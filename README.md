@@ -1,8 +1,53 @@
 <p align="center">
-  <img src="tradingagents/assets/tauric-logo.svg" width="60%" alt="Tauric Research">
+  <img src="src/tradingagents/assets/tauric-logo.svg" width="60%" alt="Tauric Research">
 </p>
 
 # TradingAgents: Multi-Agents LLM Financial Trading Framework
+
+## CS5351 team project
+
+The team extends TradingAgents 0.7.1. Four analyst nodes gather market, sentiment, news and fundamental evidence. Research and risk agents debate it before the portfolio manager produces a rating. The CLI, graph, model adapters and data vendors remain independently importable. Team feature definitions and architecture decisions are pending.
+
+Team repository: [HanDiyi2000/TradingAgents, CS5351 branch](https://github.com/HanDiyi2000/TradingAgents/tree/CS5351).
+
+| Location | Purpose |
+| --- | --- |
+| `src/tradingagents/`, `src/cli/`, `src/main.py` | Canonical implementation, CLI and example. The root package links and example launcher preserve existing entry points. |
+| `test/offline/`, `test/live/`, `test/conftest.py` | Baseline regression tests, real-provider tests and shared isolation fixtures. |
+| `docs/req/` | Product scope, requirement registry and its validation schema. The empty registry is a starting point. |
+| `architecture-blueprint.md`, `docs/architecture/` | Master blueprint, ADR, invariants, traceability, state, permissions, runtime policies and candidate evaluations. |
+| `AGENTS.md`, `Prompt.md`, `.agent/`, `.opencode/`, `docs/code-governance/` | Coding and verification workflow. The team must author the human-only rules and define and enforce its role permissions. |
+| `prompts/` | Reserved versioned prompt artifacts. Active baseline prompts are in the source. |
+| `docs/ai-use-log.yaml`, `docs/review-memo.md`, `docs/debt-register.md`, `docs/bug-diary.md` | Running evidence for AI assistance, PR reviews, debt and bugs. |
+| `transcripts/`, `Report.md` | Annotated raw sessions, team contributions, process evidence and individual reflections. |
+
+### Run and verify the team checkout
+
+From the repository root, activate Python 3.11+ and install the development dependencies once.
+
+```bash
+python -m pip install -e ".[dev]"
+python -m cli.main
+```
+
+| Scope | Command |
+| --- | --- |
+| Offline regression | `python -m pytest -q test/offline` |
+| Live DeepSeek API, with DEEPSEEK_API_KEY | `python -m pytest -q -m integration test/live` |
+| Offline and live, clearing the default marker filter | `python -m pytest -q -o addopts= test` |
+
+The live case skips without a key. The offline OAuth callback tests require permission to bind a loopback port.
+
+### CI and remaining course gates
+
+The workflow runs regression, Ruff, package installation and registry schema validation on pushes and pull requests. Schema validation checks the shape of the draft registry; the team reviews completeness. Remaining work for D7 includes pre-implementation test approval, type and dependency checks, safety-path contract/security/API/permission checks, fixed-set evaluation of prompt or model changes, and enforcement of AI-use log updates. Configure required status checks and safety-path review with an ADR in the team GitHub repository.
+
+### Starting the six feature branches
+
+1. Agree on a product scope, assign each feature an owner and reviewer, and record IDs, measurable acceptance criteria, priorities, tradeoffs and sources. Identify shared state, data access and output boundaries across the six features.
+2. Compare candidate designs, record the decision, and map each requirement to a component, interface, test and monitor. Agree on ownership of shared files.
+3. Prepare each feature plan and positive and negative tests. Record the human approval before starting implementation.
+4. Use one branch per feature from the shared baseline. Integrate through reviewed PRs, rerun prior tests, maintain the AI-use log and retain real session transcripts as the work proceeds.
 
 <div align="center" style="line-height: 1;">
   <a href="https://arxiv.org/abs/2412.20138" target="_blank"><img alt="arXiv" src="https://img.shields.io/badge/arXiv-2412.20138-B31B1B?logo=arxiv"/></a>
@@ -115,7 +160,7 @@ The selected analysts work at the same time, each on its own tools, and the rese
 
 Clone TradingAgents:
 ```bash
-git clone https://github.com/TauricResearch/TradingAgents.git
+git clone --branch CS5351 https://github.com/HanDiyi2000/TradingAgents.git
 cd TradingAgents
 ```
 
@@ -291,7 +336,7 @@ config["deep_think_llm"] = "claude-opus-5-5"
 
 A tier on its own provider uses that provider's key and default endpoint; set `quick_think_backend_url` or `deep_think_backend_url` for a local or relay endpoint. The `TRADINGAGENTS_DEEP_THINK_PROVIDER` and `TRADINGAGENTS_QUICK_THINK_PROVIDER` variables set them for the CLI, together with the tier's model variable.
 
-See `tradingagents/default_config.py` for all configuration options.
+See `src/tradingagents/default_config.py` for all configuration options.
 
 ### Fundamentals as filed
 

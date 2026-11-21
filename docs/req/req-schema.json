@@ -1,0 +1,90 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": [
+    "requirements"
+  ],
+  "properties": {
+    "requirements": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "type",
+          "priority",
+          "statement",
+          "source",
+          "tradeoff",
+          "fit_criterion"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "type": {
+            "enum": [
+              "functional",
+              "invariant",
+              "quality",
+              "performance",
+              "cost",
+              "governance",
+              "security"
+            ]
+          },
+          "priority": {
+            "enum": [
+              "Must",
+              "Should",
+              "Could",
+              "Won't"
+            ]
+          },
+          "statement": {
+            "type": "string",
+            "minLength": 1
+          },
+          "source": {
+            "type": "string",
+            "minLength": 1
+          },
+          "tradeoff": {
+            "type": "string",
+            "minLength": 1
+          },
+          "fit_criterion": {
+            "type": "object",
+            "required": [
+              "metric",
+              "verification",
+              "threshold"
+            ],
+            "properties": {
+              "metric": {
+                "type": "string",
+                "minLength": 1
+              },
+              "verification": {
+                "type": "string",
+                "minLength": 1
+              },
+              "threshold": {
+                "type": [
+                  "number",
+                  "boolean",
+                  "string"
+                ],
+                "minLength": 1
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

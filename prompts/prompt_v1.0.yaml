@@ -1,0 +1,4 @@
+# Reserved for a reviewed runtime prompt. Existing prompts run from src/.
+version: "1.0"
+status: draft
+prompts: []

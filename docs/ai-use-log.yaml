@@ -1,0 +1,11 @@
+sessions:
+  - date: "2026-11-22"
+    tool: Codex
+    task: Prepare the CS5351 repository structure from the existing TradingAgents baseline.
+    human_instruction: Preserve current functionality and defer the six feature definitions.
+    changes: Relocated source and tests, updated packaging and CI paths, and scaffolded course artifacts.
+    human_review: pending
+    verification:
+      - CLI reached ticker selection; module help matched baseline.
+      - Wheel built and installed in a temporary target; CLI and packaged assets loaded outside the checkout.
+      - Default suite before and after had 1405 passes, one optional Bedrock skip, one live case deselected and the same seven loopback bind failures.
