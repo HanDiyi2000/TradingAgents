@@ -1,8 +1,25 @@
-# Draft product scope. Refer to registry IDs after the team approves them.
 product: TradingAgents
 status: draft
-stakeholders: []
-goals: []
-in_scope: []
-out_of_scope: []
-requirement_ids: []
+stakeholders:
+- Stock analysis users
+- CS5351 project team
+goals:
+- Include options-market evidence in stock research and risk evaluation.
+in_scope:
+- 'FEAT-01: default-selectable Options Analyst, independent report, downstream delivery, export and unavailable-data
+  handling.'
+out_of_scope:
+- 'FEAT-01: option contract recommendations, option strategy construction and order execution.'
+features:
+  - id: FEAT-01
+    name: Options Analyst
+    requirement_ids:
+      - FR-OPT-01
+      - FR-OPT-02
+      - FR-OPT-03
+      - FR-OPT-04
+      - FR-OPT-05
+      - INV-OPT-01
+open_questions:
+- Select a provider after checking timestamp provenance and historical coverage.
+- Choose report indicators supported by the selected source.

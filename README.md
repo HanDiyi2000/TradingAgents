@@ -6,7 +6,7 @@
 
 ## CS5351 team project
 
-The team extends TradingAgents 0.7.1. Four analyst nodes gather market, sentiment, news and fundamental evidence. Research and risk agents debate it before the portfolio manager produces a rating. The CLI, graph, model adapters and data vendors remain independently importable. Team feature definitions and architecture decisions are pending.
+The team extends TradingAgents 0.7.1. Four analyst nodes gather market, sentiment, news and fundamental evidence. Research and risk agents debate it before the portfolio manager produces a rating. The CLI, graph, model adapters and data vendors remain independently importable. The team has specified a fifth analyst for stock options. See the [requirements registry](docs/req/requirements.yaml) for the planned extension.
 
 Team repository: [HanDiyi2000/TradingAgents, CS5351 branch](https://github.com/HanDiyi2000/TradingAgents/tree/CS5351).
 
@@ -14,7 +14,7 @@ Team repository: [HanDiyi2000/TradingAgents, CS5351 branch](https://github.com/H
 | --- | --- |
 | `src/tradingagents/`, `src/cli/`, `src/main.py` | Canonical implementation, CLI and example. The root package links and example launcher preserve existing entry points. |
 | `test/offline/`, `test/live/`, `test/conftest.py` | Baseline regression tests, real-provider tests and shared isolation fixtures. |
-| `docs/req/` | Product scope, requirement registry and its validation schema. The empty registry is a starting point. |
+| `docs/req/` | Product scope, requirement registry and its validation schema. Feature IDs FEAT-01 through FEAT-06 identify the six planned features. FEAT-01 groups the Options Analyst requirements. |
 | `architecture-blueprint.md`, `docs/architecture/` | Master blueprint, ADR, invariants, traceability, state, permissions, runtime policies and candidate evaluations. |
 | `AGENTS.md`, `Prompt.md`, `.agent/`, `.opencode/`, `docs/code-governance/` | Coding and verification workflow. The team must author the human-only rules and define and enforce its role permissions. |
 | `prompts/` | Reserved versioned prompt artifacts. Active baseline prompts are in the source. |

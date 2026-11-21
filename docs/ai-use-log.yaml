@@ -9,3 +9,12 @@ sessions:
       - CLI reached ticker selection; module help matched baseline.
       - Wheel built and installed in a temporary target; CLI and packaged assets loaded outside the checkout.
       - Default suite before and after had 1405 passes, one optional Bedrock skip, one live case deselected and the same seven loopback bind failures.
+
+  - date: "2026-11-22"
+    tool: Codex
+    task: Specify the Options Analyst and trace direct and indirect report consumers.
+    human_instruction: Distinguish options from technical market analysis and include every direct report consumer.
+    decisions: [Default inclusion with explicit opt-out, dated evidence only, explicit unavailable report and continued analysis]
+    scope: Requirements and design documents. Provider and indicators remain open.
+    evidence: transcripts/options-requirements-excerpt.md
+    test_plan_status: Proposed for human review before implementation.

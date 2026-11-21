@@ -1,2 +1,73 @@
-# Populate with sourced baseline and new requirements during D1.
-requirements: []
+requirements:
+- id: FR-OPT-01
+  type: functional
+  priority: Must
+  statement: Select Options Analyst by default alongside the four existing analysts for stock analysis. Honor explicit
+    selections, including saved selections that omit options.
+  source: Team lead, Options Analyst discussion and confirmation, 2026-11-22. Baseline 909c6c4, src/cli/models.py
+    and src/tradingagents/graph/trading_graph.py.
+  tradeoff: Default coverage adds a data lookup and may add a model call. Explicit selection controls this cost.
+  fit_criterion:
+    metric: Selection cases with incorrect active analysts or unexpected options calls
+    threshold: 0
+    verification: OPT-T1 in docs/code-governance/verification-constraints.md
+- id: FR-OPT-02
+  type: functional
+  priority: Must
+  statement: When usable options evidence exists, produce a separate report for the selected stock and analysis
+    date. Ground its interpretation in the option chain. Market Analyst retains responsibility for technical analysis
+    of the underlying stock.
+  source: Team lead, Options Analyst discussion and confirmation, 2026-11-22. Baseline 909c6c4, src/tradingagents/agents/analysts/market_analyst.py.
+  tradeoff: A separate report preserves evidence provenance and adds a report to the workflow.
+  fit_criterion:
+    metric: Fixture runs yielding one identifiable options report grounded in the supplied option-chain evidence
+    threshold: 1
+    verification: OPT-T2 in docs/code-governance/verification-constraints.md
+- id: FR-OPT-03
+  type: functional
+  priority: Must
+  statement: Deliver the options report to the bull and bear researchers and to each of the three risk debaters.
+    Carry their reasoning forward through the existing research plan, trader proposal and final decision interfaces.
+  source: Team lead, Options Analyst discussion and confirmation, 2026-11-22. Baseline 909c6c4, src/tradingagents/agents/{researchers,risk_mgmt,managers,trader}/.
+  tradeoff: Direct delivery gives both debates access to the evidence at the cost of extra context.
+  fit_criterion:
+    metric: Distinct direct recipients whose model input contains the options report marker
+    threshold: 5
+    verification: OPT-T3 in docs/code-governance/verification-constraints.md
+- id: FR-OPT-04
+  type: functional
+  priority: Must
+  statement: Show the selected analyst and its report in the CLI. Include the report in the run state and saved
+    log, the individual Markdown report and the consolidated reports produced by the existing CLI and Python export
+    paths.
+  source: Team lead, Options Analyst discussion and confirmation, 2026-11-22. Baseline 909c6c4, src/cli/display.py,
+    src/tradingagents/graph/trading_graph.py and src/tradingagents/reporting.py.
+  tradeoff: One additional section increases report size and makes the evidence inspectable.
+  fit_criterion:
+    metric: Required display, state, log or export locations missing the fixture report
+    threshold: 0
+    verification: OPT-T4 in docs/code-governance/verification-constraints.md
+- id: FR-OPT-05
+  type: functional
+  priority: Must
+  statement: When selected and no usable options data exists for the analysis date, publish an explicit data-unavailable
+    report, deliver and save it through the usual paths, and continue the stock analysis to a final decision.
+  source: 'Team lead, Options Analyst discussion and confirmation, 2026-11-22. '
+  tradeoff: A run can finish with less evidence. The status makes that limitation visible.
+  fit_criterion:
+    metric: Unavailable-data cases missing the notice, the delivery, the saved report or the final decision
+    threshold: 0
+    verification: OPT-T5 in docs/code-governance/verification-constraints.md
+- id: INV-OPT-01
+  type: invariant
+  priority: Must
+  statement: Only admit options evidence attributable to the requested stock and available as of the analysis cutoff.
+    Exclude later snapshots and records whose identity or availability time cannot be verified. If no eligible evidence
+    remains, apply FR-OPT-05.
+  source: Team lead, Options Analyst discussion and confirmation, 2026-11-22. The rejection of unverifiable records
+    operationalizes the approved historical-data rule.
+  tradeoff: Historical coverage decreases when the provider cannot establish what was known at the time.
+  fit_criterion:
+    metric: Ineligible evidence records passed to the analyst in cutoff and identity fixtures
+    threshold: 0
+    verification: OPT-T6 in docs/code-governance/verification-constraints.md
