@@ -31,3 +31,14 @@ For every termination, compare the Research Manager's input history with the ful
 | DEB-T3 | Limit 3. In round two one side cites a report fact unused in round one. Neither side answers a new point. | Begin round three. |
 | DEB-T4 | Limit 3. Round two adds no facts, but one side addresses a specific opposing argument left unanswered in round one. | Begin round three. |
 | DEB-T5 | Run with limit 1, then with limit 2 and fresh evidence in round two. | Hand off after exactly one and two complete rounds respectively. The configured cap applies in both cases. |
+
+## FEAT-03 — Company background (FR-RPT-01)
+
+Proposed offline cases. Use fixed profile data and exercise the existing CLI and Python export paths. Compare the visible section text across formats.
+
+| Case | Input | Expected export |
+| --- | --- | --- |
+| RPT-T1 | Full profile with a name, industry and two-sentence description. Omit Fundamentals Analyst from the selection. | Each format contains one background section after the header and before the analyst reports. Both show the fixture fields and the same description. |
+| RPT-T2 | Profile contains only a company name. | Both sections show just the name. The rest of the report exports successfully. |
+| RPT-T3 | No profile fields are available. | Both sections show an unavailable notice. The analysis and final decision still appear in the export. |
+| RPT-T4 | Historical analysis with only a current name, current industry and current business description. | Both sections label the name as current and omit the undated industry and business description. |

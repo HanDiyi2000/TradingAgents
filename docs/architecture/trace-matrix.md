@@ -16,3 +16,9 @@
 | Requirement | Component | Test or evidence | Runtime monitor |
 | --- | --- | --- | --- |
 | FR-DEB-01 | Research debate state, bull/bear router and Research Manager handoff | DEB-T1 through DEB-T5 | Ordered speaker history, completed round count and recorded reason on early stop |
+
+## FEAT-03 — Company background in the consolidated report
+
+| Requirement | Component | Test or evidence | Runtime monitor |
+| --- | --- | --- | --- |
+| FR-RPT-01 | Profile/date handling and shared report export (reporting.py, report_html.py) | RPT-T1 through RPT-T4 | Company Background section in exported Markdown and HTML |

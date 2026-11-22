@@ -37,3 +37,9 @@ already answered. A paraphrase of the same fact or rebuttal adds no progress.
 | Later round complete and below the limit | Continue if either side cited a new fact or first addressed an unanswered opposing point. Otherwise record “No new evidence or first response in this round” with the debate and hand the full history to the Research Manager. |
 
 The rule operates on the research debate regardless of which analysts supplied reports. The separate risk debate uses its existing routing.
+
+## FEAT-03 — Company background in the consolidated report
+
+The shared CLI and Python export path prepares one factual introduction from the run's eligible company profile. Both renderers place it between the report header and the analyst reports. Reuse the ticker in the title. The introduction is independent of the Fundamentals Analyst and requires no additional agent or model call.
+
+For historical runs, follow the identity rule in `src/tradingagents/agents/context.py`. A current name may identify the company if explicitly labelled as current. Present industry and business details as historical facts only when supported for the analysis date. Omit missing fields and show an unavailable notice if the profile supplies none.

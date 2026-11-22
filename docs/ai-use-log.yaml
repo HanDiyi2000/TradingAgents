@@ -25,3 +25,9 @@ sessions:
     human_instruction: End a research debate after a full round without new evidence or a first reply. Keep the existing cap.
     clarification: The lead confirmed that round one is an opening round and round two is the earliest no-progress stop.
     scope: Documentation. Acceptance cases are proposed and unexecuted.
+
+  - date: "2026-11-22"
+    tool: Codex
+    task: Document FEAT-03 and draft offline export checks.
+    human_instruction: Add company background to the final report. The lead approved the proposed scope before editing.
+    scope: Documentation for report placement, fields, date handling and missing-data behavior. Acceptance cases are proposed.

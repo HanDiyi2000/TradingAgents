@@ -86,3 +86,18 @@ requirements:
     metric: Scripted cases with an incorrect next speaker, stop round, termination reason or manager history
     threshold: 0
     verification: DEB-T1 through DEB-T5 in docs/code-governance/verification-constraints.md
+- id: FR-RPT-01
+  type: functional
+  priority: Must
+  statement: >
+    Each consolidated stock report shall display one Company Background section after its header and
+    before analyst reports, regardless of the analysts selected. Show the available company name,
+    industry and a one- or two-sentence business description from the source. Omit missing fields.
+    If no eligible fields are available, display an unavailable notice and complete the export.
+    Apply the existing historical-date policy and show the same information in Markdown and requested HTML.
+  source: Team lead, FEAT-03 discussion and approval on 2026-11-22. Baseline in src/tradingagents/reporting.py and src/tradingagents/agents/context.py.
+  tradeoff: Omitting unsupported details keeps profiles factual even when the resulting introduction is brief.
+  fit_criterion:
+    metric: Fixture exports failing the expected section count, placement, content or completion checks
+    threshold: 0
+    verification: RPT-T1 through RPT-T4 in docs/code-governance/verification-constraints.md
