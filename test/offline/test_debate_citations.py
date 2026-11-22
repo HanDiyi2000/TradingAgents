@@ -711,7 +711,6 @@ def test_cit_t3_a_first_reply_may_reuse_the_same_paragraph_and_progress():
     paragraph resolves to that paragraph, its PROGRESS judgement is recorded,
     and the router sends the debate on to the bull."""
     from tradingagents.agents.citations import resolve_turn
-
     from tradingagents.agents.researchers.bear_researcher import create_bear_researcher
 
     paragraphs = DEFAULT_MAP  # pairs with _state()'s default reports
