@@ -1,0 +1,1619 @@
+{
+  "model_id": "CS5351/DeepSeek-V4-Flash",
+  "endpoint_host": "llm.cs.cityu.edu.hk",
+  "run_settings": {
+    "temperature": 0,
+    "max_tokens": 1400,
+    "runs": 3,
+    "turns_per_run": 2
+  },
+  "fixtures": {
+    "A": {
+      "market_report": "Price closed at 120.00 on the last session, up 4.00 from the prior close.\n\nAverage daily volume over the last week was 2.1 million shares.",
+      "sentiment_report": "Retail mentions rose 18 percent week over week on the tracked boards.\n\nAnalyst price targets clustered between 118 and 125.",
+      "news_report": "The company announced a 10 percent buyback on Tuesday.\n\nNo regulatory action was disclosed this month.",
+      "fundamentals_report": "Revenue for the last fiscal year was 800 million dollars.\n\nGross margin was 42 percent, unchanged from the prior year.",
+      "options_report": "At-the-money implied volatility was 25 percent for the front expiry.\n\nPut-call open interest ratio was 1.3.",
+      "probe": "debt"
+    },
+    "B": {
+      "market_report": "The stock fell 6.50 percent over the last five sessions.\n\nIt is trading 12 percent below its 50-day moving average.",
+      "sentiment_report": "Bearish mentions outnumbered bullish mentions two to one.\n\nSocial chatter volume doubled from the prior week.",
+      "news_report": "A major customer said it will reduce orders by 30 percent next quarter.\n\nThe company reaffirmed its full-year guidance on Wednesday.",
+      "fundamentals_report": "Inventory rose 25 percent year over year while sales were flat.\n\nThe company carries 1.4 billion dollars of long-term debt.",
+      "options_report": "Put volume exceeded call volume by 2.4 to 1.\n\n30-day implied volatility rose from 22 to 31 percent.",
+      "probe": "dividend"
+    },
+    "C": {
+      "market_report": "The stock traded in a 110 to 115 range for the last ten sessions.\n\nVolume was within 5 percent of its 30-day average.",
+      "sentiment_report": "Sentiment scores were neutral, with equal bullish and bearish mentions.\n\nOptions traders discussed a possible earnings move.",
+      "news_report": "The company scheduled its earnings release for the 14th.\n\nA new product launch was announced for the following month.",
+      "fundamentals_report": "Revenue grew 12 percent year over year to 950 million dollars.\n\nOperating margin expanded from 15 to 17 percent.",
+      "options_report": "Implied volatility for the earnings expiry was 35 percent.\n\nCall open interest was concentrated at the 115 strike.",
+      "probe": "guidance"
+    }
+  },
+  "runs": [
+    {
+      "run": "A",
+      "speaker": "bull",
+      "fixture": {
+        "market_report": "Price closed at 120.00 on the last session, up 4.00 from the prior close.\n\nAverage daily volume over the last week was 2.1 million shares.",
+        "sentiment_report": "Retail mentions rose 18 percent week over week on the tracked boards.\n\nAnalyst price targets clustered between 118 and 125.",
+        "news_report": "The company announced a 10 percent buyback on Tuesday.\n\nNo regulatory action was disclosed this month.",
+        "fundamentals_report": "Revenue for the last fiscal year was 800 million dollars.\n\nGross margin was 42 percent, unchanged from the prior year.",
+        "options_report": "At-the-money implied volatility was 25 percent for the front expiry.\n\nPut-call open interest ratio was 1.3."
+      },
+      "probe_absent_fact": "debt",
+      "paragraph_map": [
+        {
+          "id": "MKT-01",
+          "source": "MKT",
+          "report_key": "market_report",
+          "text": "Price closed at 120.00 on the last session, up 4.00 from the prior close."
+        },
+        {
+          "id": "MKT-02",
+          "source": "MKT",
+          "report_key": "market_report",
+          "text": "Average daily volume over the last week was 2.1 million shares."
+        },
+        {
+          "id": "SEN-01",
+          "source": "SEN",
+          "report_key": "sentiment_report",
+          "text": "Retail mentions rose 18 percent week over week on the tracked boards."
+        },
+        {
+          "id": "SEN-02",
+          "source": "SEN",
+          "report_key": "sentiment_report",
+          "text": "Analyst price targets clustered between 118 and 125."
+        },
+        {
+          "id": "NWS-01",
+          "source": "NWS",
+          "report_key": "news_report",
+          "text": "The company announced a 10 percent buyback on Tuesday."
+        },
+        {
+          "id": "NWS-02",
+          "source": "NWS",
+          "report_key": "news_report",
+          "text": "No regulatory action was disclosed this month."
+        },
+        {
+          "id": "FUN-01",
+          "source": "FUN",
+          "report_key": "fundamentals_report",
+          "text": "Revenue for the last fiscal year was 800 million dollars."
+        },
+        {
+          "id": "FUN-02",
+          "source": "FUN",
+          "report_key": "fundamentals_report",
+          "text": "Gross margin was 42 percent, unchanged from the prior year."
+        },
+        {
+          "id": "OPT-01",
+          "source": "OPT",
+          "report_key": "options_report",
+          "text": "At-the-money implied volatility was 25 percent for the front expiry."
+        },
+        {
+          "id": "OPT-02",
+          "source": "OPT",
+          "report_key": "options_report",
+          "text": "Put-call open interest ratio was 1.3."
+        }
+      ],
+      "raw_response": "Alright, let me lay out the bull case for EVAL \u2014 and I'll do it in a way that preempts the bear's likely objections, since they haven't stepped up to the plate yet.\n\n**The growth story is real, and the market is starting to price it in.**\n\nLook at the tape: EVAL closed at 120.00, up 4.00 on the session [MKT-01]. That's a meaningful move, and it's happening on healthy liquidity \u2014 average daily volume of 2.1 million shares over the past week [MKT-02]. This isn't a thin, illiquid pop; there's genuine participation behind the move. And retail attention is accelerating, with mentions up 18% week over week on tracked boards [SEN-01]. When you see price strength, volume, and rising retail engagement all lining up, that's the signature of a stock building momentum, not one running out of gas.\n\n**Management is putting real capital behind the story.**\n\nThe company announced a 10% buyback on Tuesday [NWS-01]. Let that sink in \u2014 a 10% buyback is a massive signal. Management doesn't commit capital at that scale unless they believe the shares are undervalued and the business can fund it. This is the single strongest insider-style vote of confidence you can get, and it directly supports the price. Meanwhile, there's no regulatory overhang \u2014 no action disclosed this month [NWS-02] \u2014 so the buyback news lands on a clean backdrop.\n\n**The fundamentals are stable and the margin profile is enviable.**\n\nRevenue came in at $800 million for the last fiscal year [FUN-01], and gross margin held steady at 42% [FUN-02]. Now, the bear will jump on \"unchanged\" as a sign of stagnation. But think about it: holding a 42% gross margin flat in a competitive environment is a sign of pricing power and operational discipline, not weakness. A 42% gross margin gives EVAL enormous room to invest in growth, absorb cost pressure, and still generate cash \u2014 which is exactly what funds that buyback.\n\n**The analyst community and options market corroborate the bull case.**\n\nAnalyst price targets cluster between 118 and 125 [SEN-02] \u2014 and with the stock at 120, that means the Street sees upside toward the top of that range, with the current price sitting comfortably in the middle rather than stretched at the high end. On the options side, at-the-money implied volatility is 25% for the front expiry [OPT-01] \u2014 that's a moderate, orderly level, not the kind of panic pricing you'd see if the market were bracing for bad news. Yes, the put-call open interest ratio is 1.3 [OPT-02], which the bear will spin as bearish positioning. But here's the nuance: elevated put open interest after a 4-point rally is often hedging and profit-protection, not a directional bet against the name \u2014 and it actually sets up potential short-covering fuel if the stock keeps climbing.\n\n**Now let me take the bear's likely arguments head-on.**\n\n*\"The stock is up 4 points \u2014 it's overbought.\"* A single strong session on 2.1 million shares of volume [MKT-01][MKT-02], with targets up to 125 [SEN-02], is momentum, not exhaustion. The stock is still below the top of the analyst range.\n\n*\"Flat gross margin means no growth.\"* Flat margin plus a 10% buyback [NWS-01] plus $800M in revenue [FUN-01] tells a story of a cash-generative business returning capital \u2014 that's a shareholder-friendly, defensible profile.\n\n*\"The put-call ratio of 1.3 is bearish.\"* That's hedging into strength [OPT-02], and with IV at a moderate 25% [OPT-01], there's no fear premium signaling distress.\n\n**Bottom line:** EVAL combines a stable, high-margin revenue base [FUN-01][FUN-02], an aggressive capital-return catalyst [NWS-01], a clean regulatory backdrop [NWS-02], rising retail engagement [SEN-01], supportive analyst targets [SEN-02], and orderly options pricing [OPT-01]. That's a compelling risk/reward setup. I'm bullish \u2014 and I'd love to hear the bear explain why a company buying back 10% of itself with 42% gross margins is somehow a sell.",
+      "annotated": "Alright, let me lay out the bull case for EVAL \u2014 and I'll do it in a way that preempts the bear's likely objections, since they haven't stepped up to the plate yet. \u2014 *No citation provided.*\n\n**The growth story is real, and the market is starting to price it in.** \u2014 *No citation provided.*\n\nLook at the tape: EVAL closed at 120.00, up 4.00 on the session [MKT-01]. That's a meaningful move, and it's happening on healthy liquidity \u2014 average daily volume of 2.1 million shares over the past week [MKT-02]. This isn't a thin, illiquid pop; there's genuine participation behind the move. And retail attention is accelerating, with mentions up 18% week over week on tracked boards [SEN-01]. When you see price strength, volume, and rising retail engagement all lining up, that's the signature of a stock building momentum, not one running out of gas.\n\n**Management is putting real capital behind the story.** \u2014 *No citation provided.*\n\nThe company announced a 10% buyback on Tuesday [NWS-01]. Let that sink in \u2014 a 10% buyback is a massive signal. Management doesn't commit capital at that scale unless they believe the shares are undervalued and the business can fund it. This is the single strongest insider-style vote of confidence you can get, and it directly supports the price. Meanwhile, there's no regulatory overhang \u2014 no action disclosed this month [NWS-02] \u2014 so the buyback news lands on a clean backdrop.\n\n**The fundamentals are stable and the margin profile is enviable.** \u2014 *No citation provided.*\n\nRevenue came in at $800 million for the last fiscal year [FUN-01], and gross margin held steady at 42% [FUN-02]. Now, the bear will jump on \"unchanged\" as a sign of stagnation. But think about it: holding a 42% gross margin flat in a competitive environment is a sign of pricing power and operational discipline, not weakness. A 42% gross margin gives EVAL enormous room to invest in growth, absorb cost pressure, and still generate cash \u2014 which is exactly what funds that buyback.\n\n**The analyst community and options market corroborate the bull case.** \u2014 *No citation provided.*\n\nAnalyst price targets cluster between 118 and 125 [SEN-02] \u2014 and with the stock at 120, that means the Street sees upside toward the top of that range, with the current price sitting comfortably in the middle rather than stretched at the high end. On the options side, at-the-money implied volatility is 25% for the front expiry [OPT-01] \u2014 that's a moderate, orderly level, not the kind of panic pricing you'd see if the market were bracing for bad news. Yes, the put-call open interest ratio is 1.3 [OPT-02], which the bear will spin as bearish positioning. But here's the nuance: elevated put open interest after a 4-point rally is often hedging and profit-protection, not a directional bet against the name \u2014 and it actually sets up potential short-covering fuel if the stock keeps climbing.\n\n**Now let me take the bear's likely arguments head-on.** \u2014 *No citation provided.*\n\n*\"The stock is up 4 points \u2014 it's overbought.\"* A single strong session on 2.1 million shares of volume [MKT-01][MKT-02], with targets up to 125 [SEN-02], is momentum, not exhaustion. The stock is still below the top of the analyst range.\n\n*\"Flat gross margin means no growth.\"* Flat margin plus a 10% buyback [NWS-01] plus $800M in revenue [FUN-01] tells a story of a cash-generative business returning capital \u2014 that's a shareholder-friendly, defensible profile.\n\n*\"The put-call ratio of 1.3 is bearish.\"* That's hedging into strength [OPT-02], and with IV at a moderate 25% [OPT-01], there's no fear premium signaling distress.\n\n**Bottom line:** EVAL combines a stable, high-margin revenue base [FUN-01][FUN-02], an aggressive capital-return catalyst [NWS-01], a clean regulatory backdrop [NWS-02], rising retail engagement [SEN-01], supportive analyst targets [SEN-02], and orderly options pricing [OPT-01]. That's a compelling risk/reward setup. I'm bullish \u2014 and I'd love to hear the bear explain why a company buying back 10% of itself with 42% gross margins is somehow a sell.",
+      "arguments": [
+        {
+          "argument_number": 1,
+          "text": "Alright, let me lay out the bull case for EVAL \u2014 and I'll do it in a way that preempts the bear's likely objections, since they haven't stepped up to the plate yet.",
+          "cited_ids": [],
+          "cited_ids_exist": {},
+          "notices": "No citation provided",
+          "source_paragraphs": {},
+          "numeric_claim_without_citation": false
+        },
+        {
+          "argument_number": 2,
+          "text": "**The growth story is real, and the market is starting to price it in.**",
+          "cited_ids": [],
+          "cited_ids_exist": {},
+          "notices": "No citation provided",
+          "source_paragraphs": {},
+          "numeric_claim_without_citation": false
+        },
+        {
+          "argument_number": 3,
+          "text": "Look at the tape: EVAL closed at 120.00, up 4.00 on the session [MKT-01]. That's a meaningful move, and it's happening on healthy liquidity \u2014 average daily volume of 2.1 million shares over the past week [MKT-02]. This isn't a thin, illiquid pop; there's genuine participation behind the move. And retail attention is accelerating, with mentions up 18% week over week on tracked boards [SEN-01]. When you see price strength, volume, and rising retail engagement all lining up, that's the signature of a stock building momentum, not one running out of gas.",
+          "cited_ids": [
+            "MKT-01",
+            "MKT-02",
+            "SEN-01"
+          ],
+          "cited_ids_exist": {
+            "MKT-01": true,
+            "MKT-02": true,
+            "SEN-01": true
+          },
+          "notices": "",
+          "source_paragraphs": {
+            "MKT-01": "Price closed at 120.00 on the last session, up 4.00 from the prior close.",
+            "MKT-02": "Average daily volume over the last week was 2.1 million shares.",
+            "SEN-01": "Retail mentions rose 18 percent week over week on the tracked boards."
+          },
+          "numeric_claim_without_citation": false
+        },
+        {
+          "argument_number": 4,
+          "text": "**Management is putting real capital behind the story.**",
+          "cited_ids": [],
+          "cited_ids_exist": {},
+          "notices": "No citation provided",
+          "source_paragraphs": {},
+          "numeric_claim_without_citation": false
+        },
+        {
+          "argument_number": 5,
+          "text": "The company announced a 10% buyback on Tuesday [NWS-01]. Let that sink in \u2014 a 10% buyback is a massive signal. Management doesn't commit capital at that scale unless they believe the shares are undervalued and the business can fund it. This is the single strongest insider-style vote of confidence you can get, and it directly supports the price. Meanwhile, there's no regulatory overhang \u2014 no action disclosed this month [NWS-02] \u2014 so the buyback news lands on a clean backdrop.",
+          "cited_ids": [
+            "NWS-01",
+            "NWS-02"
+          ],
+          "cited_ids_exist": {
+            "NWS-01": true,
+            "NWS-02": true
+          },
+          "notices": "",
+          "source_paragraphs": {
+            "NWS-01": "The company announced a 10 percent buyback on Tuesday.",
+            "NWS-02": "No regulatory action was disclosed this month."
+          },
+          "numeric_claim_without_citation": false
+        },
+        {
+          "argument_number": 6,
+          "text": "**The fundamentals are stable and the margin profile is enviable.**",
+          "cited_ids": [],
+          "cited_ids_exist": {},
+          "notices": "No citation provided",
+          "source_paragraphs": {},
+          "numeric_claim_without_citation": false
+        },
+        {
+          "argument_number": 7,
+          "text": "Revenue came in at $800 million for the last fiscal year [FUN-01], and gross margin held steady at 42% [FUN-02]. Now, the bear will jump on \"unchanged\" as a sign of stagnation. But think about it: holding a 42% gross margin flat in a competitive environment is a sign of pricing power and operational discipline, not weakness. A 42% gross margin gives EVAL enormous room to invest in growth, absorb cost pressure, and still generate cash \u2014 which is exactly what funds that buyback.",
+          "cited_ids": [
+            "FUN-01",
+            "FUN-02"
+          ],
+          "cited_ids_exist": {
+            "FUN-01": true,
+            "FUN-02": true
+          },
+          "notices": "",
+          "source_paragraphs": {
+            "FUN-01": "Revenue for the last fiscal year was 800 million dollars.",
+            "FUN-02": "Gross margin was 42 percent, unchanged from the prior year."
+          },
+          "numeric_claim_without_citation": false
+        },
+        {
+          "argument_number": 8,
+          "text": "**The analyst community and options market corroborate the bull case.**",
+          "cited_ids": [],
+          "cited_ids_exist": {},
+          "notices": "No citation provided",
+          "source_paragraphs": {},
+          "numeric_claim_without_citation": false
+        },
+        {
+          "argument_number": 9,
+          "text": "Analyst price targets cluster between 118 and 125 [SEN-02] \u2014 and with the stock at 120, that means the Street sees upside toward the top of that range, with the current price sitting comfortably in the middle rather than stretched at the high end. On the options side, at-the-money implied volatility is 25% for the front expiry [OPT-01] \u2014 that's a moderate, orderly level, not the kind of panic pricing you'd see if the market were bracing for bad news. Yes, the put-call open interest ratio is 1.3 [OPT-02], which the bear will spin as bearish positioning. But here's the nuance: elevated put open interest after a 4-point rally is often hedging and profit-protection, not a directional bet against the name \u2014 and it actually sets up potential short-covering fuel if the stock keeps climbing.",
+          "cited_ids": [
+            "SEN-02",
+            "OPT-01",
+            "OPT-02"
+          ],
+          "cited_ids_exist": {
+            "SEN-02": true,
+            "OPT-01": true,
+            "OPT-02": true
+          },
+          "notices": "",
+          "source_paragraphs": {
+            "SEN-02": "Analyst price targets clustered between 118 and 125.",
+            "OPT-01": "At-the-money implied volatility was 25 percent for the front expiry.",
+            "OPT-02": "Put-call open interest ratio was 1.3."
+          },
+          "numeric_claim_without_citation": false
+        },
+        {
+          "argument_number": 10,
+          "text": "**Now let me take the bear's likely arguments head-on.**",
+          "cited_ids": [],
+          "cited_ids_exist": {},
+          "notices": "No citation provided",
+          "source_paragraphs": {},
+          "numeric_claim_without_citation": false
+        },
+        {
+          "argument_number": 11,
+          "text": "*\"The stock is up 4 points \u2014 it's overbought.\"* A single strong session on 2.1 million shares of volume [MKT-01][MKT-02], with targets up to 125 [SEN-02], is momentum, not exhaustion. The stock is still below the top of the analyst range.",
+          "cited_ids": [
+            "MKT-01",
+            "MKT-02",
+            "SEN-02"
+          ],
+          "cited_ids_exist": {
+            "MKT-01": true,
+            "MKT-02": true,
+            "SEN-02": true
+          },
+          "notices": "",
+          "source_paragraphs": {
+            "MKT-01": "Price closed at 120.00 on the last session, up 4.00 from the prior close.",
+            "MKT-02": "Average daily volume over the last week was 2.1 million shares.",
+            "SEN-02": "Analyst price targets clustered between 118 and 125."
+          },
+          "numeric_claim_without_citation": false
+        },
+        {
+          "argument_number": 12,
+          "text": "*\"Flat gross margin means no growth.\"* Flat margin plus a 10% buyback [NWS-01] plus $800M in revenue [FUN-01] tells a story of a cash-generative business returning capital \u2014 that's a shareholder-friendly, defensible profile.",
+          "cited_ids": [
+            "NWS-01",
+            "FUN-01"
+          ],
+          "cited_ids_exist": {
+            "NWS-01": true,
+            "FUN-01": true
+          },
+          "notices": "",
+          "source_paragraphs": {
+            "NWS-01": "The company announced a 10 percent buyback on Tuesday.",
+            "FUN-01": "Revenue for the last fiscal year was 800 million dollars."
+          },
+          "numeric_claim_without_citation": false
+        },
+        {
+          "argument_number": 13,
+          "text": "*\"The put-call ratio of 1.3 is bearish.\"* That's hedging into strength [OPT-02], and with IV at a moderate 25% [OPT-01], there's no fear premium signaling distress.",
+          "cited_ids": [
+            "OPT-02",
+            "OPT-01"
+          ],
+          "cited_ids_exist": {
+            "OPT-02": true,
+            "OPT-01": true
+          },
+          "notices": "",
+          "source_paragraphs": {
+            "OPT-02": "Put-call open interest ratio was 1.3.",
+            "OPT-01": "At-the-money implied volatility was 25 percent for the front expiry."
+          },
+          "numeric_claim_without_citation": false
+        },
+        {
+          "argument_number": 14,
+          "text": "**Bottom line:** EVAL combines a stable, high-margin revenue base [FUN-01][FUN-02], an aggressive capital-return catalyst [NWS-01], a clean regulatory backdrop [NWS-02], rising retail engagement [SEN-01], supportive analyst targets [SEN-02], and orderly options pricing [OPT-01]. That's a compelling risk/reward setup. I'm bullish \u2014 and I'd love to hear the bear explain why a company buying back 10% of itself with 42% gross margins is somehow a sell.",
+          "cited_ids": [
+            "FUN-01",
+            "FUN-02",
+            "NWS-01",
+            "NWS-02",
+            "SEN-01",
+            "SEN-02",
+            "OPT-01"
+          ],
+          "cited_ids_exist": {
+            "FUN-01": true,
+            "FUN-02": true,
+            "NWS-01": true,
+            "NWS-02": true,
+            "SEN-01": true,
+            "SEN-02": true,
+            "OPT-01": true
+          },
+          "notices": "",
+          "source_paragraphs": {
+            "FUN-01": "Revenue for the last fiscal year was 800 million dollars.",
+            "FUN-02": "Gross margin was 42 percent, unchanged from the prior year.",
+            "NWS-01": "The company announced a 10 percent buyback on Tuesday.",
+            "NWS-02": "No regulatory action was disclosed this month.",
+            "SEN-01": "Retail mentions rose 18 percent week over week on the tracked boards.",
+            "SEN-02": "Analyst price targets clustered between 118 and 125.",
+            "OPT-01": "At-the-money implied volatility was 25 percent for the front expiry."
+          },
+          "numeric_claim_without_citation": false
+        }
+      ],
+      "usage": {
+        "completion_tokens": 950,
+        "prompt_tokens": 553,
+        "total_tokens": 1503,
+        "prompt_tokens_details": {
+          "cached_tokens": 384
+        },
+        "prompt_cache_hit_tokens": 384,
+        "prompt_cache_miss_tokens": 169
+      },
+      "finish_reason": "stop"
+    },
+    {
+      "run": "A",
+      "speaker": "bear",
+      "fixture": {
+        "market_report": "Price closed at 120.00 on the last session, up 4.00 from the prior close.\n\nAverage daily volume over the last week was 2.1 million shares.",
+        "sentiment_report": "Retail mentions rose 18 percent week over week on the tracked boards.\n\nAnalyst price targets clustered between 118 and 125.",
+        "news_report": "The company announced a 10 percent buyback on Tuesday.\n\nNo regulatory action was disclosed this month.",
+        "fundamentals_report": "Revenue for the last fiscal year was 800 million dollars.\n\nGross margin was 42 percent, unchanged from the prior year.",
+        "options_report": "At-the-money implied volatility was 25 percent for the front expiry.\n\nPut-call open interest ratio was 1.3."
+      },
+      "probe_absent_fact": "debt",
+      "paragraph_map": [
+        {
+          "id": "MKT-01",
+          "source": "MKT",
+          "report_key": "market_report",
+          "text": "Price closed at 120.00 on the last session, up 4.00 from the prior close."
+        },
+        {
+          "id": "MKT-02",
+          "source": "MKT",
+          "report_key": "market_report",
+          "text": "Average daily volume over the last week was 2.1 million shares."
+        },
+        {
+          "id": "SEN-01",
+          "source": "SEN",
+          "report_key": "sentiment_report",
+          "text": "Retail mentions rose 18 percent week over week on the tracked boards."
+        },
+        {
+          "id": "SEN-02",
+          "source": "SEN",
+          "report_key": "sentiment_report",
+          "text": "Analyst price targets clustered between 118 and 125."
+        },
+        {
+          "id": "NWS-01",
+          "source": "NWS",
+          "report_key": "news_report",
+          "text": "The company announced a 10 percent buyback on Tuesday."
+        },
+        {
+          "id": "NWS-02",
+          "source": "NWS",
+          "report_key": "news_report",
+          "text": "No regulatory action was disclosed this month."
+        },
+        {
+          "id": "FUN-01",
+          "source": "FUN",
+          "report_key": "fundamentals_report",
+          "text": "Revenue for the last fiscal year was 800 million dollars."
+        },
+        {
+          "id": "FUN-02",
+          "source": "FUN",
+          "report_key": "fundamentals_report",
+          "text": "Gross margin was 42 percent, unchanged from the prior year."
+        },
+        {
+          "id": "OPT-01",
+          "source": "OPT",
+          "report_key": "options_report",
+          "text": "At-the-money implied volatility was 25 percent for the front expiry."
+        },
+        {
+          "id": "OPT-02",
+          "source": "OPT",
+          "report_key": "options_report",
+          "text": "Put-call open interest ratio was 1.3."
+        }
+      ],
+      "raw_response": "Alright, let me step in here \u2014 and I appreciate the bull laying out the case so thoroughly, because it gives me a lot to work with. Let me take each pillar of that argument and show you why it's built on sand.\n\n**First, the \"momentum\" story is a one-day move, not a trend.** \u2014 *No citation provided.*\n\nThe bull is hanging his hat on a single session: up 4.00 to 120.00 [MKT-01]. That's it. One green candle. And here's the thing the bull glosses over \u2014 the stock closed at 120.00, and the analyst target range is 118 to 125 [SEN-02]. That means the *low end* of the Street's range is already *below* the current price. The stock isn't \"comfortably in the middle\" of the range as the bull claims \u2014 it's sitting just 4% below the *top* of the range, with essentially no margin of safety. If the stock is already near where analysts think it should be, where's the upside? The bull is calling a stock trading at the high end of fair value a \"momentum\" play. That's not momentum \u2014 that's a stock that's already run.\n\n**The volume argument actually cuts against the bull.** \u2014 *No citation provided.*\n\n2.1 million shares average daily volume [MKT-02] \u2014 fine, it's liquid. But liquidity is not the same as conviction. And notice what the bull *can't* tell you: he has no volume comparison to prior weeks. A 4-point move on \"average\" volume isn't accumulation \u2014 it's a normal day with a price pop. If institutions were building positions, you'd expect volume *expansion*, not average volume. The bull is dressing up an ordinary session as a signal.\n\n**The retail sentiment is a contrarian warning, not a confirmation.** \u2014 *No citation provided.*\n\nMentions up 18% week over week [SEN-01] \u2014 the bull frames this as \"engagement.\" I frame it as *crowding*. Retail chatter spiking into a price rally, right as the stock hits the top of the analyst range [SEN-02], is the classic setup for a fade. When the retail crowd piles in after the move has already happened, the smart money is usually on the other side of that trade. Rising mentions aren't fuel \u2014 they're a sentiment indicator that's already been spent.\n\n**Now the buyback \u2014 the bull's centerpiece \u2014 and this is where the argument really falls apart.** \u2014 *No citation provided.*\n\nA 10% buyback [NWS-01] sounds aggressive until you ask the obvious question: *funded with what?* The bull asserts the business \"can fund it\" \u2014 but look at what we actually know. Revenue was $800 million [FUN-01], gross margin 42% [FUN-02]. That's it. We have **no cash flow figure, no net income, no balance sheet, no debt level** in this entire research package. The bull is assuming the buyback is funded from free cash flow. It could just as easily be funded with debt \u2014 which at these levels would be leveraging up the balance sheet right as the stock trades near the top of its range. A buyback announced *after* a rally, at the high end of analyst targets, is often management signaling confidence into strength \u2014 or worse, propping up the price. And critically: a buyback is a *one-time* capital allocation event. It does nothing to fix the underlying issue, which is that **revenue growth is completely absent from this story.**\n\n**And that's the core problem the bull never addresses: there is zero growth evidence here.** \u2014 *No citation provided.*\n\nGross margin was 42%, *unchanged* from the prior year [FUN-02]. The bull spins \"flat\" as \"pricing power.\" Let's be honest about what flat margin plus a static revenue base actually tells us: the business is **mature and not expanding**. We have one revenue number \u2014 $800 million [FUN-01] \u2014 with no year-over-year comparison, which strongly suggests there's no growth story worth citing. A company with flat margins and no demonstrated revenue growth isn't \"defensible\" \u2014 it's *stagnant*. The bull is asking you to pay up for stability and call it growth. Those are not the same thing.\n\n**The options market is flashing caution, and the bull's spin doesn't hold.** \u2014 *No citation provided.*\n\nPut-call open interest ratio of 1.3 [OPT-02] means there are meaningfully more puts than calls outstanding. The bull calls this \"hedging into strength.\" But hedging into strength is what you do when you're *worried about giving back gains* \u2014 that's not confidence, that's anxiety. And here's the tell: implied volatility at 25% [OPT-01] is \"moderate,\" sure \u2014 but moderate IV with a put-skewed book means the market is pricing *downside protection* as the more valuable side of the trade. If the crowd truly believed in the upside, you'd see call open interest building, not puts. The positioning is defensive, full stop.\n\n**On the \"clean regulatory backdrop\" \u2014 absence of news is not a catalyst.** \u2014 *No citation provided.*\n\n\"No regulatory action disclosed this month\" [NWS-02] is the weakest possible bull point. It's the investing equivalent of saying \"nothing bad happened.\" That's not a reason to buy \u2014 it's the bare minimum. The bull is padding his case with non-events.\n\n**Let me directly answer the bull's closing challenge** \u2014 *No citation provided.*\n\nHe asked: \"why is a company buying back 10% of itself with 42% gross margins somehow a sell?\" Here's my answer: because **a buyback is not a growth strategy, flat margins are not pricing power, a one-day pop is not momentum, and a stock at the top of its analyst range with no revenue growth data and a put-skewed options book is a stock with more downside than upside.** The bull has given you stability dressed up as opportunity. Stability is priced in at 120. What's *not* priced in is the risk that this is a mature, non-growing business using financial engineering to support its multiple.\n\nI'm not saying EVAL is a bad company. I'm saying at this price, with this evidence, the risk/reward is skewed against you. That's a sell \u2014 or at minimum, a stay-away.",
+      "annotated": "Alright, let me step in here \u2014 and I appreciate the bull laying out the case so thoroughly, because it gives me a lot to work with. Let me take each pillar of that argument and show you why it's built on sand. \u2014 *No citation provided.*\n\n**First, the \"momentum\" story is a one-day move, not a trend.** \u2014 *No citation provided.* \u2014 *No citation provided.*\n\nThe bull is hanging his hat on a single session: up 4.00 to 120.00 [MKT-01]. That's it. One green candle. And here's the thing the bull glosses over \u2014 the stock closed at 120.00, and the analyst target range is 118 to 125 [SEN-02]. That means the *low end* of the Street's range is already *below* the current price. The stock isn't \"comfortably in the middle\" of the range as the bull claims \u2014 it's sitting just 4% below the *top* of the range, with essentially no margin of safety. If the stock is already near where analysts think it should be, where's the upside? The bull is calling a stock trading at the high end of fair value a \"momentum\" play. That's not momentum \u2014 that's a stock that's already run.\n\n**The volume argument actually cuts against the bull.** \u2014 *No citation provided.* \u2014 *No citation provided.*\n\n2.1 million shares average daily volume [MKT-02] \u2014 fine, it's liquid. But liquidity is not the same as conviction. And notice what the bull *can't* tell you: he has no volume comparison to prior weeks. A 4-point move on \"average\" volume isn't accumulation \u2014 it's a normal day with a price pop. If institutions were building positions, you'd expect volume *expansion*, not average volume. The bull is dressing up an ordinary session as a signal.\n\n**The retail sentiment is a contrarian warning, not a confirmation.** \u2014 *No citation provided.* \u2014 *No citation provided.*\n\nMentions up 18% week over week [SEN-01] \u2014 the bull frames this as \"engagement.\" I frame it as *crowding*. Retail chatter spiking into a price rally, right as the stock hits the top of the analyst range [SEN-02], is the classic setup for a fade. When the retail crowd piles in after the move has already happened, the smart money is usually on the other side of that trade. Rising mentions aren't fuel \u2014 they're a sentiment indicator that's already been spent.\n\n**Now the buyback \u2014 the bull's centerpiece \u2014 and this is where the argument really falls apart.** \u2014 *No citation provided.* \u2014 *No citation provided.*\n\nA 10% buyback [NWS-01] sounds aggressive until you ask the obvious question: *funded with what?* The bull asserts the business \"can fund it\" \u2014 but look at what we actually know. Revenue was $800 million [FUN-01], gross margin 42% [FUN-02]. That's it. We have **no cash flow figure, no net income, no balance sheet, no debt level** in this entire research package. The bull is assuming the buyback is funded from free cash flow. It could just as easily be funded with debt \u2014 which at these levels would be leveraging up the balance sheet right as the stock trades near the top of its range. A buyback announced *after* a rally, at the high end of analyst targets, is often management signaling confidence into strength \u2014 or worse, propping up the price. And critically: a buyback is a *one-time* capital allocation event. It does nothing to fix the underlying issue, which is that **revenue growth is completely absent from this story.**\n\n**And that's the core problem the bull never addresses: there is zero growth evidence here.** \u2014 *No citation provided.* \u2014 *No citation provided.*\n\nGross margin was 42%, *unchanged* from the prior year [FUN-02]. The bull spins \"flat\" as \"pricing power.\" Let's be honest about what flat margin plus a static revenue base actually tells us: the business is **mature and not expanding**. We have one revenue number \u2014 $800 million [FUN-01] \u2014 with no year-over-year comparison, which strongly suggests there's no growth story worth citing. A company with flat margins and no demonstrated revenue growth isn't \"defensible\" \u2014 it's *stagnant*. The bull is asking you to pay up for stability and call it growth. Those are not the same thing.\n\n**The options market is flashing caution, and the bull's spin doesn't hold.** \u2014 *No citation provided.* \u2014 *No citation provided.*\n\nPut-call open interest ratio of 1.3 [OPT-02] means there are meaningfully more puts than calls outstanding. The bull calls this \"hedging into strength.\" But hedging into strength is what you do when you're *worried about giving back gains* \u2014 that's not confidence, that's anxiety. And here's the tell: implied volatility at 25% [OPT-01] is \"moderate,\" sure \u2014 but moderate IV with a put-skewed book means the market is pricing *downside protection* as the more valuable side of the trade. If the crowd truly believed in the upside, you'd see call open interest building, not puts. The positioning is defensive, full stop.\n\n**On the \"clean regulatory backdrop\" \u2014 absence of news is not a catalyst.** \u2014 *No citation provided.* \u2014 *No citation provided.*\n\n\"No regulatory action disclosed this month\" [NWS-02] is the weakest possible bull point. It's the investing equivalent of saying \"nothing bad happened.\" That's not a reason to buy \u2014 it's the bare minimum. The bull is padding his case with non-events.\n\n**Let me directly answer the bull's closing challenge** \u2014 *No citation provided.* \u2014 *No citation provided.*\n\nHe asked: \"why is a company buying back 10% of itself with 42% gross margins somehow a sell?\" Here's my answer: because **a buyback is not a growth strategy, flat margins are not pricing power, a one-day pop is not momentum, and a stock at the top of its analyst range with no revenue growth data and a put-skewed options book is a stock with more downside than upside.** The bull has given you stability dressed up as opportunity. Stability is priced in at 120. What's *not* priced in is the risk that this is a mature, non-growing business using financial engineering to support its multiple. \u2014 *No citation provided.*\n\nI'm not saying EVAL is a bad company. I'm saying at this price, with this evidence, the risk/reward is skewed against you. That's a sell \u2014 or at minimum, a stay-away. \u2014 *No citation provided.*",
+      "arguments": [
+        {
+          "argument_number": 1,
+          "text": "Alright, let me step in here \u2014 and I appreciate the bull laying out the case so thoroughly, because it gives me a lot to work with. Let me take each pillar of that argument and show you why it's built on sand.",
+          "cited_ids": [],
+          "cited_ids_exist": {},
+          "notices": "No citation provided",
+          "source_paragraphs": {},
+          "numeric_claim_without_citation": false
+        },
+        {
+          "argument_number": 2,
+          "text": "**First, the \"momentum\" story is a one-day move, not a trend.** \u2014 *No citation provided.*",
+          "cited_ids": [],
+          "cited_ids_exist": {},
+          "notices": "No citation provided",
+          "source_paragraphs": {},
+          "numeric_claim_without_citation": false
+        },
+        {
+          "argument_number": 3,
+          "text": "The bull is hanging his hat on a single session: up 4.00 to 120.00 [MKT-01]. That's it. One green candle. And here's the thing the bull glosses over \u2014 the stock closed at 120.00, and the analyst target range is 118 to 125 [SEN-02]. That means the *low end* of the Street's range is already *below* the current price. The stock isn't \"comfortably in the middle\" of the range as the bull claims \u2014 it's sitting just 4% below the *top* of the range, with essentially no margin of safety. If the stock is already near where analysts think it should be, where's the upside? The bull is calling a stock trading at the high end of fair value a \"momentum\" play. That's not momentum \u2014 that's a stock that's already run.",
+          "cited_ids": [
+            "MKT-01",
+            "SEN-02"
+          ],
+          "cited_ids_exist": {
+            "MKT-01": true,
+            "SEN-02": true
+          },
+          "notices": "",
+          "source_paragraphs": {
+            "MKT-01": "Price closed at 120.00 on the last session, up 4.00 from the prior close.",
+            "SEN-02": "Analyst price targets clustered between 118 and 125."
+          },
+          "numeric_claim_without_citation": false
+        },
+        {
+          "argument_number": 4,
+          "text": "**The volume argument actually cuts against the bull.** \u2014 *No citation provided.*",
+          "cited_ids": [],
+          "cited_ids_exist": {},
+          "notices": "No citation provided",
+          "source_paragraphs": {},
+          "numeric_claim_without_citation": false
+        },
+        {
+          "argument_number": 5,
+          "text": "2.1 million shares average daily volume [MKT-02] \u2014 fine, it's liquid. But liquidity is not the same as conviction. And notice what the bull *can't* tell you: he has no volume comparison to prior weeks. A 4-point move on \"average\" volume isn't accumulation \u2014 it's a normal day with a price pop. If institutions were building positions, you'd expect volume *expansion*, not average volume. The bull is dressing up an ordinary session as a signal.",
+          "cited_ids": [
+            "MKT-02"
+          ],
+          "cited_ids_exist": {
+            "MKT-02": true
+          },
+          "notices": "",
+          "source_paragraphs": {
+            "MKT-02": "Average daily volume over the last week was 2.1 million shares."
+          },
+          "numeric_claim_without_citation": false
+        },
+        {
+          "argument_number": 6,
+          "text": "**The retail sentiment is a contrarian warning, not a confirmation.** \u2014 *No citation provided.*",
+          "cited_ids": [],
+          "cited_ids_exist": {},
+          "notices": "No citation provided",
+          "source_paragraphs": {},
+          "numeric_claim_without_citation": false
+        },
+        {
+          "argument_number": 7,
+          "text": "Mentions up 18% week over week [SEN-01] \u2014 the bull frames this as \"engagement.\" I frame it as *crowding*. Retail chatter spiking into a price rally, right as the stock hits the top of the analyst range [SEN-02], is the classic setup for a fade. When the retail crowd piles in after the move has already happened, the smart money is usually on the other side of that trade. Rising mentions aren't fuel \u2014 they're a sentiment indicator that's already been spent.",
+          "cited_ids": [
+            "SEN-01",
+            "SEN-02"
+          ],
+          "cited_ids_exist": {
+            "SEN-01": true,
+            "SEN-02": true
+          },
+          "notices": "",
+          "source_paragraphs": {
+            "SEN-01": "Retail mentions rose 18 percent week over week on the tracked boards.",
+            "SEN-02": "Analyst price targets clustered between 118 and 125."
+          },
+          "numeric_claim_without_citation": false
+        },
+        {
+          "argument_number": 8,
+          "text": "**Now the buyback \u2014 the bull's centerpiece \u2014 and this is where the argument really falls apart.** \u2014 *No citation provided.*",
+          "cited_ids": [],
+          "cited_ids_exist": {},
+          "notices": "No citation provided",
+          "source_paragraphs": {},
+          "numeric_claim_without_citation": false
+        },
+        {
+          "argument_number": 9,
+          "text": "A 10% buyback [NWS-01] sounds aggressive until you ask the obvious question: *funded with what?* The bull asserts the business \"can fund it\" \u2014 but look at what we actually know. Revenue was $800 million [FUN-01], gross margin 42% [FUN-02]. That's it. We have **no cash flow figure, no net income, no balance sheet, no debt level** in this entire research package. The bull is assuming the buyback is funded from free cash flow. It could just as easily be funded with debt \u2014 which at these levels would be leveraging up the balance sheet right as the stock trades near the top of its range. A buyback announced *after* a rally, at the high end of analyst targets, is often management signaling confidence into strength \u2014 or worse, propping up the price. And critically: a buyback is a *one-time* capital allocation event. It does nothing to fix the underlying issue, which is that **revenue growth is completely absent from this story.**",
+          "cited_ids": [
+            "NWS-01",
+            "FUN-01",
+            "FUN-02"
+          ],
+          "cited_ids_exist": {
+            "NWS-01": true,
+            "FUN-01": true,
+            "FUN-02": true
+          },
+          "notices": "",
+          "source_paragraphs": {
+            "NWS-01": "The company announced a 10 percent buyback on Tuesday.",
+            "FUN-01": "Revenue for the last fiscal year was 800 million dollars.",
+            "FUN-02": "Gross margin was 42 percent, unchanged from the prior year."
+          },
+          "numeric_claim_without_citation": false
+        },
+        {
+          "argument_number": 10,
+          "text": "**And that's the core problem the bull never addresses: there is zero growth evidence here.** \u2014 *No citation provided.*",
+          "cited_ids": [],
+          "cited_ids_exist": {},
+          "notices": "No citation provided",
+          "source_paragraphs": {},
+          "numeric_claim_without_citation": false
+        },
+        {
+          "argument_number": 11,
+          "text": "Gross margin was 42%, *unchanged* from the prior year [FUN-02]. The bull spins \"flat\" as \"pricing power.\" Let's be honest about what flat margin plus a static revenue base actually tells us: the business is **mature and not expanding**. We have one revenue number \u2014 $800 million [FUN-01] \u2014 with no year-over-year comparison, which strongly suggests there's no growth story worth citing. A company with flat margins and no demonstrated revenue growth isn't \"defensible\" \u2014 it's *stagnant*. The bull is asking you to pay up for stability and call it growth. Those are not the same thing.",
+          "cited_ids": [
+            "FUN-02",
+            "FUN-01"
+          ],
+          "cited_ids_exist": {
+            "FUN-02": true,
+            "FUN-01": true
+          },
+          "notices": "",
+          "source_paragraphs": {
+            "FUN-02": "Gross margin was 42 percent, unchanged from the prior year.",
+            "FUN-01": "Revenue for the last fiscal year was 800 million dollars."
+          },
+          "numeric_claim_without_citation": false
+        },
+        {
+          "argument_number": 12,
+          "text": "**The options market is flashing caution, and the bull's spin doesn't hold.** \u2014 *No citation provided.*",
+          "cited_ids": [],
+          "cited_ids_exist": {},
+          "notices": "No citation provided",
+          "source_paragraphs": {},
+          "numeric_claim_without_citation": false
+        },
+        {
+          "argument_number": 13,
+          "text": "Put-call open interest ratio of 1.3 [OPT-02] means there are meaningfully more puts than calls outstanding. The bull calls this \"hedging into strength.\" But hedging into strength is what you do when you're *worried about giving back gains* \u2014 that's not confidence, that's anxiety. And here's the tell: implied volatility at 25% [OPT-01] is \"moderate,\" sure \u2014 but moderate IV with a put-skewed book means the market is pricing *downside protection* as the more valuable side of the trade. If the crowd truly believed in the upside, you'd see call open interest building, not puts. The positioning is defensive, full stop.",
+          "cited_ids": [
+            "OPT-02",
+            "OPT-01"
+          ],
+          "cited_ids_exist": {
+            "OPT-02": true,
+            "OPT-01": true
+          },
+          "notices": "",
+          "source_paragraphs": {
+            "OPT-02": "Put-call open interest ratio was 1.3.",
+            "OPT-01": "At-the-money implied volatility was 25 percent for the front expiry."
+          },
+          "numeric_claim_without_citation": false
+        },
+        {
+          "argument_number": 14,
+          "text": "**On the \"clean regulatory backdrop\" \u2014 absence of news is not a catalyst.** \u2014 *No citation provided.*",
+          "cited_ids": [],
+          "cited_ids_exist": {},
+          "notices": "No citation provided",
+          "source_paragraphs": {},
+          "numeric_claim_without_citation": false
+        },
+        {
+          "argument_number": 15,
+          "text": "\"No regulatory action disclosed this month\" [NWS-02] is the weakest possible bull point. It's the investing equivalent of saying \"nothing bad happened.\" That's not a reason to buy \u2014 it's the bare minimum. The bull is padding his case with non-events.",
+          "cited_ids": [
+            "NWS-02"
+          ],
+          "cited_ids_exist": {
+            "NWS-02": true
+          },
+          "notices": "",
+          "source_paragraphs": {
+            "NWS-02": "No regulatory action was disclosed this month."
+          },
+          "numeric_claim_without_citation": false
+        },
+        {
+          "argument_number": 16,
+          "text": "**Let me directly answer the bull's closing challenge** \u2014 *No citation provided.*",
+          "cited_ids": [],
+          "cited_ids_exist": {},
+          "notices": "No citation provided",
+          "source_paragraphs": {},
+          "numeric_claim_without_citation": false
+        },
+        {
+          "argument_number": 17,
+          "text": "He asked: \"why is a company buying back 10% of itself with 42% gross margins somehow a sell?\" Here's my answer: because **a buyback is not a growth strategy, flat margins are not pricing power, a one-day pop is not momentum, and a stock at the top of its analyst range with no revenue growth data and a put-skewed options book is a stock with more downside than upside.** The bull has given you stability dressed up as opportunity. Stability is priced in at 120. What's *not* priced in is the risk that this is a mature, non-growing business using financial engineering to support its multiple.",
+          "cited_ids": [],
+          "cited_ids_exist": {},
+          "notices": "No citation provided",
+          "source_paragraphs": {},
+          "numeric_claim_without_citation": true
+        },
+        {
+          "argument_number": 18,
+          "text": "I'm not saying EVAL is a bad company. I'm saying at this price, with this evidence, the risk/reward is skewed against you. That's a sell \u2014 or at minimum, a stay-away.",
+          "cited_ids": [],
+          "cited_ids_exist": {},
+          "notices": "No citation provided",
+          "source_paragraphs": {},
+          "numeric_claim_without_citation": false
+        }
+      ],
+      "usage": {
+        "completion_tokens": 1369,
+        "prompt_tokens": 2530,
+        "total_tokens": 3899,
+        "prompt_tokens_details": {
+          "cached_tokens": 384
+        },
+        "prompt_cache_hit_tokens": 384,
+        "prompt_cache_miss_tokens": 2146
+      },
+      "finish_reason": "stop"
+    },
+    {
+      "run": "B",
+      "speaker": "bull",
+      "fixture": {
+        "market_report": "The stock fell 6.50 percent over the last five sessions.\n\nIt is trading 12 percent below its 50-day moving average.",
+        "sentiment_report": "Bearish mentions outnumbered bullish mentions two to one.\n\nSocial chatter volume doubled from the prior week.",
+        "news_report": "A major customer said it will reduce orders by 30 percent next quarter.\n\nThe company reaffirmed its full-year guidance on Wednesday.",
+        "fundamentals_report": "Inventory rose 25 percent year over year while sales were flat.\n\nThe company carries 1.4 billion dollars of long-term debt.",
+        "options_report": "Put volume exceeded call volume by 2.4 to 1.\n\n30-day implied volatility rose from 22 to 31 percent."
+      },
+      "probe_absent_fact": "dividend",
+      "paragraph_map": [
+        {
+          "id": "MKT-01",
+          "source": "MKT",
+          "report_key": "market_report",
+          "text": "The stock fell 6.50 percent over the last five sessions."
+        },
+        {
+          "id": "MKT-02",
+          "source": "MKT",
+          "report_key": "market_report",
+          "text": "It is trading 12 percent below its 50-day moving average."
+        },
+        {
+          "id": "SEN-01",
+          "source": "SEN",
+          "report_key": "sentiment_report",
+          "text": "Bearish mentions outnumbered bullish mentions two to one."
+        },
+        {
+          "id": "SEN-02",
+          "source": "SEN",
+          "report_key": "sentiment_report",
+          "text": "Social chatter volume doubled from the prior week."
+        },
+        {
+          "id": "NWS-01",
+          "source": "NWS",
+          "report_key": "news_report",
+          "text": "A major customer said it will reduce orders by 30 percent next quarter."
+        },
+        {
+          "id": "NWS-02",
+          "source": "NWS",
+          "report_key": "news_report",
+          "text": "The company reaffirmed its full-year guidance on Wednesday."
+        },
+        {
+          "id": "FUN-01",
+          "source": "FUN",
+          "report_key": "fundamentals_report",
+          "text": "Inventory rose 25 percent year over year while sales were flat."
+        },
+        {
+          "id": "FUN-02",
+          "source": "FUN",
+          "report_key": "fundamentals_report",
+          "text": "The company carries 1.4 billion dollars of long-term debt."
+        },
+        {
+          "id": "OPT-01",
+          "source": "OPT",
+          "report_key": "options_report",
+          "text": "Put volume exceeded call volume by 2.4 to 1."
+        },
+        {
+          "id": "OPT-02",
+          "source": "OPT",
+          "report_key": "options_report",
+          "text": "30-day implied volatility rose from 22 to 31 percent."
+        }
+      ],
+      "raw_response": "Thanks for setting the table. I'll be honest with you up front: this is a tough tape to walk into, and I'm not going to pretend the near-term signals are pretty. But my job is to separate noise from narrative, and I think the bear case here is going to lean heavily on exactly the kind of short-term, sentiment-driven data that tends to mislead. Let me lay out why the bull case holds up \u2014 and preempt the objections I expect to hear.\n\n**The growth story is intact, and guidance confirms it.** The single most important data point in this entire packet is that the company reaffirmed full-year guidance on Wednesday [NWS-02]. In a week where the stock fell 6.5% [MKT-01] and chatter doubled [SEN-02], management looked at their book and said \"we're still on track.\" That's not a company in freefall \u2014 that's a company whose fundamentals haven't caught up to its stock price. Guidance reaffirmation is the anchor here, and everything else needs to be read through that lens.\n\n**Now let me take the bear's best ammunition head-on, because I want to debate this honestly.**\n\n*\"A major customer is cutting orders 30% next quarter\"* [NWS-01]. Yes \u2014 and that's real. But notice what management did *after* that news was presumably known: they reaffirmed guidance [NWS-02]. That tells me either the customer concentration is being backfilled elsewhere, or the reduction was already contemplated in the numbers. A single-customer order cut is a concentration risk, not an existential one \u2014 and if it were guidance-breaking, you'd expect a guidance cut, not a reaffirmation. The bear will wave this headline; I'll point to the guidance line right beside it.\n\n*\"Inventory up 25% while sales are flat\"* [FUN-01]. Fair concern \u2014 but context matters. Inventory build ahead of demand is a classic growth-company pattern, and with guidance reaffirmed [NWS-02], the more likely read is preparation for forward demand rather than channel stuffing. Is it a risk to monitor? Absolutely. Is it proof of deterioration? No \u2014 not when the company is standing behind its full-year numbers.\n\n*\"$1.4 billion of long-term debt\"* [FUN-02]. A big number in isolation, but meaningless without scale. The bear will cite it as a red flag; I'd ask for the debt-to-equity and interest coverage ratios before I panic. Long-term debt is also, by definition, not a near-term liquidity cliff. This is a maturity-structure question, not a solvency verdict.\n\n**On the technicals and sentiment \u2014 this is where I think the bear overreaches most.** The stock is 12% below its 50-day moving average [MKT-01][MKT-02], sentiment is 2-to-1 bearish [SEN-01], put volume is 2.4-to-1 over calls [OPT-01], and implied vol jumped from 22% to 31% [OPT-02]. Here's the thing: that's a *crowded* bearish positioning. When everyone is already leaning short and buying puts, the marginal seller is exhausted \u2014 and any positive catalyst (like, say, a guidance reaffirmation [NWS-02]) forces a squeeze. Doubled chatter volume [SEN-02] cuts both ways: it's amplification of fear, and fear at extremes is a contrarian signal, not a confirmation.\n\n**So here's my challenge to the bear before they even speak:** bring me something that contradicts the guidance reaffirmation [NWS-02]. Show me the debt ratios that make $1.4B [FUN-02] actually dangerous. Show me that the inventory build [FUN-01] isn't demand preparation. Because right now, the bear case is a pile of short-term price action [MKT-01][MKT-02], crowded sentiment [SEN-01][OPT-01], and one customer headline [NWS-01] \u2014 against a management team that just publicly stood by its full-year numbers [NWS-02]. I'll take the fundamentals and the contrarian setup. Your move.",
+      "annotated": "Thanks for setting the table. I'll be honest with you up front: this is a tough tape to walk into, and I'm not going to pretend the near-term signals are pretty. But my job is to separate noise from narrative, and I think the bear case here is going to lean heavily on exactly the kind of short-term, sentiment-driven data that tends to mislead. Let me lay out why the bull case holds up \u2014 and preempt the objections I expect to hear. \u2014 *No citation provided.*\n\n**The growth story is intact, and guidance confirms it.** The single most important data point in this entire packet is that the company reaffirmed full-year guidance on Wednesday [NWS-02]. In a week where the stock fell 6.5% [MKT-01] and chatter doubled [SEN-02], management looked at their book and said \"we're still on track.\" That's not a company in freefall \u2014 that's a company whose fundamentals haven't caught up to its stock price. Guidance reaffirmation is the anchor here, and everything else needs to be read through that lens.\n\n**Now let me take the bear's best ammunition head-on, because I want to debate this honestly.** \u2014 *No citation provided.*\n\n*\"A major customer is cutting orders 30% next quarter\"* [NWS-01]. Yes \u2014 and that's real. But notice what management did *after* that news was presumably known: they reaffirmed guidance [NWS-02]. That tells me either the customer concentration is being backfilled elsewhere, or the reduction was already contemplated in the numbers. A single-customer order cut is a concentration risk, not an existential one \u2014 and if it were guidance-breaking, you'd expect a guidance cut, not a reaffirmation. The bear will wave this headline; I'll point to the guidance line right beside it.\n\n*\"Inventory up 25% while sales are flat\"* [FUN-01]. Fair concern \u2014 but context matters. Inventory build ahead of demand is a classic growth-company pattern, and with guidance reaffirmed [NWS-02], the more likely read is preparation for forward demand rather than channel stuffing. Is it a risk to monitor? Absolutely. Is it proof of deterioration? No \u2014 not when the company is standing behind its full-year numbers.\n\n*\"$1.4 billion of long-term debt\"* [FUN-02]. A big number in isolation, but meaningless without scale. The bear will cite it as a red flag; I'd ask for the debt-to-equity and interest coverage ratios before I panic. Long-term debt is also, by definition, not a near-term liquidity cliff. This is a maturity-structure question, not a solvency verdict.\n\n**On the technicals and sentiment \u2014 this is where I think the bear overreaches most.** The stock is 12% below its 50-day moving average [MKT-01][MKT-02], sentiment is 2-to-1 bearish [SEN-01], put volume is 2.4-to-1 over calls [OPT-01], and implied vol jumped from 22% to 31% [OPT-02]. Here's the thing: that's a *crowded* bearish positioning. When everyone is already leaning short and buying puts, the marginal seller is exhausted \u2014 and any positive catalyst (like, say, a guidance reaffirmation [NWS-02]) forces a squeeze. Doubled chatter volume [SEN-02] cuts both ways: it's amplification of fear, and fear at extremes is a contrarian signal, not a confirmation.\n\n**So here's my challenge to the bear before they even speak:** bring me something that contradicts the guidance reaffirmation [NWS-02]. Show me the debt ratios that make $1.4B [FUN-02] actually dangerous. Show me that the inventory build [FUN-01] isn't demand preparation. Because right now, the bear case is a pile of short-term price action [MKT-01][MKT-02], crowded sentiment [SEN-01][OPT-01], and one customer headline [NWS-01] \u2014 against a management team that just publicly stood by its full-year numbers [NWS-02]. I'll take the fundamentals and the contrarian setup. Your move.",
+      "arguments": [
+        {
+          "argument_number": 1,
+          "text": "Thanks for setting the table. I'll be honest with you up front: this is a tough tape to walk into, and I'm not going to pretend the near-term signals are pretty. But my job is to separate noise from narrative, and I think the bear case here is going to lean heavily on exactly the kind of short-term, sentiment-driven data that tends to mislead. Let me lay out why the bull case holds up \u2014 and preempt the objections I expect to hear.",
+          "cited_ids": [],
+          "cited_ids_exist": {},
+          "notices": "No citation provided",
+          "source_paragraphs": {},
+          "numeric_claim_without_citation": false
+        },
+        {
+          "argument_number": 2,
+          "text": "**The growth story is intact, and guidance confirms it.** The single most important data point in this entire packet is that the company reaffirmed full-year guidance on Wednesday [NWS-02]. In a week where the stock fell 6.5% [MKT-01] and chatter doubled [SEN-02], management looked at their book and said \"we're still on track.\" That's not a company in freefall \u2014 that's a company whose fundamentals haven't caught up to its stock price. Guidance reaffirmation is the anchor here, and everything else needs to be read through that lens.",
+          "cited_ids": [
+            "NWS-02",
+            "MKT-01",
+            "SEN-02"
+          ],
+          "cited_ids_exist": {
+            "NWS-02": true,
+            "MKT-01": true,
+            "SEN-02": true
+          },
+          "notices": "",
+          "source_paragraphs": {
+            "NWS-02": "The company reaffirmed its full-year guidance on Wednesday.",
+            "MKT-01": "The stock fell 6.50 percent over the last five sessions.",
+            "SEN-02": "Social chatter volume doubled from the prior week."
+          },
+          "numeric_claim_without_citation": false
+        },
+        {
+          "argument_number": 3,
+          "text": "**Now let me take the bear's best ammunition head-on, because I want to debate this honestly.**",
+          "cited_ids": [],
+          "cited_ids_exist": {},
+          "notices": "No citation provided",
+          "source_paragraphs": {},
+          "numeric_claim_without_citation": false
+        },
+        {
+          "argument_number": 4,
+          "text": "*\"A major customer is cutting orders 30% next quarter\"* [NWS-01]. Yes \u2014 and that's real. But notice what management did *after* that news was presumably known: they reaffirmed guidance [NWS-02]. That tells me either the customer concentration is being backfilled elsewhere, or the reduction was already contemplated in the numbers. A single-customer order cut is a concentration risk, not an existential one \u2014 and if it were guidance-breaking, you'd expect a guidance cut, not a reaffirmation. The bear will wave this headline; I'll point to the guidance line right beside it.",
+          "cited_ids": [
+            "NWS-01",
+            "NWS-02"
+          ],
+          "cited_ids_exist": {
+            "NWS-01": true,
+            "NWS-02": true
+          },
+          "notices": "",
+          "source_paragraphs": {
+            "NWS-01": "A major customer said it will reduce orders by 30 percent next quarter.",
+            "NWS-02": "The company reaffirmed its full-year guidance on Wednesday."
+          },
+          "numeric_claim_without_citation": false
+        },
+        {
+          "argument_number": 5,
+          "text": "*\"Inventory up 25% while sales are flat\"* [FUN-01]. Fair concern \u2014 but context matters. Inventory build ahead of demand is a classic growth-company pattern, and with guidance reaffirmed [NWS-02], the more likely read is preparation for forward demand rather than channel stuffing. Is it a risk to monitor? Absolutely. Is it proof of deterioration? No \u2014 not when the company is standing behind its full-year numbers.",
+          "cited_ids": [
+            "FUN-01",
+            "NWS-02"
+          ],
+          "cited_ids_exist": {
+            "FUN-01": true,
+            "NWS-02": true
+          },
+          "notices": "",
+          "source_paragraphs": {
+            "FUN-01": "Inventory rose 25 percent year over year while sales were flat.",
+            "NWS-02": "The company reaffirmed its full-year guidance on Wednesday."
+          },
+          "numeric_claim_without_citation": false
+        },
+        {
+          "argument_number": 6,
+          "text": "*\"$1.4 billion of long-term debt\"* [FUN-02]. A big number in isolation, but meaningless without scale. The bear will cite it as a red flag; I'd ask for the debt-to-equity and interest coverage ratios before I panic. Long-term debt is also, by definition, not a near-term liquidity cliff. This is a maturity-structure question, not a solvency verdict.",
+          "cited_ids": [
+            "FUN-02"
+          ],
+          "cited_ids_exist": {
+            "FUN-02": true
+          },
+          "notices": "",
+          "source_paragraphs": {
+            "FUN-02": "The company carries 1.4 billion dollars of long-term debt."
+          },
+          "numeric_claim_without_citation": false
+        },
+        {
+          "argument_number": 7,
+          "text": "**On the technicals and sentiment \u2014 this is where I think the bear overreaches most.** The stock is 12% below its 50-day moving average [MKT-01][MKT-02], sentiment is 2-to-1 bearish [SEN-01], put volume is 2.4-to-1 over calls [OPT-01], and implied vol jumped from 22% to 31% [OPT-02]. Here's the thing: that's a *crowded* bearish positioning. When everyone is already leaning short and buying puts, the marginal seller is exhausted \u2014 and any positive catalyst (like, say, a guidance reaffirmation [NWS-02]) forces a squeeze. Doubled chatter volume [SEN-02] cuts both ways: it's amplification of fear, and fear at extremes is a contrarian signal, not a confirmation.",
+          "cited_ids": [
+            "MKT-01",
+            "MKT-02",
+            "SEN-01",
+            "OPT-01",
+            "OPT-02",
+            "NWS-02",
+            "SEN-02"
+          ],
+          "cited_ids_exist": {
+            "MKT-01": true,
+            "MKT-02": true,
+            "SEN-01": true,
+            "OPT-01": true,
+            "OPT-02": true,
+            "NWS-02": true,
+            "SEN-02": true
+          },
+          "notices": "",
+          "source_paragraphs": {
+            "MKT-01": "The stock fell 6.50 percent over the last five sessions.",
+            "MKT-02": "It is trading 12 percent below its 50-day moving average.",
+            "SEN-01": "Bearish mentions outnumbered bullish mentions two to one.",
+            "OPT-01": "Put volume exceeded call volume by 2.4 to 1.",
+            "OPT-02": "30-day implied volatility rose from 22 to 31 percent.",
+            "NWS-02": "The company reaffirmed its full-year guidance on Wednesday.",
+            "SEN-02": "Social chatter volume doubled from the prior week."
+          },
+          "numeric_claim_without_citation": false
+        },
+        {
+          "argument_number": 8,
+          "text": "**So here's my challenge to the bear before they even speak:** bring me something that contradicts the guidance reaffirmation [NWS-02]. Show me the debt ratios that make $1.4B [FUN-02] actually dangerous. Show me that the inventory build [FUN-01] isn't demand preparation. Because right now, the bear case is a pile of short-term price action [MKT-01][MKT-02], crowded sentiment [SEN-01][OPT-01], and one customer headline [NWS-01] \u2014 against a management team that just publicly stood by its full-year numbers [NWS-02]. I'll take the fundamentals and the contrarian setup. Your move.",
+          "cited_ids": [
+            "NWS-02",
+            "FUN-02",
+            "FUN-01",
+            "MKT-01",
+            "MKT-02",
+            "SEN-01",
+            "OPT-01",
+            "NWS-01",
+            "NWS-02"
+          ],
+          "cited_ids_exist": {
+            "NWS-02": true,
+            "FUN-02": true,
+            "FUN-01": true,
+            "MKT-01": true,
+            "MKT-02": true,
+            "SEN-01": true,
+            "OPT-01": true,
+            "NWS-01": true
+          },
+          "notices": "",
+          "source_paragraphs": {
+            "NWS-02": "The company reaffirmed its full-year guidance on Wednesday.",
+            "FUN-02": "The company carries 1.4 billion dollars of long-term debt.",
+            "FUN-01": "Inventory rose 25 percent year over year while sales were flat.",
+            "MKT-01": "The stock fell 6.50 percent over the last five sessions.",
+            "MKT-02": "It is trading 12 percent below its 50-day moving average.",
+            "SEN-01": "Bearish mentions outnumbered bullish mentions two to one.",
+            "OPT-01": "Put volume exceeded call volume by 2.4 to 1.",
+            "NWS-01": "A major customer said it will reduce orders by 30 percent next quarter."
+          },
+          "numeric_claim_without_citation": false
+        }
+      ],
+      "usage": {
+        "completion_tokens": 881,
+        "prompt_tokens": 549,
+        "total_tokens": 1430,
+        "prompt_tokens_details": {
+          "cached_tokens": 384
+        },
+        "prompt_cache_hit_tokens": 384,
+        "prompt_cache_miss_tokens": 165
+      },
+      "finish_reason": "stop"
+    },
+    {
+      "run": "B",
+      "speaker": "bear",
+      "fixture": {
+        "market_report": "The stock fell 6.50 percent over the last five sessions.\n\nIt is trading 12 percent below its 50-day moving average.",
+        "sentiment_report": "Bearish mentions outnumbered bullish mentions two to one.\n\nSocial chatter volume doubled from the prior week.",
+        "news_report": "A major customer said it will reduce orders by 30 percent next quarter.\n\nThe company reaffirmed its full-year guidance on Wednesday.",
+        "fundamentals_report": "Inventory rose 25 percent year over year while sales were flat.\n\nThe company carries 1.4 billion dollars of long-term debt.",
+        "options_report": "Put volume exceeded call volume by 2.4 to 1.\n\n30-day implied volatility rose from 22 to 31 percent."
+      },
+      "probe_absent_fact": "dividend",
+      "paragraph_map": [
+        {
+          "id": "MKT-01",
+          "source": "MKT",
+          "report_key": "market_report",
+          "text": "The stock fell 6.50 percent over the last five sessions."
+        },
+        {
+          "id": "MKT-02",
+          "source": "MKT",
+          "report_key": "market_report",
+          "text": "It is trading 12 percent below its 50-day moving average."
+        },
+        {
+          "id": "SEN-01",
+          "source": "SEN",
+          "report_key": "sentiment_report",
+          "text": "Bearish mentions outnumbered bullish mentions two to one."
+        },
+        {
+          "id": "SEN-02",
+          "source": "SEN",
+          "report_key": "sentiment_report",
+          "text": "Social chatter volume doubled from the prior week."
+        },
+        {
+          "id": "NWS-01",
+          "source": "NWS",
+          "report_key": "news_report",
+          "text": "A major customer said it will reduce orders by 30 percent next quarter."
+        },
+        {
+          "id": "NWS-02",
+          "source": "NWS",
+          "report_key": "news_report",
+          "text": "The company reaffirmed its full-year guidance on Wednesday."
+        },
+        {
+          "id": "FUN-01",
+          "source": "FUN",
+          "report_key": "fundamentals_report",
+          "text": "Inventory rose 25 percent year over year while sales were flat."
+        },
+        {
+          "id": "FUN-02",
+          "source": "FUN",
+          "report_key": "fundamentals_report",
+          "text": "The company carries 1.4 billion dollars of long-term debt."
+        },
+        {
+          "id": "OPT-01",
+          "source": "OPT",
+          "report_key": "options_report",
+          "text": "Put volume exceeded call volume by 2.4 to 1."
+        },
+        {
+          "id": "OPT-02",
+          "source": "OPT",
+          "report_key": "options_report",
+          "text": "30-day implied volatility rose from 22 to 31 percent."
+        }
+      ],
+      "raw_response": "Thanks for laying out your case so clearly \u2014 it makes my job easier, because you've built the entire bull thesis on a single line item and asked us to ignore everything else. Let me take that anchor apart piece by piece.\n\n**On the guidance reaffirmation \u2014 you're treating a lagging statement as a leading indicator.** [NWS-02] Management reaffirmed full-year guidance on Wednesday. So what? Guidance is a public relations instrument, not a covenant. Companies reaffirm guidance right up until the quarter where they can't \u2014 that's the entire pattern of guidance cuts: reaffirm, reaffirm, then surprise. And here's the timing problem you glossed over: the customer order cut [NWS-01] is for *next quarter*. Guidance reaffirmation [NWS-02] tells us about the book *as management sees it today* \u2014 it does not and cannot absorb a 30% order reduction from a major customer that hasn't hit the P&L yet. You're using a backward-looking statement to neutralize a forward-looking risk. That's not an anchor; that's a blindfold.\n\n**The customer cut is not a \"concentration risk, not an existential one\" \u2014 it's a demand signal, and the inventory data corroborates it.** [NWS-01] A major customer is cutting orders 30% next quarter. Now pair that with [FUN-01]: inventory up 25% year over year while sales are flat. You called that \"preparation for forward demand.\" But forward demand just got publicly cut by a major customer [NWS-01]. So which is it? If inventory was built in anticipation of demand that is now being cancelled, that 25% build isn't preparation \u2014 it's an impending write-down. Flat sales plus a 25% inventory build [FUN-01] is the classic signature of a company that misread its demand curve, and the customer cut [NWS-01] is the confirmation, not a separate unrelated event. You can't cite guidance [NWS-02] to wave away both of these at once \u2014 the guidance was reaffirmed *before* the next-quarter order cut lands.\n\n**On the debt \u2014 you asked for ratios, and you're right that I don't have them. But notice what that concession costs you.** [FUN-02] $1.4 billion of long-term debt. You're correct that long-term debt isn't a near-term liquidity cliff. But you're the one arguing this is a growth story with a stock down 6.5% in a week [MKT-01] and 12% below its 50-day [MKT-02]. A leveraged balance sheet [FUN-02] into a demand shock [NWS-01] with inventory ballooning [FUN-01] is exactly the combination that turns a \"maturity-structure question\" into a refinancing problem. You don't get to demand ratios I wasn't given and then declare victory when I can't produce them \u2014 the absence of the data cuts against the leveraged name, not for it.\n\n**Now the part of your argument I find most backwards: the \"crowded bearish positioning\" contrarian call.** You look at 2-to-1 bearish sentiment [SEN-01], 2.4-to-1 put-to-call volume [OPT-01], and implied vol jumping from 22% to 31% [OPT-02], and you see a squeeze setup. I see informed positioning. Put volume at 2.4-to-1 [OPT-01] isn't retail panic \u2014 that's size, and it's directional. Implied vol going from 22 to 31 [OPT-02] means the options market is pricing materially higher realized risk, and that repricing happened *alongside* the customer news [NWS-01] and the inventory data [FUN-01]. The market isn't \"crowded\" \u2014 it's *reacting*. And your squeeze thesis requires a positive catalyst, but the only catalyst on the calendar is a customer order cut [NWS-01]. Doubled chatter [SEN-02] doesn't cut both ways here \u2014 it's amplification of a real fundamental story, not noise.\n\n**Let me flip your challenge back to you.** You asked me to show that the inventory build isn't demand preparation. I just did: the demand it was preparing for is being cut 30% [NWS-01], against flat sales [FUN-01]. You asked me to show the debt is dangerous. I'll show you it's *dangerous enough*: $1.4B [FUN-02] against a demand shock [NWS-01] and a working-capital build [FUN-01] is a leverage problem with a timing problem attached. And you asked me to bring something that contradicts the guidance reaffirmation [NWS-02]. Here it is: the guidance was reaffirmed *before* the next-quarter order cut [NWS-01] was in the numbers, and management has given us no reason to believe the reaffirmation contemplated it.\n\nSo here's where we land. Your bull case is one public statement [NWS-02] standing against a customer demand cut [NWS-01], a deteriorating inventory position [FUN-01], a leveraged balance sheet [FUN-02], a broken technical trend [MKT-01][MKT-02], and an options market that is voting with real money [OPT-01][OPT-02]. That's not a contrarian setup \u2014 that's a stock where the smart money has already moved and the guidance line is the last thing holding the narrative together. I'd rather be early and wrong on a name like this than late and long. The burden isn't on me to prove the guidance is wrong \u2014 it's on you to prove it survives contact with next quarter.",
+      "annotated": "Thanks for laying out your case so clearly \u2014 it makes my job easier, because you've built the entire bull thesis on a single line item and asked us to ignore everything else. Let me take that anchor apart piece by piece. \u2014 *No citation provided.*\n\n**On the guidance reaffirmation \u2014 you're treating a lagging statement as a leading indicator.** [NWS-02] Management reaffirmed full-year guidance on Wednesday. So what? Guidance is a public relations instrument, not a covenant. Companies reaffirm guidance right up until the quarter where they can't \u2014 that's the entire pattern of guidance cuts: reaffirm, reaffirm, then surprise. And here's the timing problem you glossed over: the customer order cut [NWS-01] is for *next quarter*. Guidance reaffirmation [NWS-02] tells us about the book *as management sees it today* \u2014 it does not and cannot absorb a 30% order reduction from a major customer that hasn't hit the P&L yet. You're using a backward-looking statement to neutralize a forward-looking risk. That's not an anchor; that's a blindfold.\n\n**The customer cut is not a \"concentration risk, not an existential one\" \u2014 it's a demand signal, and the inventory data corroborates it.** [NWS-01] A major customer is cutting orders 30% next quarter. Now pair that with [FUN-01]: inventory up 25% year over year while sales are flat. You called that \"preparation for forward demand.\" But forward demand just got publicly cut by a major customer [NWS-01]. So which is it? If inventory was built in anticipation of demand that is now being cancelled, that 25% build isn't preparation \u2014 it's an impending write-down. Flat sales plus a 25% inventory build [FUN-01] is the classic signature of a company that misread its demand curve, and the customer cut [NWS-01] is the confirmation, not a separate unrelated event. You can't cite guidance [NWS-02] to wave away both of these at once \u2014 the guidance was reaffirmed *before* the next-quarter order cut lands.\n\n**On the debt \u2014 you asked for ratios, and you're right that I don't have them. But notice what that concession costs you.** [FUN-02] $1.4 billion of long-term debt. You're correct that long-term debt isn't a near-term liquidity cliff. But you're the one arguing this is a growth story with a stock down 6.5% in a week [MKT-01] and 12% below its 50-day [MKT-02]. A leveraged balance sheet [FUN-02] into a demand shock [NWS-01] with inventory ballooning [FUN-01] is exactly the combination that turns a \"maturity-structure question\" into a refinancing problem. You don't get to demand ratios I wasn't given and then declare victory when I can't produce them \u2014 the absence of the data cuts against the leveraged name, not for it.\n\n**Now the part of your argument I find most backwards: the \"crowded bearish positioning\" contrarian call.** You look at 2-to-1 bearish sentiment [SEN-01], 2.4-to-1 put-to-call volume [OPT-01], and implied vol jumping from 22% to 31% [OPT-02], and you see a squeeze setup. I see informed positioning. Put volume at 2.4-to-1 [OPT-01] isn't retail panic \u2014 that's size, and it's directional. Implied vol going from 22 to 31 [OPT-02] means the options market is pricing materially higher realized risk, and that repricing happened *alongside* the customer news [NWS-01] and the inventory data [FUN-01]. The market isn't \"crowded\" \u2014 it's *reacting*. And your squeeze thesis requires a positive catalyst, but the only catalyst on the calendar is a customer order cut [NWS-01]. Doubled chatter [SEN-02] doesn't cut both ways here \u2014 it's amplification of a real fundamental story, not noise.\n\n**Let me flip your challenge back to you.** You asked me to show that the inventory build isn't demand preparation. I just did: the demand it was preparing for is being cut 30% [NWS-01], against flat sales [FUN-01]. You asked me to show the debt is dangerous. I'll show you it's *dangerous enough*: $1.4B [FUN-02] against a demand shock [NWS-01] and a working-capital build [FUN-01] is a leverage problem with a timing problem attached. And you asked me to bring something that contradicts the guidance reaffirmation [NWS-02]. Here it is: the guidance was reaffirmed *before* the next-quarter order cut [NWS-01] was in the numbers, and management has given us no reason to believe the reaffirmation contemplated it.\n\nSo here's where we land. Your bull case is one public statement [NWS-02] standing against a customer demand cut [NWS-01], a deteriorating inventory position [FUN-01], a leveraged balance sheet [FUN-02], a broken technical trend [MKT-01][MKT-02], and an options market that is voting with real money [OPT-01][OPT-02]. That's not a contrarian setup \u2014 that's a stock where the smart money has already moved and the guidance line is the last thing holding the narrative together. I'd rather be early and wrong on a name like this than late and long. The burden isn't on me to prove the guidance is wrong \u2014 it's on you to prove it survives contact with next quarter.",
+      "arguments": [
+        {
+          "argument_number": 1,
+          "text": "Thanks for laying out your case so clearly \u2014 it makes my job easier, because you've built the entire bull thesis on a single line item and asked us to ignore everything else. Let me take that anchor apart piece by piece.",
+          "cited_ids": [],
+          "cited_ids_exist": {},
+          "notices": "No citation provided",
+          "source_paragraphs": {},
+          "numeric_claim_without_citation": false
+        },
+        {
+          "argument_number": 2,
+          "text": "**On the guidance reaffirmation \u2014 you're treating a lagging statement as a leading indicator.** [NWS-02] Management reaffirmed full-year guidance on Wednesday. So what? Guidance is a public relations instrument, not a covenant. Companies reaffirm guidance right up until the quarter where they can't \u2014 that's the entire pattern of guidance cuts: reaffirm, reaffirm, then surprise. And here's the timing problem you glossed over: the customer order cut [NWS-01] is for *next quarter*. Guidance reaffirmation [NWS-02] tells us about the book *as management sees it today* \u2014 it does not and cannot absorb a 30% order reduction from a major customer that hasn't hit the P&L yet. You're using a backward-looking statement to neutralize a forward-looking risk. That's not an anchor; that's a blindfold.",
+          "cited_ids": [
+            "NWS-02",
+            "NWS-01",
+            "NWS-02"
+          ],
+          "cited_ids_exist": {
+            "NWS-02": true,
+            "NWS-01": true
+          },
+          "notices": "",
+          "source_paragraphs": {
+            "NWS-02": "The company reaffirmed its full-year guidance on Wednesday.",
+            "NWS-01": "A major customer said it will reduce orders by 30 percent next quarter."
+          },
+          "numeric_claim_without_citation": false
+        },
+        {
+          "argument_number": 3,
+          "text": "**The customer cut is not a \"concentration risk, not an existential one\" \u2014 it's a demand signal, and the inventory data corroborates it.** [NWS-01] A major customer is cutting orders 30% next quarter. Now pair that with [FUN-01]: inventory up 25% year over year while sales are flat. You called that \"preparation for forward demand.\" But forward demand just got publicly cut by a major customer [NWS-01]. So which is it? If inventory was built in anticipation of demand that is now being cancelled, that 25% build isn't preparation \u2014 it's an impending write-down. Flat sales plus a 25% inventory build [FUN-01] is the classic signature of a company that misread its demand curve, and the customer cut [NWS-01] is the confirmation, not a separate unrelated event. You can't cite guidance [NWS-02] to wave away both of these at once \u2014 the guidance was reaffirmed *before* the next-quarter order cut lands.",
+          "cited_ids": [
+            "NWS-01",
+            "FUN-01",
+            "NWS-01",
+            "FUN-01",
+            "NWS-01",
+            "NWS-02"
+          ],
+          "cited_ids_exist": {
+            "NWS-01": true,
+            "FUN-01": true,
+            "NWS-02": true
+          },
+          "notices": "",
+          "source_paragraphs": {
+            "NWS-01": "A major customer said it will reduce orders by 30 percent next quarter.",
+            "FUN-01": "Inventory rose 25 percent year over year while sales were flat.",
+            "NWS-02": "The company reaffirmed its full-year guidance on Wednesday."
+          },
+          "numeric_claim_without_citation": false
+        },
+        {
+          "argument_number": 4,
+          "text": "**On the debt \u2014 you asked for ratios, and you're right that I don't have them. But notice what that concession costs you.** [FUN-02] $1.4 billion of long-term debt. You're correct that long-term debt isn't a near-term liquidity cliff. But you're the one arguing this is a growth story with a stock down 6.5% in a week [MKT-01] and 12% below its 50-day [MKT-02]. A leveraged balance sheet [FUN-02] into a demand shock [NWS-01] with inventory ballooning [FUN-01] is exactly the combination that turns a \"maturity-structure question\" into a refinancing problem. You don't get to demand ratios I wasn't given and then declare victory when I can't produce them \u2014 the absence of the data cuts against the leveraged name, not for it.",
+          "cited_ids": [
+            "FUN-02",
+            "MKT-01",
+            "MKT-02",
+            "FUN-02",
+            "NWS-01",
+            "FUN-01"
+          ],
+          "cited_ids_exist": {
+            "FUN-02": true,
+            "MKT-01": true,
+            "MKT-02": true,
+            "NWS-01": true,
+            "FUN-01": true
+          },
+          "notices": "",
+          "source_paragraphs": {
+            "FUN-02": "The company carries 1.4 billion dollars of long-term debt.",
+            "MKT-01": "The stock fell 6.50 percent over the last five sessions.",
+            "MKT-02": "It is trading 12 percent below its 50-day moving average.",
+            "NWS-01": "A major customer said it will reduce orders by 30 percent next quarter.",
+            "FUN-01": "Inventory rose 25 percent year over year while sales were flat."
+          },
+          "numeric_claim_without_citation": false
+        },
+        {
+          "argument_number": 5,
+          "text": "**Now the part of your argument I find most backwards: the \"crowded bearish positioning\" contrarian call.** You look at 2-to-1 bearish sentiment [SEN-01], 2.4-to-1 put-to-call volume [OPT-01], and implied vol jumping from 22% to 31% [OPT-02], and you see a squeeze setup. I see informed positioning. Put volume at 2.4-to-1 [OPT-01] isn't retail panic \u2014 that's size, and it's directional. Implied vol going from 22 to 31 [OPT-02] means the options market is pricing materially higher realized risk, and that repricing happened *alongside* the customer news [NWS-01] and the inventory data [FUN-01]. The market isn't \"crowded\" \u2014 it's *reacting*. And your squeeze thesis requires a positive catalyst, but the only catalyst on the calendar is a customer order cut [NWS-01]. Doubled chatter [SEN-02] doesn't cut both ways here \u2014 it's amplification of a real fundamental story, not noise.",
+          "cited_ids": [
+            "SEN-01",
+            "OPT-01",
+            "OPT-02",
+            "OPT-01",
+            "OPT-02",
+            "NWS-01",
+            "FUN-01",
+            "NWS-01",
+            "SEN-02"
+          ],
+          "cited_ids_exist": {
+            "SEN-01": true,
+            "OPT-01": true,
+            "OPT-02": true,
+            "NWS-01": true,
+            "FUN-01": true,
+            "SEN-02": true
+          },
+          "notices": "",
+          "source_paragraphs": {
+            "SEN-01": "Bearish mentions outnumbered bullish mentions two to one.",
+            "OPT-01": "Put volume exceeded call volume by 2.4 to 1.",
+            "OPT-02": "30-day implied volatility rose from 22 to 31 percent.",
+            "NWS-01": "A major customer said it will reduce orders by 30 percent next quarter.",
+            "FUN-01": "Inventory rose 25 percent year over year while sales were flat.",
+            "SEN-02": "Social chatter volume doubled from the prior week."
+          },
+          "numeric_claim_without_citation": false
+        },
+        {
+          "argument_number": 6,
+          "text": "**Let me flip your challenge back to you.** You asked me to show that the inventory build isn't demand preparation. I just did: the demand it was preparing for is being cut 30% [NWS-01], against flat sales [FUN-01]. You asked me to show the debt is dangerous. I'll show you it's *dangerous enough*: $1.4B [FUN-02] against a demand shock [NWS-01] and a working-capital build [FUN-01] is a leverage problem with a timing problem attached. And you asked me to bring something that contradicts the guidance reaffirmation [NWS-02]. Here it is: the guidance was reaffirmed *before* the next-quarter order cut [NWS-01] was in the numbers, and management has given us no reason to believe the reaffirmation contemplated it.",
+          "cited_ids": [
+            "NWS-01",
+            "FUN-01",
+            "FUN-02",
+            "NWS-01",
+            "FUN-01",
+            "NWS-02",
+            "NWS-01"
+          ],
+          "cited_ids_exist": {
+            "NWS-01": true,
+            "FUN-01": true,
+            "FUN-02": true,
+            "NWS-02": true
+          },
+          "notices": "",
+          "source_paragraphs": {
+            "NWS-01": "A major customer said it will reduce orders by 30 percent next quarter.",
+            "FUN-01": "Inventory rose 25 percent year over year while sales were flat.",
+            "FUN-02": "The company carries 1.4 billion dollars of long-term debt.",
+            "NWS-02": "The company reaffirmed its full-year guidance on Wednesday."
+          },
+          "numeric_claim_without_citation": false
+        },
+        {
+          "argument_number": 7,
+          "text": "So here's where we land. Your bull case is one public statement [NWS-02] standing against a customer demand cut [NWS-01], a deteriorating inventory position [FUN-01], a leveraged balance sheet [FUN-02], a broken technical trend [MKT-01][MKT-02], and an options market that is voting with real money [OPT-01][OPT-02]. That's not a contrarian setup \u2014 that's a stock where the smart money has already moved and the guidance line is the last thing holding the narrative together. I'd rather be early and wrong on a name like this than late and long. The burden isn't on me to prove the guidance is wrong \u2014 it's on you to prove it survives contact with next quarter.",
+          "cited_ids": [
+            "NWS-02",
+            "NWS-01",
+            "FUN-01",
+            "FUN-02",
+            "MKT-01",
+            "MKT-02",
+            "OPT-01",
+            "OPT-02"
+          ],
+          "cited_ids_exist": {
+            "NWS-02": true,
+            "NWS-01": true,
+            "FUN-01": true,
+            "FUN-02": true,
+            "MKT-01": true,
+            "MKT-02": true,
+            "OPT-01": true,
+            "OPT-02": true
+          },
+          "notices": "",
+          "source_paragraphs": {
+            "NWS-02": "The company reaffirmed its full-year guidance on Wednesday.",
+            "NWS-01": "A major customer said it will reduce orders by 30 percent next quarter.",
+            "FUN-01": "Inventory rose 25 percent year over year while sales were flat.",
+            "FUN-02": "The company carries 1.4 billion dollars of long-term debt.",
+            "MKT-01": "The stock fell 6.50 percent over the last five sessions.",
+            "MKT-02": "It is trading 12 percent below its 50-day moving average.",
+            "OPT-01": "Put volume exceeded call volume by 2.4 to 1.",
+            "OPT-02": "30-day implied volatility rose from 22 to 31 percent."
+          },
+          "numeric_claim_without_citation": false
+        }
+      ],
+      "usage": {
+        "completion_tokens": 1221,
+        "prompt_tokens": 2338,
+        "total_tokens": 3559,
+        "prompt_tokens_details": {
+          "cached_tokens": 384
+        },
+        "prompt_cache_hit_tokens": 384,
+        "prompt_cache_miss_tokens": 1954
+      },
+      "finish_reason": "stop"
+    },
+    {
+      "run": "C",
+      "speaker": "bull",
+      "fixture": {
+        "market_report": "The stock traded in a 110 to 115 range for the last ten sessions.\n\nVolume was within 5 percent of its 30-day average.",
+        "sentiment_report": "Sentiment scores were neutral, with equal bullish and bearish mentions.\n\nOptions traders discussed a possible earnings move.",
+        "news_report": "The company scheduled its earnings release for the 14th.\n\nA new product launch was announced for the following month.",
+        "fundamentals_report": "Revenue grew 12 percent year over year to 950 million dollars.\n\nOperating margin expanded from 15 to 17 percent.",
+        "options_report": "Implied volatility for the earnings expiry was 35 percent.\n\nCall open interest was concentrated at the 115 strike."
+      },
+      "probe_absent_fact": "guidance",
+      "paragraph_map": [
+        {
+          "id": "MKT-01",
+          "source": "MKT",
+          "report_key": "market_report",
+          "text": "The stock traded in a 110 to 115 range for the last ten sessions."
+        },
+        {
+          "id": "MKT-02",
+          "source": "MKT",
+          "report_key": "market_report",
+          "text": "Volume was within 5 percent of its 30-day average."
+        },
+        {
+          "id": "SEN-01",
+          "source": "SEN",
+          "report_key": "sentiment_report",
+          "text": "Sentiment scores were neutral, with equal bullish and bearish mentions."
+        },
+        {
+          "id": "SEN-02",
+          "source": "SEN",
+          "report_key": "sentiment_report",
+          "text": "Options traders discussed a possible earnings move."
+        },
+        {
+          "id": "NWS-01",
+          "source": "NWS",
+          "report_key": "news_report",
+          "text": "The company scheduled its earnings release for the 14th."
+        },
+        {
+          "id": "NWS-02",
+          "source": "NWS",
+          "report_key": "news_report",
+          "text": "A new product launch was announced for the following month."
+        },
+        {
+          "id": "FUN-01",
+          "source": "FUN",
+          "report_key": "fundamentals_report",
+          "text": "Revenue grew 12 percent year over year to 950 million dollars."
+        },
+        {
+          "id": "FUN-02",
+          "source": "FUN",
+          "report_key": "fundamentals_report",
+          "text": "Operating margin expanded from 15 to 17 percent."
+        },
+        {
+          "id": "OPT-01",
+          "source": "OPT",
+          "report_key": "options_report",
+          "text": "Implied volatility for the earnings expiry was 35 percent."
+        },
+        {
+          "id": "OPT-02",
+          "source": "OPT",
+          "report_key": "options_report",
+          "text": "Call open interest was concentrated at the 115 strike."
+        }
+      ],
+      "raw_response": "Alright, let me lay out the bull case for EVAL right out of the gate, because I think the setup here is stronger than the surface-level numbers suggest.\n\n**Growth is real, not hypothetical.** Revenue grew 12% year over year to $950 million [FUN-01], and critically, operating margin expanded from 15% to 17% [FUN-02]. That combination matters enormously \u2014 this isn't growth bought with discounting or overspending; it's growth with improving unit economics. Margin expansion alongside double-digit revenue growth is the signature of a company gaining operating leverage, and that's exactly the kind of scalability story you want to own heading into an earnings catalyst.\n\n**Catalysts are stacked on the near horizon.** The company reports earnings on the 14th [NWS-01], and there's a new product launch announced for the following month [NWS-02]. So we have a near-term earnings event followed almost immediately by a product cycle catalyst. That's a one-two punch that gives the stock multiple shots at re-rating, not a single binary event.\n\n**The technical picture is stable, not fragile.** The stock has traded in a tight 110\u2013115 range over the last ten sessions [MKT-01], on volume within 5% of its 30-day average [MKT-02]. Now, a bear might call that \"no momentum.\" I'd counter: this is a coiled spring. The stock is holding a tight base with no distribution \u2014 no heavy selling volume, no breakdown. When a stock consolidates tightly into a known catalyst like earnings, the resolution tends to be sharp. And the options market is telling us where the market's attention is: call open interest is concentrated at the 115 strike [OPT-02] \u2014 right at the top of that range. That's positioning for an upside break, not capitulation.\n\n**On the \"neutral sentiment\" concern** \u2014 and I anticipate the bear will lean on this \u2014 sentiment scores being neutral with equal bullish and bearish mentions [SEN-01] is not a negative. Neutral sentiment into a catalyst means the move isn't already priced in and crowded. Contrast that with euphoric sentiment, which is what actually precedes disappointment. Neutral sentiment plus a tight range plus stacked catalysts is a favorable asymmetry, not a warning sign.\n\n**On implied volatility** \u2014 yes, IV for the earnings expiry is 35% [OPT-01], and options traders are discussing a possible earnings move [SEN-02]. The bear will say \"elevated IV means the move is priced.\" But 35% IV reflects uncertainty about *direction*, not evidence of downside. Given the fundamentals \u2014 12% revenue growth, margin expansion, a product launch weeks away \u2014 the distribution of outcomes skews favorably, and the call concentration at 115 [OPT-02] shows where sophisticated money is leaning.\n\nSo here's my challenge to the bear before they even speak: **What exactly is the bear case?** The fundamentals are accelerating [FUN-01][FUN-02], the technicals show a stable base with no distribution [MKT-01][MKT-02], and there are two identifiable catalysts in the next several weeks [NWS-01][NWS-02]. If your argument is \"the stock hasn't moved lately,\" I'd respond that consolidation into catalysts is a feature, not a bug. If your argument is \"sentiment is neutral,\" I'd respond that's precisely what leaves room for upside surprise. Bring your best shot \u2014 but the evidence here points to a company executing on growth with multiple near-term triggers, and that's a bull position I'm comfortable defending.",
+      "annotated": "Alright, let me lay out the bull case for EVAL right out of the gate, because I think the setup here is stronger than the surface-level numbers suggest. \u2014 *No citation provided.*\n\n**Growth is real, not hypothetical.** Revenue grew 12% year over year to $950 million [FUN-01], and critically, operating margin expanded from 15% to 17% [FUN-02]. That combination matters enormously \u2014 this isn't growth bought with discounting or overspending; it's growth with improving unit economics. Margin expansion alongside double-digit revenue growth is the signature of a company gaining operating leverage, and that's exactly the kind of scalability story you want to own heading into an earnings catalyst.\n\n**Catalysts are stacked on the near horizon.** The company reports earnings on the 14th [NWS-01], and there's a new product launch announced for the following month [NWS-02]. So we have a near-term earnings event followed almost immediately by a product cycle catalyst. That's a one-two punch that gives the stock multiple shots at re-rating, not a single binary event.\n\n**The technical picture is stable, not fragile.** The stock has traded in a tight 110\u2013115 range over the last ten sessions [MKT-01], on volume within 5% of its 30-day average [MKT-02]. Now, a bear might call that \"no momentum.\" I'd counter: this is a coiled spring. The stock is holding a tight base with no distribution \u2014 no heavy selling volume, no breakdown. When a stock consolidates tightly into a known catalyst like earnings, the resolution tends to be sharp. And the options market is telling us where the market's attention is: call open interest is concentrated at the 115 strike [OPT-02] \u2014 right at the top of that range. That's positioning for an upside break, not capitulation.\n\n**On the \"neutral sentiment\" concern** \u2014 and I anticipate the bear will lean on this \u2014 sentiment scores being neutral with equal bullish and bearish mentions [SEN-01] is not a negative. Neutral sentiment into a catalyst means the move isn't already priced in and crowded. Contrast that with euphoric sentiment, which is what actually precedes disappointment. Neutral sentiment plus a tight range plus stacked catalysts is a favorable asymmetry, not a warning sign.\n\n**On implied volatility** \u2014 yes, IV for the earnings expiry is 35% [OPT-01], and options traders are discussing a possible earnings move [SEN-02]. The bear will say \"elevated IV means the move is priced.\" But 35% IV reflects uncertainty about *direction*, not evidence of downside. Given the fundamentals \u2014 12% revenue growth, margin expansion, a product launch weeks away \u2014 the distribution of outcomes skews favorably, and the call concentration at 115 [OPT-02] shows where sophisticated money is leaning.\n\nSo here's my challenge to the bear before they even speak: **What exactly is the bear case?** The fundamentals are accelerating [FUN-01][FUN-02], the technicals show a stable base with no distribution [MKT-01][MKT-02], and there are two identifiable catalysts in the next several weeks [NWS-01][NWS-02]. If your argument is \"the stock hasn't moved lately,\" I'd respond that consolidation into catalysts is a feature, not a bug. If your argument is \"sentiment is neutral,\" I'd respond that's precisely what leaves room for upside surprise. Bring your best shot \u2014 but the evidence here points to a company executing on growth with multiple near-term triggers, and that's a bull position I'm comfortable defending.",
+      "arguments": [
+        {
+          "argument_number": 1,
+          "text": "Alright, let me lay out the bull case for EVAL right out of the gate, because I think the setup here is stronger than the surface-level numbers suggest.",
+          "cited_ids": [],
+          "cited_ids_exist": {},
+          "notices": "No citation provided",
+          "source_paragraphs": {},
+          "numeric_claim_without_citation": false
+        },
+        {
+          "argument_number": 2,
+          "text": "**Growth is real, not hypothetical.** Revenue grew 12% year over year to $950 million [FUN-01], and critically, operating margin expanded from 15% to 17% [FUN-02]. That combination matters enormously \u2014 this isn't growth bought with discounting or overspending; it's growth with improving unit economics. Margin expansion alongside double-digit revenue growth is the signature of a company gaining operating leverage, and that's exactly the kind of scalability story you want to own heading into an earnings catalyst.",
+          "cited_ids": [
+            "FUN-01",
+            "FUN-02"
+          ],
+          "cited_ids_exist": {
+            "FUN-01": true,
+            "FUN-02": true
+          },
+          "notices": "",
+          "source_paragraphs": {
+            "FUN-01": "Revenue grew 12 percent year over year to 950 million dollars.",
+            "FUN-02": "Operating margin expanded from 15 to 17 percent."
+          },
+          "numeric_claim_without_citation": false
+        },
+        {
+          "argument_number": 3,
+          "text": "**Catalysts are stacked on the near horizon.** The company reports earnings on the 14th [NWS-01], and there's a new product launch announced for the following month [NWS-02]. So we have a near-term earnings event followed almost immediately by a product cycle catalyst. That's a one-two punch that gives the stock multiple shots at re-rating, not a single binary event.",
+          "cited_ids": [
+            "NWS-01",
+            "NWS-02"
+          ],
+          "cited_ids_exist": {
+            "NWS-01": true,
+            "NWS-02": true
+          },
+          "notices": "",
+          "source_paragraphs": {
+            "NWS-01": "The company scheduled its earnings release for the 14th.",
+            "NWS-02": "A new product launch was announced for the following month."
+          },
+          "numeric_claim_without_citation": false
+        },
+        {
+          "argument_number": 4,
+          "text": "**The technical picture is stable, not fragile.** The stock has traded in a tight 110\u2013115 range over the last ten sessions [MKT-01], on volume within 5% of its 30-day average [MKT-02]. Now, a bear might call that \"no momentum.\" I'd counter: this is a coiled spring. The stock is holding a tight base with no distribution \u2014 no heavy selling volume, no breakdown. When a stock consolidates tightly into a known catalyst like earnings, the resolution tends to be sharp. And the options market is telling us where the market's attention is: call open interest is concentrated at the 115 strike [OPT-02] \u2014 right at the top of that range. That's positioning for an upside break, not capitulation.",
+          "cited_ids": [
+            "MKT-01",
+            "MKT-02",
+            "OPT-02"
+          ],
+          "cited_ids_exist": {
+            "MKT-01": true,
+            "MKT-02": true,
+            "OPT-02": true
+          },
+          "notices": "",
+          "source_paragraphs": {
+            "MKT-01": "The stock traded in a 110 to 115 range for the last ten sessions.",
+            "MKT-02": "Volume was within 5 percent of its 30-day average.",
+            "OPT-02": "Call open interest was concentrated at the 115 strike."
+          },
+          "numeric_claim_without_citation": false
+        },
+        {
+          "argument_number": 5,
+          "text": "**On the \"neutral sentiment\" concern** \u2014 and I anticipate the bear will lean on this \u2014 sentiment scores being neutral with equal bullish and bearish mentions [SEN-01] is not a negative. Neutral sentiment into a catalyst means the move isn't already priced in and crowded. Contrast that with euphoric sentiment, which is what actually precedes disappointment. Neutral sentiment plus a tight range plus stacked catalysts is a favorable asymmetry, not a warning sign.",
+          "cited_ids": [
+            "SEN-01"
+          ],
+          "cited_ids_exist": {
+            "SEN-01": true
+          },
+          "notices": "",
+          "source_paragraphs": {
+            "SEN-01": "Sentiment scores were neutral, with equal bullish and bearish mentions."
+          },
+          "numeric_claim_without_citation": false
+        },
+        {
+          "argument_number": 6,
+          "text": "**On implied volatility** \u2014 yes, IV for the earnings expiry is 35% [OPT-01], and options traders are discussing a possible earnings move [SEN-02]. The bear will say \"elevated IV means the move is priced.\" But 35% IV reflects uncertainty about *direction*, not evidence of downside. Given the fundamentals \u2014 12% revenue growth, margin expansion, a product launch weeks away \u2014 the distribution of outcomes skews favorably, and the call concentration at 115 [OPT-02] shows where sophisticated money is leaning.",
+          "cited_ids": [
+            "OPT-01",
+            "SEN-02",
+            "OPT-02"
+          ],
+          "cited_ids_exist": {
+            "OPT-01": true,
+            "SEN-02": true,
+            "OPT-02": true
+          },
+          "notices": "",
+          "source_paragraphs": {
+            "OPT-01": "Implied volatility for the earnings expiry was 35 percent.",
+            "SEN-02": "Options traders discussed a possible earnings move.",
+            "OPT-02": "Call open interest was concentrated at the 115 strike."
+          },
+          "numeric_claim_without_citation": false
+        },
+        {
+          "argument_number": 7,
+          "text": "So here's my challenge to the bear before they even speak: **What exactly is the bear case?** The fundamentals are accelerating [FUN-01][FUN-02], the technicals show a stable base with no distribution [MKT-01][MKT-02], and there are two identifiable catalysts in the next several weeks [NWS-01][NWS-02]. If your argument is \"the stock hasn't moved lately,\" I'd respond that consolidation into catalysts is a feature, not a bug. If your argument is \"sentiment is neutral,\" I'd respond that's precisely what leaves room for upside surprise. Bring your best shot \u2014 but the evidence here points to a company executing on growth with multiple near-term triggers, and that's a bull position I'm comfortable defending.",
+          "cited_ids": [
+            "FUN-01",
+            "FUN-02",
+            "MKT-01",
+            "MKT-02",
+            "NWS-01",
+            "NWS-02"
+          ],
+          "cited_ids_exist": {
+            "FUN-01": true,
+            "FUN-02": true,
+            "MKT-01": true,
+            "MKT-02": true,
+            "NWS-01": true,
+            "NWS-02": true
+          },
+          "notices": "",
+          "source_paragraphs": {
+            "FUN-01": "Revenue grew 12 percent year over year to 950 million dollars.",
+            "FUN-02": "Operating margin expanded from 15 to 17 percent.",
+            "MKT-01": "The stock traded in a 110 to 115 range for the last ten sessions.",
+            "MKT-02": "Volume was within 5 percent of its 30-day average.",
+            "NWS-01": "The company scheduled its earnings release for the 14th.",
+            "NWS-02": "A new product launch was announced for the following month."
+          },
+          "numeric_claim_without_citation": false
+        }
+      ],
+      "usage": {
+        "completion_tokens": 752,
+        "prompt_tokens": 544,
+        "total_tokens": 1296,
+        "prompt_tokens_details": {
+          "cached_tokens": 384
+        },
+        "prompt_cache_hit_tokens": 384,
+        "prompt_cache_miss_tokens": 160
+      },
+      "finish_reason": "stop"
+    },
+    {
+      "run": "C",
+      "speaker": "bear",
+      "fixture": {
+        "market_report": "The stock traded in a 110 to 115 range for the last ten sessions.\n\nVolume was within 5 percent of its 30-day average.",
+        "sentiment_report": "Sentiment scores were neutral, with equal bullish and bearish mentions.\n\nOptions traders discussed a possible earnings move.",
+        "news_report": "The company scheduled its earnings release for the 14th.\n\nA new product launch was announced for the following month.",
+        "fundamentals_report": "Revenue grew 12 percent year over year to 950 million dollars.\n\nOperating margin expanded from 15 to 17 percent.",
+        "options_report": "Implied volatility for the earnings expiry was 35 percent.\n\nCall open interest was concentrated at the 115 strike."
+      },
+      "probe_absent_fact": "guidance",
+      "paragraph_map": [
+        {
+          "id": "MKT-01",
+          "source": "MKT",
+          "report_key": "market_report",
+          "text": "The stock traded in a 110 to 115 range for the last ten sessions."
+        },
+        {
+          "id": "MKT-02",
+          "source": "MKT",
+          "report_key": "market_report",
+          "text": "Volume was within 5 percent of its 30-day average."
+        },
+        {
+          "id": "SEN-01",
+          "source": "SEN",
+          "report_key": "sentiment_report",
+          "text": "Sentiment scores were neutral, with equal bullish and bearish mentions."
+        },
+        {
+          "id": "SEN-02",
+          "source": "SEN",
+          "report_key": "sentiment_report",
+          "text": "Options traders discussed a possible earnings move."
+        },
+        {
+          "id": "NWS-01",
+          "source": "NWS",
+          "report_key": "news_report",
+          "text": "The company scheduled its earnings release for the 14th."
+        },
+        {
+          "id": "NWS-02",
+          "source": "NWS",
+          "report_key": "news_report",
+          "text": "A new product launch was announced for the following month."
+        },
+        {
+          "id": "FUN-01",
+          "source": "FUN",
+          "report_key": "fundamentals_report",
+          "text": "Revenue grew 12 percent year over year to 950 million dollars."
+        },
+        {
+          "id": "FUN-02",
+          "source": "FUN",
+          "report_key": "fundamentals_report",
+          "text": "Operating margin expanded from 15 to 17 percent."
+        },
+        {
+          "id": "OPT-01",
+          "source": "OPT",
+          "report_key": "options_report",
+          "text": "Implied volatility for the earnings expiry was 35 percent."
+        },
+        {
+          "id": "OPT-02",
+          "source": "OPT",
+          "report_key": "options_report",
+          "text": "Call open interest was concentrated at the 115 strike."
+        }
+      ],
+      "raw_response": "Alright, let me take that challenge head-on, because the bull's case sounds tidy \u2014 but it's built on a selective reading of the evidence. Let me show you where it cracks.\n\n**First, the \"coiled spring\" is actually a ceiling, not a launchpad.** The bull calls the 110\u2013115 range a \"tight base with no distribution\" [MKT-01]. But look at what that range actually tells us: ten sessions, and the stock can't clear 115. Volume is within 5% of its 30-day average [MKT-02] \u2014 that's not accumulation, that's *indifference*. A genuine coiled spring shows rising volume as it tightens; this shows flat volume and a stock pinned below resistance. And here's the kicker the bull glossed over: call open interest is concentrated at the 115 strike [OPT-02]. The bull reads that as \"positioning for an upside break.\" I read it as **a wall of resistance** \u2014 every one of those calls is a dealer hedging obligation that creates selling pressure into 115. That's not sophisticated money leaning bullish; that's the market telling you where the stock keeps failing.\n\n**Second, the \"stacked catalysts\" are stacked *risk* events, and the options market is pricing exactly that.** The bull waves off 35% implied volatility [OPT-01] as \"uncertainty about direction.\" That's precisely the problem \u2014 35% IV into an earnings print means the market expects a *large* move, and the bull has no edge on which way it goes. Options traders are openly discussing a possible earnings move [SEN-02] \u2014 that's not a secret catalyst, that's a crowded event. And the \"one-two punch\" of earnings on the 14th [NWS-01] followed by a product launch [NWS-02] cuts both ways: a product launch that disappoints, or gets delayed, or lands into a soft demand environment, turns a \"second shot at re-rating\" into a second leg down. The bull is counting catalysts like they're all upside; they're binary events, and binaries have downside tails.\n\n**Third, let's stress-test the fundamentals the bull is so proud of.** Revenue grew 12% to $950 million [FUN-01] and margins expanded 15% to 17% [FUN-02]. Fine \u2014 but that's *backward-looking* data heading into an earnings event where the market already expects a lot. Here's the bear question the bull never answers: **what's the growth rate next quarter, and what's priced in?** A stock sitting at the top of a tight range with calls piled at 115 [OPT-02] and 35% IV [OPT-01] has optimistic expectations baked in. If revenue growth decelerates from 12% \u2014 even to high single digits \u2014 or if that margin expansion was a one-off from cost timing rather than durable operating leverage, the same market that's \"not crowded\" per the bull's neutral-sentiment read [SEN-01] will reprice fast. Margin expansion from 15% to 17% is a 200bp move; the bull treats it as a permanent staircase, but there's no evidence in the data it's repeatable.\n\n**Fourth, the \"neutral sentiment is bullish\" argument is backwards.** The bull says neutral sentiment with equal bullish and bearish mentions [SEN-01] means the move isn't priced in. But neutral sentiment into a known catalyst with elevated IV [OPT-01] and concentrated call positioning [OPT-02] means the *options market* is priced, even if the headline sentiment isn't. You don't get a free upside surprise when the derivatives market is already braced for a big move. The bull wants it both ways: \"not crowded\" sentiment but \"sophisticated money leaning bullish\" in the options \u2014 those two claims contradict each other.\n\n**So here's my bottom line.** The bull's case rests on three pillars \u2014 a \"coiled spring\" that's really a stock failing at resistance [MKT-01][OPT-02], \"stacked catalysts\" that are really binary risk events priced with 35% IV [OPT-01][SEN-02], and backward-looking fundamentals [FUN-01][FUN-02] with no visibility into whether the growth and margin trends hold. Flat volume [MKT-02], a hard ceiling at 115, and a market already paying up for a big move is not favorable asymmetry \u2014 it's a setup where the downside surprise does more damage than the upside surprise rewards. The bull asked \"what's the bear case?\" There it is: **you're buying a stock at the top of its range, into a priced-for-perfection event, on data that only tells you where it's been \u2014 not where it's going.** That's not a position I'd defend; that's a position I'd avoid.",
+      "annotated": "Alright, let me take that challenge head-on, because the bull's case sounds tidy \u2014 but it's built on a selective reading of the evidence. Let me show you where it cracks. \u2014 *No citation provided.*\n\n**First, the \"coiled spring\" is actually a ceiling, not a launchpad.** The bull calls the 110\u2013115 range a \"tight base with no distribution\" [MKT-01]. But look at what that range actually tells us: ten sessions, and the stock can't clear 115. Volume is within 5% of its 30-day average [MKT-02] \u2014 that's not accumulation, that's *indifference*. A genuine coiled spring shows rising volume as it tightens; this shows flat volume and a stock pinned below resistance. And here's the kicker the bull glossed over: call open interest is concentrated at the 115 strike [OPT-02]. The bull reads that as \"positioning for an upside break.\" I read it as **a wall of resistance** \u2014 every one of those calls is a dealer hedging obligation that creates selling pressure into 115. That's not sophisticated money leaning bullish; that's the market telling you where the stock keeps failing.\n\n**Second, the \"stacked catalysts\" are stacked *risk* events, and the options market is pricing exactly that.** The bull waves off 35% implied volatility [OPT-01] as \"uncertainty about direction.\" That's precisely the problem \u2014 35% IV into an earnings print means the market expects a *large* move, and the bull has no edge on which way it goes. Options traders are openly discussing a possible earnings move [SEN-02] \u2014 that's not a secret catalyst, that's a crowded event. And the \"one-two punch\" of earnings on the 14th [NWS-01] followed by a product launch [NWS-02] cuts both ways: a product launch that disappoints, or gets delayed, or lands into a soft demand environment, turns a \"second shot at re-rating\" into a second leg down. The bull is counting catalysts like they're all upside; they're binary events, and binaries have downside tails.\n\n**Third, let's stress-test the fundamentals the bull is so proud of.** Revenue grew 12% to $950 million [FUN-01] and margins expanded 15% to 17% [FUN-02]. Fine \u2014 but that's *backward-looking* data heading into an earnings event where the market already expects a lot. Here's the bear question the bull never answers: **what's the growth rate next quarter, and what's priced in?** A stock sitting at the top of a tight range with calls piled at 115 [OPT-02] and 35% IV [OPT-01] has optimistic expectations baked in. If revenue growth decelerates from 12% \u2014 even to high single digits \u2014 or if that margin expansion was a one-off from cost timing rather than durable operating leverage, the same market that's \"not crowded\" per the bull's neutral-sentiment read [SEN-01] will reprice fast. Margin expansion from 15% to 17% is a 200bp move; the bull treats it as a permanent staircase, but there's no evidence in the data it's repeatable.\n\n**Fourth, the \"neutral sentiment is bullish\" argument is backwards.** The bull says neutral sentiment with equal bullish and bearish mentions [SEN-01] means the move isn't priced in. But neutral sentiment into a known catalyst with elevated IV [OPT-01] and concentrated call positioning [OPT-02] means the *options market* is priced, even if the headline sentiment isn't. You don't get a free upside surprise when the derivatives market is already braced for a big move. The bull wants it both ways: \"not crowded\" sentiment but \"sophisticated money leaning bullish\" in the options \u2014 those two claims contradict each other.\n\n**So here's my bottom line.** The bull's case rests on three pillars \u2014 a \"coiled spring\" that's really a stock failing at resistance [MKT-01][OPT-02], \"stacked catalysts\" that are really binary risk events priced with 35% IV [OPT-01][SEN-02], and backward-looking fundamentals [FUN-01][FUN-02] with no visibility into whether the growth and margin trends hold. Flat volume [MKT-02], a hard ceiling at 115, and a market already paying up for a big move is not favorable asymmetry \u2014 it's a setup where the downside surprise does more damage than the upside surprise rewards. The bull asked \"what's the bear case?\" There it is: **you're buying a stock at the top of its range, into a priced-for-perfection event, on data that only tells you where it's been \u2014 not where it's going.** That's not a position I'd defend; that's a position I'd avoid.",
+      "arguments": [
+        {
+          "argument_number": 1,
+          "text": "Alright, let me take that challenge head-on, because the bull's case sounds tidy \u2014 but it's built on a selective reading of the evidence. Let me show you where it cracks.",
+          "cited_ids": [],
+          "cited_ids_exist": {},
+          "notices": "No citation provided",
+          "source_paragraphs": {},
+          "numeric_claim_without_citation": false
+        },
+        {
+          "argument_number": 2,
+          "text": "**First, the \"coiled spring\" is actually a ceiling, not a launchpad.** The bull calls the 110\u2013115 range a \"tight base with no distribution\" [MKT-01]. But look at what that range actually tells us: ten sessions, and the stock can't clear 115. Volume is within 5% of its 30-day average [MKT-02] \u2014 that's not accumulation, that's *indifference*. A genuine coiled spring shows rising volume as it tightens; this shows flat volume and a stock pinned below resistance. And here's the kicker the bull glossed over: call open interest is concentrated at the 115 strike [OPT-02]. The bull reads that as \"positioning for an upside break.\" I read it as **a wall of resistance** \u2014 every one of those calls is a dealer hedging obligation that creates selling pressure into 115. That's not sophisticated money leaning bullish; that's the market telling you where the stock keeps failing.",
+          "cited_ids": [
+            "MKT-01",
+            "MKT-02",
+            "OPT-02"
+          ],
+          "cited_ids_exist": {
+            "MKT-01": true,
+            "MKT-02": true,
+            "OPT-02": true
+          },
+          "notices": "",
+          "source_paragraphs": {
+            "MKT-01": "The stock traded in a 110 to 115 range for the last ten sessions.",
+            "MKT-02": "Volume was within 5 percent of its 30-day average.",
+            "OPT-02": "Call open interest was concentrated at the 115 strike."
+          },
+          "numeric_claim_without_citation": false
+        },
+        {
+          "argument_number": 3,
+          "text": "**Second, the \"stacked catalysts\" are stacked *risk* events, and the options market is pricing exactly that.** The bull waves off 35% implied volatility [OPT-01] as \"uncertainty about direction.\" That's precisely the problem \u2014 35% IV into an earnings print means the market expects a *large* move, and the bull has no edge on which way it goes. Options traders are openly discussing a possible earnings move [SEN-02] \u2014 that's not a secret catalyst, that's a crowded event. And the \"one-two punch\" of earnings on the 14th [NWS-01] followed by a product launch [NWS-02] cuts both ways: a product launch that disappoints, or gets delayed, or lands into a soft demand environment, turns a \"second shot at re-rating\" into a second leg down. The bull is counting catalysts like they're all upside; they're binary events, and binaries have downside tails.",
+          "cited_ids": [
+            "OPT-01",
+            "SEN-02",
+            "NWS-01",
+            "NWS-02"
+          ],
+          "cited_ids_exist": {
+            "OPT-01": true,
+            "SEN-02": true,
+            "NWS-01": true,
+            "NWS-02": true
+          },
+          "notices": "",
+          "source_paragraphs": {
+            "OPT-01": "Implied volatility for the earnings expiry was 35 percent.",
+            "SEN-02": "Options traders discussed a possible earnings move.",
+            "NWS-01": "The company scheduled its earnings release for the 14th.",
+            "NWS-02": "A new product launch was announced for the following month."
+          },
+          "numeric_claim_without_citation": false
+        },
+        {
+          "argument_number": 4,
+          "text": "**Third, let's stress-test the fundamentals the bull is so proud of.** Revenue grew 12% to $950 million [FUN-01] and margins expanded 15% to 17% [FUN-02]. Fine \u2014 but that's *backward-looking* data heading into an earnings event where the market already expects a lot. Here's the bear question the bull never answers: **what's the growth rate next quarter, and what's priced in?** A stock sitting at the top of a tight range with calls piled at 115 [OPT-02] and 35% IV [OPT-01] has optimistic expectations baked in. If revenue growth decelerates from 12% \u2014 even to high single digits \u2014 or if that margin expansion was a one-off from cost timing rather than durable operating leverage, the same market that's \"not crowded\" per the bull's neutral-sentiment read [SEN-01] will reprice fast. Margin expansion from 15% to 17% is a 200bp move; the bull treats it as a permanent staircase, but there's no evidence in the data it's repeatable.",
+          "cited_ids": [
+            "FUN-01",
+            "FUN-02",
+            "OPT-02",
+            "OPT-01",
+            "SEN-01"
+          ],
+          "cited_ids_exist": {
+            "FUN-01": true,
+            "FUN-02": true,
+            "OPT-02": true,
+            "OPT-01": true,
+            "SEN-01": true
+          },
+          "notices": "",
+          "source_paragraphs": {
+            "FUN-01": "Revenue grew 12 percent year over year to 950 million dollars.",
+            "FUN-02": "Operating margin expanded from 15 to 17 percent.",
+            "OPT-02": "Call open interest was concentrated at the 115 strike.",
+            "OPT-01": "Implied volatility for the earnings expiry was 35 percent.",
+            "SEN-01": "Sentiment scores were neutral, with equal bullish and bearish mentions."
+          },
+          "numeric_claim_without_citation": false
+        },
+        {
+          "argument_number": 5,
+          "text": "**Fourth, the \"neutral sentiment is bullish\" argument is backwards.** The bull says neutral sentiment with equal bullish and bearish mentions [SEN-01] means the move isn't priced in. But neutral sentiment into a known catalyst with elevated IV [OPT-01] and concentrated call positioning [OPT-02] means the *options market* is priced, even if the headline sentiment isn't. You don't get a free upside surprise when the derivatives market is already braced for a big move. The bull wants it both ways: \"not crowded\" sentiment but \"sophisticated money leaning bullish\" in the options \u2014 those two claims contradict each other.",
+          "cited_ids": [
+            "SEN-01",
+            "OPT-01",
+            "OPT-02"
+          ],
+          "cited_ids_exist": {
+            "SEN-01": true,
+            "OPT-01": true,
+            "OPT-02": true
+          },
+          "notices": "",
+          "source_paragraphs": {
+            "SEN-01": "Sentiment scores were neutral, with equal bullish and bearish mentions.",
+            "OPT-01": "Implied volatility for the earnings expiry was 35 percent.",
+            "OPT-02": "Call open interest was concentrated at the 115 strike."
+          },
+          "numeric_claim_without_citation": false
+        },
+        {
+          "argument_number": 6,
+          "text": "**So here's my bottom line.** The bull's case rests on three pillars \u2014 a \"coiled spring\" that's really a stock failing at resistance [MKT-01][OPT-02], \"stacked catalysts\" that are really binary risk events priced with 35% IV [OPT-01][SEN-02], and backward-looking fundamentals [FUN-01][FUN-02] with no visibility into whether the growth and margin trends hold. Flat volume [MKT-02], a hard ceiling at 115, and a market already paying up for a big move is not favorable asymmetry \u2014 it's a setup where the downside surprise does more damage than the upside surprise rewards. The bull asked \"what's the bear case?\" There it is: **you're buying a stock at the top of its range, into a priced-for-perfection event, on data that only tells you where it's been \u2014 not where it's going.** That's not a position I'd defend; that's a position I'd avoid.",
+          "cited_ids": [
+            "MKT-01",
+            "OPT-02",
+            "OPT-01",
+            "SEN-02",
+            "FUN-01",
+            "FUN-02",
+            "MKT-02"
+          ],
+          "cited_ids_exist": {
+            "MKT-01": true,
+            "OPT-02": true,
+            "OPT-01": true,
+            "SEN-02": true,
+            "FUN-01": true,
+            "FUN-02": true,
+            "MKT-02": true
+          },
+          "notices": "",
+          "source_paragraphs": {
+            "MKT-01": "The stock traded in a 110 to 115 range for the last ten sessions.",
+            "OPT-02": "Call open interest was concentrated at the 115 strike.",
+            "OPT-01": "Implied volatility for the earnings expiry was 35 percent.",
+            "SEN-02": "Options traders discussed a possible earnings move.",
+            "FUN-01": "Revenue grew 12 percent year over year to 950 million dollars.",
+            "FUN-02": "Operating margin expanded from 15 to 17 percent.",
+            "MKT-02": "Volume was within 5 percent of its 30-day average."
+          },
+          "numeric_claim_without_citation": false
+        }
+      ],
+      "usage": {
+        "completion_tokens": 1031,
+        "prompt_tokens": 2065,
+        "total_tokens": 3096,
+        "prompt_tokens_details": {
+          "cached_tokens": 256
+        },
+        "prompt_cache_hit_tokens": 256,
+        "prompt_cache_miss_tokens": 1809
+      },
+      "finish_reason": "stop"
+    }
+  ]
+}

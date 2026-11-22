@@ -140,7 +140,34 @@ Pre-commit correction: warning rendering at 40, 50 and 80 columns preserved both
 
 | Requirement | Component | Test or evidence | Runtime monitor |
 | --- | --- | --- | --- |
-| FR-CIT-01 | Analyst-to-research handoff, bull/bear histories, consolidated report renderers | CIT-T1 through CIT-T3 | Source labels, argument citations and missing or invalid citation notices in the run report |
+| FR-CIT-01 | Analyst-to-research handoff, bull/bear histories, consolidated report renderers | CIT-T1 through CIT-T3; supplementary FEAT-05 six-defect cases; regression cases for heading, fence and debate-fence attachment | Source labels, argument citations and missing or invalid citation notices in the run report |
+
+### FEAT-05 verification evidence (2026-11-23)
+
+Implementation lives in `src/tradingagents/agents/citations.py` (a leaf), the bull/bear researcher nodes, the research manager passthrough, the optional `InvestDebateState` fields, `_log_state` and `reporting.py`. Evidence came from a fresh editable environment (`python3.12 -m venv`, then `pip install -e ".[dev]"`, exit 0).
+
+| Case | Implemented evidence | Result |
+| --- | --- | --- |
+| CIT-T1 · FR-CIT-01 source numbering | `test_debate_citations.py` and `test_debate_citations_exports.py`: prefixes `MKT/SEN/NWS/FUN/OPT`, numbering from `01`, deselected analysts unnumbered, labels reaching prompt and both exports | Passed |
+| CIT-T2 · FR-CIT-01 per-argument notices | Same files: three-paragraph bull/bear turn, valid pair, `Invalid citation`, `No citation provided`, notices beside their own claim in Markdown and HTML, individual and consolidated reports agreeing, manager reading the recorded history | Passed |
+| CIT-T3 · FR-CIT-01 judge input | Same files: the FEAT-02 judge receives the recorded annotated turns | Passed |
+| CIT-T1..T9 contract, state ownership, layout, exports, run log, checkpoint resume | `test_debate_citations_exports.py`: graph layout unchanged, Options/FEAT-02/03 compatibility, run log fields, resume | Passed |
+| Six reviewed defects (explicit citation instruction, `NotRequired` fields, IDs past 99, headings excluded, intact unnumbered fences in prompt and exports, per-speaker turn numbering) | `test_debate_citations_supplementary.py` | Passed (9) |
+| Rendering/segmentation regressions: heading preserved unnumbered without duplicating a body (prompt, Markdown, HTML); prose above an opening fence kept and numbered; debate fence attaching to its claim, with the same citation, validity and notice in both spacing variants | `test_debate_citations_regressions.py` | Passed (7) |
+
+Approved test hashes verified with `shasum -a 256` after implementation. The three untouched approved files match their recorded hashes; the regression file carries the approved two-case correction, `e93e099bca763a0ba9d25b01afdb66a2539bea92de13fad29bccdae239bfc0d1` → `b23f62899b96fec3ed8c77932c44205f3a1979993ceca60f67c3407592e216d2`.
+
+Fresh editable environment (`python3.12 -m venv`, `pip install -e ".[dev]"`, exit 0), Python 3.12.14:
+
+| Check | Result |
+| --- | --- |
+| Four FEAT-05 test files | 63 passed |
+| Full offline suite | 1614 passed, 1 skipped, 1 deselected, 100 subtests passed |
+| `ruff check src/` and the four FEAT-05 files | All checks passed |
+
+The two contradictions reported on 2026-11-23 are resolved by the approved test corrections: the claim's `FUN-01` is valid in its own fixture and takes no notice, and the two fence-spacing variants are each asserted to preserve their exact input while resolving the same citation identically.
+
+Note: the token-warning failure reported in earlier rounds does not reproduce in the fresh editable environment (21 passed). It is specific to the conda environment, where a stale installed `cli` package shadows the repository copy (`ImportError: cannot import name 'render_live_layout' from 'cli.display'`).
 
 ## FEAT-06 — Local web interface
 

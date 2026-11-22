@@ -490,6 +490,13 @@ class TradingAgentsGraph:
                 "progress_reason": final_state["investment_debate_state"].get(
                     "progress_reason", ""
                 ),
+                # FEAT-05: added beside the keys above, which keep their values.
+                "report_paragraphs": final_state["investment_debate_state"].get(
+                    "report_paragraphs", []
+                ),
+                "turn_citations": final_state["investment_debate_state"].get(
+                    "turn_citations", []
+                ),
             },
             "trader_investment_plan": final_state["trader_investment_plan"],
             "risk_debate_state": {

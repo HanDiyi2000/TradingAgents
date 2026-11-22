@@ -10,6 +10,11 @@ import re
 from datetime import datetime
 from pathlib import Path
 
+from tradingagents.agents.citations import (
+    REPORT_PREFIXES,
+    render_for_reader,
+    render_numbered_report,
+)
 from tradingagents.agents.context import build_company_background
 from tradingagents.agents.rating import run_rating
 
@@ -117,7 +122,15 @@ _SECTIONS = (
 
 
 def _report_parts(final_state: dict) -> list[tuple[str, str, list[tuple[str, str, str]]]]:
-    """The sections with something to say: (heading, folder, [(agent, file, text)])."""
+    """The sections with something to say: (heading, folder, [(agent, file, text)]).
+
+    FEAT-05 adds the citation presentation here, once: the analyst reports carry
+    their numbered paragraphs, and the recorded debate turns are framed so each
+    argument (and its notice) stays its own reader-facing item.
+    """
+    paragraphs = (final_state.get("investment_debate_state") or {}).get(
+        "report_paragraphs") or []
+    report_keys = {key for key, _prefix in REPORT_PREFIXES}
     parts = []
     for heading, folder, agents in _SECTIONS:
         written = []
@@ -126,6 +139,10 @@ def _report_parts(final_state: dict) -> list[tuple[str, str, list[tuple[str, str
             for key in path:
                 value = (value or {}).get(key)
             if value:
+                if path[-1] in report_keys and paragraphs:
+                    value = render_numbered_report(path[-1], value, paragraphs)
+                elif path[-1] in ("bull_history", "bear_history"):
+                    value = render_for_reader(value)
                 written.append((agent, filename, value))
         if written:
             parts.append((heading, folder, written))
@@ -153,7 +170,9 @@ def write_report_tree(final_state: dict, ticker: str, save_path, settings: dict 
         (save_path / folder).mkdir(exist_ok=True)
         for _agent, filename, text in written:
             (save_path / folder / filename).write_text(text, encoding="utf-8")
-        content = "\n\n".join(f"### {agent}\n{text}" for agent, _filename, text in written)
+        # A blank line after each heading so the agent's own first line starts
+        # its own block (the recorded turn's label stays with its argument).
+        content = "\n\n".join(f"### {agent}\n\n{text}" for agent, _filename, text in written)
         sections.append(f"## {heading}\n\n{content}")
 
     (save_path / "complete_report.md").write_text(

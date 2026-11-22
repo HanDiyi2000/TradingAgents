@@ -1,3 +1,10 @@
+from tradingagents.agents.citations import (
+    build_report_paragraphs,
+    render_annotated_turn,
+    render_for_prompt,
+    reports_from_state,
+    resolve_turn,
+)
 from tradingagents.agents.context import (
     get_instrument_context_from_state,
     get_language_instruction,
@@ -21,11 +28,16 @@ def create_bear_researcher(llm, judge=None):
         current_response = opponent_argument_or_opening(
             investment_debate_state.get("current_response", ""), "bull analyst"
         )
-        market_research_report = report_or_absent(state["market_report"], "market")
-        sentiment_report = report_or_absent(state["sentiment_report"], "sentiment")
-        news_report = report_or_absent(state["news_report"], "news")
-        fundamentals_report = report_or_absent(state["fundamentals_report"], "fundamentals")
-        options_report = report_or_absent(state.get("options_report", ""), "options")
+        # FEAT-05: reuse the bull's map; build it only if it is absent.
+        paragraphs = investment_debate_state.get("report_paragraphs")
+        if paragraphs is None:
+            paragraphs = build_report_paragraphs(reports_from_state(state))
+        reports = render_for_prompt(state, paragraphs)
+        market_research_report = report_or_absent(reports["market_report"], "market")
+        sentiment_report = report_or_absent(reports["sentiment_report"], "sentiment")
+        news_report = report_or_absent(reports["news_report"], "news")
+        fundamentals_report = report_or_absent(reports["fundamentals_report"], "fundamentals")
+        options_report = report_or_absent(reports["options_report"], "options")
         instrument_context = get_instrument_context_from_state(state)
         asset_type = state.get("asset_type", "stock")
         target_label = "stock" if asset_type == "stock" else "asset"
@@ -44,6 +56,7 @@ Key points to focus on:
 - Negative Indicators: Use evidence from financial data, market trends, or recent adverse news to support your position.
 - Bull Counterpoints: Critically analyze the bull argument with specific data and sound reasoning, exposing weaknesses or over-optimistic assumptions.
 - Engagement: Present your argument in a conversational style, directly engaging with the bull analyst's points and debating effectively rather than simply listing facts.
+- Evidence pointing: Each report paragraph below is labelled with a source ID in square brackets (three letters, a hyphen, two or more digits — the same form as the report prefixes, e.g. MKT, SEN, NWS, FUN, OPT). When an argument rests on a report, cite that paragraph's ID in square brackets beside the argument it supports. A claim that no supplied report supports should not take a report citation; do not invent an ID.
 
 Resources available:
 
@@ -60,16 +73,24 @@ Use this information to deliver a compelling bear argument, refute the bull's cl
 
         response = llm.invoke(prompt)
 
-        argument = f"Bear Analyst: {response.content}"
+        # FEAT-05: annotate against this run's map; the record keeps the raw text.
+        new_count = investment_debate_state["count"] + 1
+        # Each speaker numbers its own utterances, so the bear's first turn is 1
+        # and its second is 2, independently of the bull's numbering.
+        turn_number = 1 + sum(1 for e in investment_debate_state.get("turn_citations", [])
+                              if e.get("speaker") == "bear")
+        entry = resolve_turn("bear", turn_number, response.content, paragraphs)
+        argument = "Bear Analyst: " + render_annotated_turn(entry)
 
         new_history = history + "\n" + argument
-        new_count = investment_debate_state["count"] + 1
         new_investment_debate_state = {
             "history": new_history,
             "bear_history": bear_history + "\n" + argument,
             "bull_history": investment_debate_state.get("bull_history", ""),
             "current_response": argument,
             "count": new_count,
+            "report_paragraphs": paragraphs,
+            "turn_citations": [*investment_debate_state.get("turn_citations", []), entry],
             # Carry any earlier decision forward; a fresh judgement may replace it.
             "progress_outcome": investment_debate_state.get("progress_outcome", ""),
             "progress_round": investment_debate_state.get("progress_round", 0),

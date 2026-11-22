@@ -68,6 +68,10 @@ Write these sections, in this order, starting with the recommendation on its own
             "progress_outcome": investment_debate_state.get("progress_outcome", ""),
             "progress_round": investment_debate_state.get("progress_round", 0),
             "progress_reason": investment_debate_state.get("progress_reason", ""),
+            # FEAT-05: carry the recorded citation record forward unchanged; the
+            # manager reads and passes it on, it does not re-derive it.
+            "report_paragraphs": investment_debate_state.get("report_paragraphs", []),
+            "turn_citations": investment_debate_state.get("turn_citations", []),
         }
 
         return {

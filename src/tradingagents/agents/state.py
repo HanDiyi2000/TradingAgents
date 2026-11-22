@@ -24,6 +24,14 @@ class InvestDebateState(TypedDict):
     progress_reason: Annotated[
         str, "Early-stop reason recorded when the debate ends without progress"
     ]
+    # FEAT-05: this run's numbered analyst paragraphs and every recorded turn.
+    # Optional so older states, saved logs and checkpoints stay readable.
+    report_paragraphs: NotRequired[
+        Annotated[list, "Numbered analyst paragraphs: {id, source, report_key, text}"]
+    ]
+    turn_citations: NotRequired[
+        Annotated[list, "One resolved record per debate turn: {speaker, turn, raw, arguments}"]
+    ]
 
 
 # Risk management team state
