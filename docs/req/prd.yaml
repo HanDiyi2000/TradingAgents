@@ -10,6 +10,7 @@ in_scope:
   handling.'
 - 'FEAT-02: end a stalled bull/bear research debate and hand its history to the Research Manager.'
 - 'FEAT-03: introduce the company to readers of the consolidated stock analysis report.'
+- 'FEAT-04: warn once when cumulative token usage exceeds the threshold for one CLI analysis.'
 out_of_scope:
 - 'FEAT-01: option contract recommendations, option strategy construction and order execution.'
 features:
@@ -28,6 +29,9 @@ features:
   - id: FEAT-03
     name: Company background in the final report
     requirement_ids: [FR-RPT-01]
+  - id: FEAT-04
+    name: CLI token usage warning
+    requirement_ids: [FR-TOK-01]
 open_questions:
 - Select a provider after checking timestamp provenance and historical coverage.
 - Choose report indicators supported by the selected source.

@@ -31,3 +31,9 @@ sessions:
     task: Document FEAT-03 and draft offline export checks.
     human_instruction: Add company background to the final report. The lead approved the proposed scope before editing.
     scope: Documentation for report placement, fields, date handling and missing-data behavior. Acceptance cases are proposed.
+
+  - date: "2026-11-22"
+    tool: Codex
+    task: Document FEAT-04 and its boundary and reset cases.
+    human_instruction: Keep the warning simple. The lead approved the configurable 100000-token default and one terminal warning per CLI analysis.
+    scope: Specification and proposed offline acceptance cases.

@@ -22,3 +22,9 @@
 | Requirement | Component | Test or evidence | Runtime monitor |
 | --- | --- | --- | --- |
 | FR-RPT-01 | Profile/date handling and shared report export (reporting.py, report_html.py) | RPT-T1 through RPT-T4 | Company Background section in exported Markdown and HTML |
+
+## FEAT-04 — CLI token usage warning
+
+| Requirement | Component | Test or evidence | Runtime monitor |
+| --- | --- | --- | --- |
+| FR-TOK-01 | Run configuration, CLI statistics handler and terminal display | TOK-T1 and TOK-T2 | First crossing total and threshold displayed during the run |

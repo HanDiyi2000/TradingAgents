@@ -43,3 +43,9 @@ The rule operates on the research debate regardless of which analysts supplied r
 The shared CLI and Python export path prepares one factual introduction from the run's eligible company profile. Both renderers place it between the report header and the analyst reports. Reuse the ticker in the title. The introduction is independent of the Fundamentals Analyst and requires no additional agent or model call.
 
 For historical runs, follow the identity rule in `src/tradingagents/agents/context.py`. A current name may identify the company if explicitly labelled as current. Present industry and business details as historical facts only when supported for the analysis date. Omit missing fields and show an unavailable notice if the profile supplies none.
+
+## FEAT-04 — CLI token usage warning
+
+The CLI creates a statistics handler for each analysis. Reuse its input and output counters and read the warning threshold from the run configuration. A call with no reported usage contributes nothing to the measured total. Check the total and mark the first crossing under the handler's existing lock so simultaneous completions produce a single warning. Send the crossing total and configured threshold to the terminal. The graph continues normally.
+
+The run-level warning threshold is independent of `TRADINGAGENTS_MAX_TOKENS`, which controls output length per model call.

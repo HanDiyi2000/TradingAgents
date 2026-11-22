@@ -42,3 +42,12 @@ Proposed offline cases. Use fixed profile data and exercise the existing CLI and
 | RPT-T2 | Profile contains only a company name. | Both sections show just the name. The rest of the report exports successfully. |
 | RPT-T3 | No profile fields are available. | Both sections show an unavailable notice. The analysis and final decision still appear in the export. |
 | RPT-T4 | Historical analysis with only a current name, current industry and current business description. | Both sections label the name as current and omit the undated industry and business description. |
+
+## FEAT-04 — CLI token usage warning (FR-TOK-01)
+
+Proposed offline cases. Feed scripted usage metadata from multiple agents into a CLI analysis and capture its terminal warnings.
+
+| Case | Setup | Expected outcome |
+| --- | --- | --- |
+| TOK-T1 | Set the threshold to 1000. Supply input/output pairs (700, 200), (80, 20), (60, 40) and (100, 100). | Cumulative totals are 900, 1000, 1100 and 1300. Exactly one warning appears, at 1100, showing 1100 used and a threshold of 1000. The final report is produced. |
+| TOK-T2 | Leave the threshold unset. Run two analyses in the same process. In each, reach 100000, receive one completion with no usage metadata, then add one reported token. | Each analysis starts at zero, stays quiet through 100000, and warns once at 100001 with the default threshold of 100000. |

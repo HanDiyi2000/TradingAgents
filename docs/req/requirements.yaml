@@ -101,3 +101,18 @@ requirements:
     metric: Fixture exports failing the expected section count, placement, content or completion checks
     threshold: 0
     verification: RPT-T1 through RPT-T4 in docs/code-governance/verification-constraints.md
+- id: FR-TOK-01
+  type: functional
+  priority: Must
+  statement: >
+    For each CLI analysis, start the usage total at zero. After each completed model call across
+    all agents, add its provider-reported input and output token counts. On the first total strictly
+    greater than the threshold, display one terminal warning with the total and threshold. Continue
+    the analysis through normal report generation. The threshold defaults to 100000 tokens and accepts
+    a positive integer override via TRADINGAGENTS_TOKEN_WARNING_THRESHOLD in .env.
+  source: Team lead, FEAT-04 approval on 2026-11-22. Existing accounting in src/cli/stats_handler.py and src/cli/run.py.
+  tradeoff: The user can finish the analysis after a warning, so further model calls may consume more tokens.
+  fit_criterion:
+    metric: Scripted runs with incorrect warning count, timing, displayed values or report completion
+    threshold: 0
+    verification: TOK-T1 and TOK-T2 in docs/code-governance/verification-constraints.md
