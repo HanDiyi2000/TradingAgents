@@ -2,6 +2,7 @@
 
 import functools
 import logging
+import re
 from collections.abc import Mapping
 from typing import Any
 
@@ -58,6 +59,28 @@ def _clean_identity_value(value: Any) -> str | None:
     return cleaned
 
 
+# A sentence ends at . ! or ? followed by whitespace or the end of the text. A
+# decimal ("3.5") is followed by a digit, not whitespace, so it does not split.
+_SENTENCE_END = re.compile(r"(?<=[.!?])(?:\s+|$)")
+
+
+def first_sentences(text: str, limit: int = 2) -> str:
+    """The first ``limit`` complete sentences of ``text``, unsummarised.
+
+    The source is split at sentence boundaries and the first one or two complete
+    sentences are returned verbatim; no character cap truncates a sentence, so a
+    long first sentence is kept whole. Limitations: abbreviations and initials
+    (e.g. ``Inc.``) may be read as sentence ends, and an unterminated final
+    fragment is dropped rather than shown truncated.
+    """
+    text = (text or "").strip()
+    if not text:
+        return ""
+    pieces = _SENTENCE_END.split(text)
+    sentences = [piece.strip() for piece in pieces if piece.strip()]
+    return " ".join(sentences[:limit])
+
+
 def resolve_instrument_identity(ticker: str) -> dict:
     """Resolve deterministic identity metadata (company name, sector, …) for a ticker.
 
@@ -101,6 +124,12 @@ def _identity(ticker: str) -> dict:
         value = _clean_identity_value(info.get(source_key))
         if value:
             identity[target_key] = value
+    # The vendor's own business summary, kept for the report's Company Background.
+    # It carries no historical vintage (like name/industry), so it is only shown
+    # for a current run; the exporter filters it with the same point-in-time rule.
+    description = _clean_identity_value(info.get("longBusinessSummary"))
+    if description:
+        identity["business_description"] = description
     return identity
 
 
@@ -216,3 +245,69 @@ def get_portfolio_context_from_state(state: Mapping[str, Any]) -> str:
         "holdings or cash, so do not assume a flat book; give direction and "
         "sizing guidance in terms the caller can apply to their own position."
     )
+
+
+# The company profile retained for the report, keyed on the run state. It holds
+# only the cleaned fields the Company Background shows.
+_COMPANY_IDENTITY_FIELDS = ("company_name", "industry", "business_description")
+
+
+def retained_company_identity(identity: Mapping[str, str] | None) -> dict[str, str]:
+    """The cleaned profile to keep on a run: name, industry and description only.
+
+    A run retains this once at initialization from the identity already resolved
+    for the instrument context, so export never looks the profile up again. Only
+    non-empty cleaned fields are kept; a profile with none is empty.
+    """
+    identity = identity or {}
+    kept: dict[str, str] = {}
+    for key in _COMPANY_IDENTITY_FIELDS:
+        value = _clean_identity_value(identity.get(key))
+        if value:
+            kept[key] = value
+    return kept
+
+
+def company_profile_view(identity: Mapping[str, str] | None, trade_date: str | None) -> dict:
+    """What the report may show of a run's profile, filtered for the analysis date.
+
+    For a current run (analysis date today, the default) the name, industry and
+    a one- or two-sentence slice of the source business description are shown. For
+    a historical run the vendor's profile carries no vintage, so only the name is
+    shown, marked as today's; undated industry and description are withheld. Empty
+    fields are omitted. The returned view is ``{name, name_is_current, industry,
+    business_description}``; every value not shown is None.
+    """
+    view = {"name": None, "name_is_current": False,
+            "industry": None, "business_description": None}
+    identity = identity or {}
+    name = _clean_identity_value(identity.get("company_name"))
+    if is_historical(trade_date):
+        if name:
+            view["name"] = name
+            view["name_is_current"] = True
+        return view
+    if name:
+        view["name"] = name
+    industry = _clean_identity_value(identity.get("industry"))
+    if industry:
+        view["industry"] = industry
+    description = first_sentences(_clean_identity_value(identity.get("business_description")) or "")
+    if description:
+        view["business_description"] = description
+    return view
+
+
+def build_company_background(final_state: Mapping[str, Any]) -> dict:
+    """The run's prepared Company Background, from stored state only.
+
+    Reads the retained ``company_identity`` and the analysis ``trade_date`` from
+    ``final_state`` and returns the filtered view. It performs no lookup, reads no
+    cache and makes no model call, so export is a pure function of the run. An
+    old state without ``company_identity`` yields an all-None view (the exporter
+    then shows the unavailable notice).
+    """
+    identity = final_state.get("company_identity") or {}
+    if not isinstance(identity, Mapping):
+        identity = {}
+    return company_profile_view(identity, final_state.get("trade_date"))

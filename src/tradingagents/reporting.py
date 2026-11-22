@@ -6,10 +6,52 @@ CLI and ``TradingAgentsGraph.save_reports`` both call this, so a headless / API
 run produces the same on-disk report tree a CLI run does.
 """
 
+import re
 from datetime import datetime
 from pathlib import Path
 
+from tradingagents.agents.context import build_company_background
 from tradingagents.agents.rating import run_rating
+
+# Shown when a run retains no usable profile (old states, an unrecognised
+# ticker or a withheld historical profile), so the section is never blank.
+BACKGROUND_UNAVAILABLE = (
+    "No company background is available for this run: no company name, industry "
+    "or business description was retained."
+)
+
+# Characters with meaning in CommonMark inline text, escaped so a profile's own
+# text shows literally instead of becoming emphasis, code, links or raw HTML.
+_MD_SPECIAL = re.compile(r"([\\`*_\[\]<>])")
+
+
+def _md_escape(value: str) -> str:
+    """Escape Markdown-significant characters so source text renders literally.
+
+    Applied only to Markdown output; the HTML renderer escapes for HTML instead,
+    and the shared background view keeps the raw source text.
+    """
+    return _MD_SPECIAL.sub(r"\\\1", value)
+
+
+def _company_background_markdown(view: dict) -> str:
+    """The Company Background section for a prepared profile view.
+
+    One field per line, missing fields omitted. A historical run's view carries
+    only a name, shown as today's. An empty view shows the unavailable notice.
+    Field values come from the raw shared view and are Markdown-escaped here so
+    the reader sees the source text literally, matching the HTML report.
+    """
+    lines = []
+    if view.get("name"):
+        suffix = " (current name)" if view["name_is_current"] else ""
+        lines.append(f"- Name: {_md_escape(view['name'])}{suffix}")
+    if view.get("industry"):
+        lines.append(f"- Industry: {_md_escape(view['industry'])}")
+    if view.get("business_description"):
+        lines.append(f"- Business: {_md_escape(view['business_description'])}")
+    body = "\n".join(lines) if lines else BACKGROUND_UNAVAILABLE
+    return f"## Company Background\n\n{body}"
 
 
 def analyst_names(keys) -> list[str]:
@@ -103,6 +145,9 @@ def write_report_tree(final_state: dict, ticker: str, save_path, settings: dict 
     save_path = Path(save_path)
     save_path.mkdir(parents=True, exist_ok=True)
     parts = _report_parts(final_state)
+    # Prepared once per export and shared by both formats (FEAT-03).
+    background = build_company_background(final_state)
+    background_md = _company_background_markdown(background) + "\n\n"
     sections = []
     for heading, folder, written in parts:
         (save_path / folder).mkdir(exist_ok=True)
@@ -112,13 +157,15 @@ def write_report_tree(final_state: dict, ticker: str, save_path, settings: dict 
         sections.append(f"## {heading}\n\n{content}")
 
     (save_path / "complete_report.md").write_text(
-        _header(ticker, final_state, settings) + "\n\n".join(sections), encoding="utf-8"
+        _header(ticker, final_state, settings) + background_md + "\n\n".join(sections),
+        encoding="utf-8",
     )
     if html:
         from tradingagents.report_html import render_report
 
         (save_path / "complete_report.html").write_text(
-            render_report(ticker, final_state, settings, parts), encoding="utf-8"
+            render_report(ticker, final_state, settings, parts, background=background),
+            encoding="utf-8",
         )
     else:
         (save_path / "complete_report.html").unlink(missing_ok=True)

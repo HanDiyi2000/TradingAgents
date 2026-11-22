@@ -79,6 +79,44 @@ Analysis: these were **fixture/evaluation-design defects, not established model 
 | --- | --- | --- | --- |
 | FR-RPT-01 | Profile/date handling and shared report export (reporting.py, report_html.py) | RPT-T1 through RPT-T4 | Company Background section in exported Markdown and HTML |
 
+### FEAT-03 verification evidence (2026-11-22)
+
+Implementation on branch `CS5351`. The run retains its cleaned profile once at
+initialization (the single identity lookup), persists it in the run log, and the
+exporter prepares the background once and shares it between Markdown and HTML.
+Offline only; no live provider involved.
+
+| Case | Implemented evidence | Result |
+| --- | --- | --- |
+| Initialization retention | `test_company_background.py::test_initialization_retains_the_cleaned_profile_from_one_lookup`, `::test_initialization_retains_only_the_cleaned_profile_fields`, `::test_initialization_omits_placeholder_profile_values` (6 placeholders) | Passed |
+| Init compatibility / no second lookup | `::test_initialization_reuses_the_cached_profile_without_a_second_lookup` | Passed |
+| Graph retention → `save_reports` | `::test_the_retained_profile_survives_the_graph_and_reaches_save_reports` | Passed |
+| Graph retention → CLI `_offer_reports` | `::test_the_retained_profile_reaches_the_cli_offer_reports_entry` | Passed |
+| No Fundamentals Analyst required | `::test_a_run_without_the_fundamentals_analyst_still_carries_a_background` | Passed |
+| Run-log persistence (RPT-LOG) | `::test_the_run_log_persists_company_identity` | Passed |
+| RPT-T1 placement | `::test_exactly_one_background_sits_after_the_header_and_before_analysts` | Passed |
+| RPT-T1 content | `::test_full_profile_shows_name_industry_and_complete_description` | Passed |
+| RPT-T2 | `::test_name_only_profile_omits_missing_labels_and_content` | Passed |
+| RPT-T4 | `::test_a_historical_run_labels_the_current_name_and_hides_undated_details`, `::test_a_historical_run_without_a_name_shows_the_notice_and_leaks_no_undated_fields` | Passed |
+| RPT-T3 | `::test_no_profile_shows_an_unavailable_notice_and_still_exports` (absent/empty) | Passed |
+| Old state / no export lookup | `::test_old_state_without_company_identity_exports_without_lookup_or_cache`, `::test_export_performs_no_additional_lookup_even_when_identity_is_present` | Passed |
+| Sentence retention/trimming | `::test_business_description_keeps_one_or_two_complete_source_sentences` (5 cases), `::test_the_description_is_not_truncated_mid_sentence` | Passed |
+
+Offline regression: `python -m pytest -q test/offline` reported `1522 passed, 1 skipped, 1 deselected, 100 subtests passed`. Targeted regressions (layering, reporting, report_html, instrument_identity, undated_tools_as_of, options_analyst): `84 passed`. Structural: `ruff`/`pyflakes` were not installed, so no lint run is claimed; `py_compile` of the changed modules succeeded and the layering test passed.
+
+### FEAT-03 implementation-review corrections (2026-11-22)
+
+Three confirmed review issues were corrected; the approved test file was extended first (blob `1023b4c964fa96bf7d5f734f1f97632df58c0b43`) and then the implementation was changed. The 28 original approved tests are unchanged; the 6 correction tests are listed below.
+
+| Correction | Issue | Evidence | Result |
+| --- | --- | --- | --- |
+| Literal text parity | Markdown interpolated raw profile text while HTML escaped it | `::test_literal_profile_text_is_shown_the_same_way_in_both_formats` (3 cases: `*Group*`, `A&B <Holdings>`, `_Co_ & <b>x</b> [link](y)`) | Passed |
+| Optional state field | `company_identity` appeared in `__required_keys__` | `::test_company_identity_is_an_optional_state_field` | Passed |
+| Legacy-state export | a state without `company_identity` must still export | `::test_legacy_state_without_company_identity_still_exports` | Passed |
+| Custom context hook | `create_run_state` bypassed `resolve_instrument_context` overrides | `::test_initialization_respects_a_custom_resolve_instrument_context` | Passed |
+
+Correction verification: FEAT-03 file `34 passed`; full offline `python -m pytest -q test/offline` reported `1528 passed, 1 skipped, 1 deselected, 100 subtests passed`; targeted (layering, reporting, report_html, instrument_identity, undated_tools_as_of, options_analyst, portfolio_context) `113 passed`; `py_compile` of the changed modules OK; `ruff`/`pyflakes` still unavailable (no lint run claimed). A direct probe confirmed a failed identity resolution performs one vendor attempt and no immediate retry.
+
 ## FEAT-04 — Per-run token usage warning
 
 | Requirement | Component | Test or evidence | Runtime monitor |

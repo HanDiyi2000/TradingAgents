@@ -34,14 +34,20 @@ For every termination, compare the Research Manager's input history with the ful
 
 ## FEAT-03 — Company background (FR-RPT-01)
 
-Proposed offline cases. Use fixed profile data and exercise the existing CLI and Python export paths. Compare the visible section text across formats.
+Approved offline cases (test blob `821e88d24eae95fcd7f01bf094fb23a90bff52b2`). Use fixed profile data and a frozen test date; exercise the existing Python (`TradingAgentsGraph.save_reports`) and CLI (`run._offer_reports` with non-interactive flags) export paths. Compare the visible section text across formats.
 
 | Case | Input | Expected export |
 | --- | --- | --- |
 | RPT-T1 | Full profile with a name, industry and two-sentence description. Omit Fundamentals Analyst from the selection. | Each format contains one background section after the header and before the analyst reports. Both show the fixture fields and the same description. |
-| RPT-T2 | Profile contains only a company name. | Both sections show just the name. The rest of the report exports successfully. |
+| RPT-T2 | Profile contains only a company name. | Both sections show just the name; the Industry label and description are omitted. The rest of the report exports successfully. |
 | RPT-T3 | No profile fields are available. | Both sections show an unavailable notice. The analysis and final decision still appear in the export. |
 | RPT-T4 | Historical analysis with only a current name, current industry and current business description. | Both sections label the name as current and omit the undated industry and business description. |
+| RPT-INIT | A full profile through run initialization, including a direct context call before it. | The cleaned profile is retained from a single lookup; the second resolution reuses the cache; `resolve_instrument_context` behaviour is unchanged. |
+| RPT-RETENTION | A complete offline analysis; then both export entry points. | The retained profile survives the graph into final state and reaches both formats; the run log persists `company_identity`. |
+| RPT-SENTENCE | Fixed summaries with two/three sentences, a decimal and a long first sentence. | One or two complete source sentences are kept, unsummarised, in both formats; no character cap truncates a sentence. |
+| RPT-LITERAL (correction, blob `1023b4c9…`) | Profile text with Markdown markers and HTML-sensitive characters (`*Group*`, `A&B <Holdings>`, `_Co_ & <b>x</b> [link](y)`). | Both formats show the same literal source text; no emphasis, tags or links are produced in Markdown; HTML shows the same characters. |
+| RPT-OPTIONAL (correction) | State schema inspection and a legacy state without `company_identity`. | `company_identity` is in `__optional_keys__` and not in `__required_keys__`; a legacy state exports with the notice and a fresh run still retains the field. |
+| RPT-HOOK (correction) | A custom `resolve_instrument_context` override. | Initialization calls the override with `(ticker, asset_type, trade_date)`, its value reaches `instrument_context`, and exactly one vendor lookup retains the profile; a failed lookup is not retried. |
 
 ## FEAT-04 — Per-run token usage warning (FR-TOK-01)
 

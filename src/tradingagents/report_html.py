@@ -246,8 +246,39 @@ def _run_details(final_state: dict, settings: dict | None) -> list[tuple[str, st
     return details
 
 
-def render_report(ticker: str, final_state: dict, settings: dict | None, parts) -> str:
-    """The report page: title and rating, what produced the run, contents, sections."""
+def _company_background_html(background: dict | None) -> str:
+    """The Company Background section for a prepared profile view, or ''.
+
+    ``background`` is the shared view ``write_report_tree`` prepared once for
+    both formats. Empty/None renders nothing extra, so direct callers keep the
+    page they had. Values are escaped; the section precedes the numbered ones.
+    """
+    if not background:
+        return ""
+    lines = []
+    if background.get("name"):
+        suffix = " (current name)" if background.get("name_is_current") else ""
+        lines.append(f"<li><strong>Name</strong>: {escape(background['name'])}{escape(suffix)}</li>")
+    if background.get("industry"):
+        lines.append(f"<li><strong>Industry</strong>: {escape(background['industry'])}</li>")
+    if background.get("business_description"):
+        lines.append(f"<li><strong>Business</strong>: {escape(background['business_description'])}</li>")
+    if lines:
+        body = "<ul>" + "".join(lines) + "</ul>"
+    else:
+        body = ("<p>No company background is available for this run: no company "
+                "name, industry or business description was retained.</p>")
+    return f'<section id="company-background"><h2>Company Background</h2>\n{body}</section>'
+
+
+def render_report(ticker: str, final_state: dict, settings: dict | None, parts,
+                  *, background: dict | None = None) -> str:
+    """The report page: title and rating, what produced the run, contents, sections.
+
+    ``background`` is the Company Background view prepared once by
+    ``write_report_tree`` and shared with the Markdown report; when omitted the
+    page is rendered without it, unchanged for direct callers.
+    """
     md = _markdown()
     rating = run_rating(final_state) if final_state.get("final_trade_decision") else ""
     tone = _TONE.get(rating, "review")
@@ -263,6 +294,11 @@ def render_report(ticker: str, final_state: dict, settings: dict | None, parts) 
     )
 
     contents, body = [], []
+    background_html = _company_background_html(background)
+    if background_html:
+        contents.append('<li><a href="#company-background"><span class="num"></span> '
+                        '<span class="label">Company Background</span></a></li>')
+        body.append(background_html)
     for n, (heading, _folder, written) in enumerate(parts, 1):
         agents = "".join(
             f'<li><a href="#s{n}-{m}"><span class="bar"></span> <span class="label">{escape(agent)}</span></a></li>'

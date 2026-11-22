@@ -163,3 +163,72 @@ sessions:
       semantic-quality acceptance remains unverified.
     human_review: implementation approved for verification/evidence stage; semantic accuracy pending
     evidence: "transcripts/FEAT-02-annotated-session.md (annotated) and transcripts/FEAT-02-session.json (redacted session export; session ses_dfdfdad54ffemNA5rq3445en7M). Live-failure capture: transcripts/FEAT-02-live-eval-2026-11-22.txt."
+
+  - date: "2026-11-22"
+    tool: OpenCode
+    task: Implement FEAT-03 / FR-RPT-01, a Company Background section in the consolidated report.
+    human_instruction: >
+      Retain the cleaned name, industry and business description once at initialization
+      (reusing the existing identity lookup), persist it in the run log, prepare the
+      background once per export and share it between Markdown and HTML, with no
+      export-time lookup, cache access, prompt-text parsing or model call.
+    approved_test_blob: "test/offline/test_company_background.py at 821e88d24eae95fcd7f01bf094fb23a90bff52b2"
+    decisions:
+      - "company_identity is an optional state mapping holding only cleaned company_name, industry and business_description."
+      - "create_run_state resolves identity once and reuses it for the instrument context and the retained profile."
+      - "The exporter reads only stored run data (company_identity + trade_date); historical runs show the current name only and omit undated industry/business."
+      - "The business description keeps one or two complete source sentences split at sentence boundaries; no character cap."
+      - "An independent ## Company Background section sits after the header and before the numbered analyst sections; a contents entry precedes them in HTML."
+    changes:
+      - "agents/context.py: retain longBusinessSummary; add first_sentences, retained_company_identity, company_profile_view, build_company_background."
+      - "agents/state.py, graph/propagation.py: add optional company_identity state field."
+      - "graph/trading_graph.py: retain company_identity in create_run_state; persist in _log_state."
+      - "reporting.py: prepare background once and render the Markdown Company Background section before the numbered sections."
+      - "report_html.py: render the same view as an HTML section (and contents entry); keep the CSP and safe rendering."
+    verification:
+      feature: "28 passed via test/offline/test_company_background.py"
+      offline_suite: "1522 passed, 1 skipped, 1 deselected, 100 subtests passed (python -m pytest -q test/offline)"
+      targeted: "84 passed (layering, reporting, report_html, instrument_identity, undated_tools_as_of, options_analyst)"
+      structural: "ruff/pyflakes not installed in either environment; py_compile of changed modules OK; layering test passed."
+    environment: >-
+      interpreter .venv/bin/python (3.13.5) with conda pytest 9.1.1 supplied via PYTHONPATH and
+      PYTEST_DISABLE_PLUGIN_AUTOLOAD=1; no dependencies installed.
+    human_review: pending
+    correction_round:
+      date: "2026-11-22"
+      reason: >
+        Implementation review found three confirmed issues: Markdown interpolated raw profile
+        text while HTML escaped it; company_identity was required in AgentState though described
+        as optional; create_run_state bypassed a custom resolve_instrument_context.
+      approval_history:
+        - "Original FEAT-03 tests approved at blob 821e88d24eae95fcd7f01bf094fb23a90bff52b2."
+        - "Correction regression tests approved separately at blob 1023b4c964fa96bf7d5f734f1f97632df58c0b43 (not part of the original approval)."
+      approved_test_blob: "test/offline/test_company_background.py at 1023b4c964fa96bf7d5f734f1f97632df58c0b43"
+      changes:
+        - "reporting.py: keep raw source text in the shared view; Markdown-escape field values only in the Markdown renderer (HTML keeps its escaping)."
+        - "agents/state.py: declare company_identity as NotRequired so it is a genuinely optional key while propagation still writes it."
+        - "graph/trading_graph.py: create_run_state honours a custom resolve_instrument_context for the context string, resolves identity once for the retained profile, and does not retry a failed resolution."
+      verification:
+        feature: "34 passed via test/offline/test_company_background.py"
+        offline_suite: "1528 passed, 1 skipped, 1 deselected, 100 subtests passed (python -m pytest -q test/offline)"
+        targeted: "113 passed (layering, reporting, report_html, instrument_identity, undated_tools_as_of, options_analyst, portfolio_context)"
+        failed_lookup_probe: "a failing identity lookup performed 1 vendor attempt and no immediate duplicate; company_identity was empty and the context still built."
+        structural: "ruff/pyflakes not installed; py_compile of changed modules OK; layering test passed."
+      human_review: "Accepted by Haobin Yan (60642891); final local functional acceptance recorded in docs/review-memo.md. Merge gates remain outstanding."
+    final_local_acceptance:
+      student: "Haobin Yan"
+      student_id: "60642891"
+      verdict: "APPROVE for local FEAT-03 functional acceptance; not merge approval"
+      evidence: "transcripts/60642891-Haobin-Yan.md; Report.md; docs/review-memo.md"
+      manual_run: "AAPL, 2026-11-22, market/news only; matching Company Background in Markdown and HTML, complete final report and persisted company_identity."
+      limitations: "Lint not run; review-chat full-suite reproduction exited 139; successful full-suite counts are OpenCode's reported results."
+    delivery_preparation:
+      assistant: "Codex, separate review chat"
+      human_authorization: "Student accepted six annotation drafts and the 414-word reflection, supplied name and ID, and authorized recording local acceptance."
+      changes:
+        - "Inserted the six student-accepted annotations outside the historical transcript."
+        - "Renamed transcript to transcripts/60642891-Haobin-Yan.md and added student identity metadata."
+        - "Added the accepted reflection and contribution evidence to Report.md; team contribution weights remain undecided."
+        - "Recorded final local acceptance and verification limitations in docs/review-memo.md."
+      raw_export_sha256: "9c7389bcdb91af21f520ee38099204da4f63c0c691b8550bf2f83977766c5363"
+      status: "No code changes, commit, push or PR in this delivery-preparation step."

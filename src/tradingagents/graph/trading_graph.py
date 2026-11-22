@@ -8,7 +8,11 @@ from pathlib import Path
 from typing import Any
 
 import tradingagents
-from tradingagents.agents.context import build_instrument_context, resolve_instrument_identity
+from tradingagents.agents.context import (
+    build_instrument_context,
+    resolve_instrument_identity,
+    retained_company_identity,
+)
 from tradingagents.agents.rating import run_rating
 from tradingagents.dataflows.config import run_config, run_config_context, set_config
 from tradingagents.dataflows.date_window import get_current_date, is_historical
@@ -294,17 +298,40 @@ class TradingAgentsGraph:
         """Build a run's initial state; propagate() and the CLI both start here.
 
         Injects the resolved instrument identity for every agent (#814). The
-        memory log's lessons are not here: the graph's Memory Log step settles
-        and loads them alongside the analysts (see ``_memory_step``).
+        identity is resolved once here: it feeds the retained ``company_identity``
+        (FEAT-03), and, unless the caller overrides ``resolve_instrument_context``,
+        also the instrument context — so export reads the profile from the run and
+        no extra vendor request is made. A custom
+        ``resolve_instrument_context`` still supplies the run's context string; the
+        profile is retained from the single resolution, which happens once even if
+        that resolution failed (a failure is not retried here). The memory log's
+        lessons are not here: the graph's Memory Log step settles and loads them
+        alongside the analysts (see ``_memory_step``).
         """
         trade_date = _validate_trade_date(trade_date)
+        identity = resolve_instrument_identity(company_name)
+        if self._has_custom_instrument_context():
+            instrument_context = self.resolve_instrument_context(company_name, asset_type, trade_date)
+        else:
+            instrument_context = build_instrument_context(company_name, asset_type, identity, trade_date)
         return self.propagator.create_initial_state(
             company_name,
             trade_date,
             asset_type=asset_type,
-            instrument_context=self.resolve_instrument_context(company_name, asset_type, trade_date),
+            instrument_context=instrument_context,
             portfolio_context=portfolio.render(company_name) if portfolio is not None else "",
+            company_identity=retained_company_identity(identity),
         )
+
+    def _has_custom_instrument_context(self) -> bool:
+        """Whether ``resolve_instrument_context`` was overridden on this instance.
+
+        The default builds the context from the identity resolved here; a custom
+        override is honoured for the context string so callers can extend it.
+        """
+        method = self.resolve_instrument_context
+        default = TradingAgentsGraph.resolve_instrument_context
+        return getattr(method, "__func__", None) is not default
 
     def _memory_step(self, state):
         """The graph's Memory Log step, alongside the analysts (#1428): settle every
@@ -440,6 +467,7 @@ class TradingAgentsGraph:
         entry = {
             "company_of_interest": final_state["company_of_interest"],
             "trade_date": final_state["trade_date"],
+            "company_identity": final_state.get("company_identity", {}),
             "market_report": final_state["market_report"],
             "sentiment_report": final_state["sentiment_report"],
             "news_report": final_state["news_report"],
