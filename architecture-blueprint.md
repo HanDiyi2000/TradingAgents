@@ -21,3 +21,19 @@ For stock runs, add a fifth parallel analyst to the default selection. Explicit 
 | Presentation and storage | CLI progress and report panels, graph state and saved run logs expose the selected analyst's result. The shared report writer emits a separate Markdown file and a section in the combined Markdown and requested HTML output. |
 
 The scope decision is recorded in [ADR 001](docs/architecture/adr/001-architecture-choice.md). The [trace matrix](docs/architecture/trace-matrix.md) links each contract to its planned verification.
+
+## FEAT-02 — Research debate early stop
+
+The bull and bear researchers already alternate turns. Extend the routing decision in
+`src/tradingagents/graph/conditional_logic.py` at the end of a bull–bear pair. The research
+debate history is the reference for identifying evidence already cited and opposing arguments
+already answered. A paraphrase of the same fact or rebuttal adds no progress.
+
+| Decision point | Next step |
+| --- | --- |
+| Only the bull has spoken in this round | Give the bear its turn. |
+| Both have spoken and the round limit is reached | Hand the history to the Research Manager under the existing limit. |
+| Opening round complete and below the limit | Start round two. |
+| Later round complete and below the limit | Continue if either side cited a new fact or first addressed an unanswered opposing point. Otherwise record “No new evidence or first response in this round” with the debate and hand the full history to the Research Manager. |
+
+The rule operates on the research debate regardless of which analysts supplied reports. The separate risk debate uses its existing routing.

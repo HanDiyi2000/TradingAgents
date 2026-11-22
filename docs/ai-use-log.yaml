@@ -18,3 +18,10 @@ sessions:
     scope: Requirements and design documents. Provider and indicators remain open.
     evidence: transcripts/options-requirements-excerpt.md
     test_plan_status: Proposed for human review before implementation.
+
+  - date: "2026-11-22"
+    tool: Codex
+    task: Specify FEAT-02 and draft its offline acceptance cases.
+    human_instruction: End a research debate after a full round without new evidence or a first reply. Keep the existing cap.
+    clarification: The lead confirmed that round one is an opening round and round two is the earliest no-progress stop.
+    scope: Documentation. Acceptance cases are proposed and unexecuted.

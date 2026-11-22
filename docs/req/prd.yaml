@@ -8,6 +8,7 @@ goals:
 in_scope:
 - 'FEAT-01: default-selectable Options Analyst, independent report, downstream delivery, export and unavailable-data
   handling.'
+- 'FEAT-02: end a stalled bull/bear research debate and hand its history to the Research Manager.'
 out_of_scope:
 - 'FEAT-01: option contract recommendations, option strategy construction and order execution.'
 features:
@@ -20,6 +21,9 @@ features:
       - FR-OPT-04
       - FR-OPT-05
       - INV-OPT-01
+  - id: FEAT-02
+    name: Research debate early stop
+    requirement_ids: [FR-DEB-01]
 open_questions:
 - Select a provider after checking timestamp provenance and historical coverage.
 - Choose report indicators supported by the selected source.

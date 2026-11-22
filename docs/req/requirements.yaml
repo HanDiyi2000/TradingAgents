@@ -71,3 +71,18 @@ requirements:
     metric: Ineligible evidence records passed to the analyst in cutoff and identity fixtures
     threshold: 0
     verification: OPT-T6 in docs/code-governance/verification-constraints.md
+- id: FR-DEB-01
+  type: functional
+  priority: Must
+  statement: >
+    Let both researchers speak once in the opening round. From round two onward, evaluate progress
+    only after both have spoken. End the debate early when neither side introduces evidence new to
+    this debate nor gives a first substantive reply to a previously unanswered opposing argument.
+    Record the reason for early termination and pass the complete debate history to the Research Manager.
+    The configured maximum number of rounds remains binding.
+  source: Team lead, FEAT-02 discussion on 2026-11-22. Baseline routing in src/tradingagents/graph/conditional_logic.py.
+  tradeoff: Ending repeated exchanges saves debate turns. Waiting for a full round gives both sides a chance to contribute.
+  fit_criterion:
+    metric: Scripted cases with an incorrect next speaker, stop round, termination reason or manager history
+    threshold: 0
+    verification: DEB-T1 through DEB-T5 in docs/code-governance/verification-constraints.md

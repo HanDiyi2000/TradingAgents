@@ -18,3 +18,16 @@ Review and approve these cases before implementation. Use fixed option-chain obs
 | OPT-T6 · INV-OPT-01 | Inject a later snapshot into a historical run. Also exercise wrong-symbol and unknown-time records. Capture the adapter output: zero invalid observations may enter the analyst context. In a mixed fixture retain eligible observations, including one at the cutoff. With only rejected records verify the OPT-T5 fallback. |
 
 Run the full prior offline suite alongside these cases in the implementation PR. Live-provider checks depend on provider selection and credentials.
+
+## FEAT-02 — Research debate early stop (FR-DEB-01)
+
+Proposed offline cases. Use scripted researcher turns and inspect the route after each turn.
+For every termination, compare the Research Manager's input history with the full scripted exchange through the last bear turn.
+
+| Case | Fixed exchange | Expected outcome |
+| --- | --- | --- |
+| DEB-T1 | Limit 3. Both sides state opening positions without citing evidence or answering a point. | Bull and bear each speak once. Round two begins. |
+| DEB-T2 | Limit 3. In round two both repeat round-one facts and rephrase a rebuttal already made. | The bear still gets its turn. Stop after round two, record the no-progress reason and hand off without starting round three. |
+| DEB-T3 | Limit 3. In round two one side cites a report fact unused in round one. Neither side answers a new point. | Begin round three. |
+| DEB-T4 | Limit 3. Round two adds no facts, but one side addresses a specific opposing argument left unanswered in round one. | Begin round three. |
+| DEB-T5 | Run with limit 1, then with limit 2 and fresh evidence in round two. | Hand off after exactly one and two complete rounds respectively. The configured cap applies in both cases. |

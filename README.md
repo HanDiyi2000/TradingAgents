@@ -14,7 +14,7 @@ Team repository: [HanDiyi2000/TradingAgents, CS5351 branch](https://github.com/H
 | --- | --- |
 | `src/tradingagents/`, `src/cli/`, `src/main.py` | Canonical implementation, CLI and example. The root package links and example launcher preserve existing entry points. |
 | `test/offline/`, `test/live/`, `test/conftest.py` | Baseline regression tests, real-provider tests and shared isolation fixtures. |
-| `docs/req/` | Product scope, requirement registry and its validation schema. Feature IDs FEAT-01 through FEAT-06 identify the six planned features. FEAT-01 groups the Options Analyst requirements. |
+| `docs/req/` | Product scope, requirement registry and its validation schema. Feature IDs FEAT-01 through FEAT-06 identify the six planned features. FEAT-01 covers the Options Analyst. FEAT-02 covers early stopping in the research debate. |
 | `architecture-blueprint.md`, `docs/architecture/` | Master blueprint, ADR, invariants, traceability, state, permissions, runtime policies and candidate evaluations. |
 | `AGENTS.md`, `Prompt.md`, `.agent/`, `.opencode/`, `docs/code-governance/` | Coding and verification workflow. The team must author the human-only rules and define and enforce its role permissions. |
 | `prompts/` | Reserved versioned prompt artifacts. Active baseline prompts are in the source. |

@@ -10,3 +10,9 @@
 | FR-OPT-04 | CLI display, graph log and shared report writer | OPT-T4 | Report panels and generated files |
 | FR-OPT-05 | Options data boundary and graph | OPT-T5 | Unavailable notice and final run status |
 | INV-OPT-01 | Options data adapter | OPT-T6 | Rejected or accepted observation identity and time in supervised replay |
+
+## FEAT-02 — Research debate early stop
+
+| Requirement | Component | Test or evidence | Runtime monitor |
+| --- | --- | --- | --- |
+| FR-DEB-01 | Research debate state, bull/bear router and Research Manager handoff | DEB-T1 through DEB-T5 | Ordered speaker history, completed round count and recorded reason on early stop |
