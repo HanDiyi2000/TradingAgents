@@ -123,6 +123,19 @@ Correction verification: FEAT-03 file `34 passed`; full offline `python -m pytes
 | --- | --- | --- | --- |
 | FR-TOK-01 | Run configuration, shared statistics handler and active terminal or web display | TOK-T1 and TOK-T2 | First crossing total and threshold displayed during the run |
 
+The CLI and shared-handler evidence is recorded below. The browser rows in TOK-T1 and TOK-T2 await FEAT-06 integration.
+
+| Evidence | Result |
+| --- | --- |
+| TOK-T1: strict crossing, immutable values and an immediate terminal warning while a later model call is pending | Passed in `test_token_warning.py` and `test_cli_token_warning.py`; subsequent calls and both report exports completed. |
+| TOK-T2: default threshold, missing usage and two consecutive CLI runs | Passed in `test_cli_token_warning.py`; each run used a distinct handler and warned at 100001. |
+| Supporting cases: concurrent completions, receiver failure, environment validation, independent output cap and checkpoint identity | Passed in `test_token_warning.py`; real graph coverage included parallel analysts, both model tiers and the structured debate judge. |
+| Browser activity view | Pending FEAT-06. Shared receiver tests exercised the interface without a browser. |
+
+On Python 3.12.14 the two feature files passed all 20 cases. The full offline suite recorded 1548 passed, 1 skipped, 1 deselected and 100 subtests passed. The default local suite recorded 1548 passed, 1 skipped, 5 deselected and 100 subtests passed.
+
+Pre-commit correction: warning rendering at 40, 50 and 80 columns preserved both values. The corrected feature suite passed 23 tests and the full offline suite passed 1551 tests and 100 subtests (1 skip, 1 deselection).
+
 ## FEAT-05 — Paragraph citations in the research debate
 
 | Requirement | Component | Test or evidence | Runtime monitor |

@@ -26,3 +26,17 @@ CI for commit `ca6bb65` (run 45026962649, job 137221978655) failed only the Ruff
 The test file's import-only cleanup hash is `f56a01511a1e409b16b3214108bd197a7c6eda3b`; it is recorded as a cleanup, not as an originally approved hash (original approval `821e88d2…`; correction approval `1023b4c9…`).
 
 Local verification after the cleanup: `python -m ruff check .` → `All checks passed!` (four errors reproduced before the change; `ruff==0.17.6` installed into the existing `.venv` only); FEAT-03 file `34 passed`; full offline `1528 passed, 1 skipped, 1 deselected, 100 subtests passed`; `git diff --check` clean. Remote CI has not been re-run, so it is not claimed to have passed. Human verdict pending.
+
+## FEAT-04 local implementation evidence
+
+FR-TOK-01 is implemented for the CLI and covered by 20 offline tests. The shared receiver contract is ready for FEAT-06. Browser acceptance and remote CI have not run.
+
+**Human verdict: APPROVE for local FEAT-04 CLI and shared warning contract acceptance.** The user explicitly accepted local verification after reviewing the reported results. This approval covers the local scope. Browser acceptance awaits FEAT-06.
+
+The user approved the implementation plan and original tests before coding, then approved a follow-up correction to test the existing configuration-to-client conversion for `MAX_TOKENS`, exercise a known interactive terminal in the CLI tests, and preserve checkpoint identity. The one-time warning is advisory. The implementation adds no dependency, provider request or model prompt change.
+
+Local Python 3.12.14 verification: feature tests 20 passed, related structural/entrypoint/output-cap/checkpoint tests 52 passed, offline suite 1548 passed / 1 skipped / 1 deselected, and default suite 1548 passed / 1 skipped / 5 deselected. Each full suite also passed 100 subtests. Ruff, diff whitespace and the requirements schema checks passed. Optional Bedrock dependencies account for the skip, and integration cases account for the deselections. Tests that bind a mock loopback endpoint ran with local loopback permission. No live provider was used for this feature verification.
+
+### FEAT-04 pre-commit correction
+
+A follow-up review reproduced clipping of the threshold at 40 and 50 columns. The user approved a correction and its tests before application. The live warning now uses enough rows for both values, with regression cases at 40, 50 and 80 columns. Post-fix results were 23 feature tests passed, 173 targeted tests passed, and 1551 offline tests passed with 1 skip, 1 deselection and 100 subtests passed. Ruff and diff whitespace checks passed. Final confirmation for submission is pending.

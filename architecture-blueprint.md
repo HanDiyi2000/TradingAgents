@@ -52,6 +52,8 @@ The CLI and web entry points share the same per-analysis statistics handler desi
 
 The run-level warning threshold is independent of `TRADINGAGENTS_MAX_TOKENS`, which controls output length per model call.
 
+The CLI implements this contract with a run-local `StatsCallbackHandler`. The existing callback chain accounts for usage. A `TokenWarning(total_tokens, threshold)` is available through the handler snapshot and an optional one-shot receiver. Rich refreshes the current view at the crossing; a terminal without live display support receives a plain warning. See [ADR 002](docs/architecture/adr/002-token-warning.md) for configuration, checkpoint compatibility and the planned FEAT-06 integration.
+
 ## FEAT-05 — Paragraph citations in the research debate
 
 At the handoff from analysts to researchers, assign a stable report prefix and a sequence starting at 01 within each supplied report. For example, `[MKT-01]` identifies the first market paragraph and `[FUN-02]` the second fundamentals paragraph. Treat blank lines as body paragraph boundaries and skip headings and empty blocks. Preserve the original paragraph text. A selected Options Analyst report uses its own sequence (`OPT`). The company background added at export falls outside the debate inputs.

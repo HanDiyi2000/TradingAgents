@@ -51,7 +51,7 @@ Approved offline cases (test blob `821e88d24eae95fcd7f01bf094fb23a90bff52b2`). U
 
 ## FEAT-04 — Per-run token usage warning (FR-TOK-01)
 
-Proposed offline cases. Feed scripted usage metadata from multiple agents through each entry point. Capture terminal warnings for CLI runs and browser activity warnings for web runs.
+The CLI cases below are implemented and exercised with scripted model usage, the real graph, Rich Live and the report writer. Run the same cases through the browser activity view after FEAT-06 provides that entry point. The shared-handler tests cover the receiver contract independently.
 
 | Case | Setup | Expected outcome |
 | --- | --- | --- |

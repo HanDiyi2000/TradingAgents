@@ -261,3 +261,31 @@ sessions:
         dependency manifests or other environments changed.
       remote_ci: "Not re-run; no claim that remote CI has passed."
       human_review: pending
+
+  - date: "2026-11-22"
+    tool: Codex
+    feature: FEAT-04
+    task: Implement and verify the single-run token usage warning (FR-TOK-01).
+    baseline: ce838c82a630fa150e6cfe7ea6146ed8fcbced7c
+    scope: Run configuration, shared accounting and warning receiver, CLI presentation and checkpoint compatibility.
+    human_approval:
+      - The user approved the Stage A plan before test preparation.
+      - The user approved the Stage B test patch before implementation.
+      - The user approved the Stage C correction patch for configuration expectations, terminal fixtures and checkpoint identity.
+    original_test_patch_sha256: "04459bf82d388f506fdca1acd1e52c35420ec3afee5097697f41e23065a1cf9a"
+    approved_corrected_test_blobs:
+      test/offline/test_token_warning.py: "0b14c3d601f71b53e1d9c4b990f6fb50cb297cbd"
+      test/offline/test_cli_token_warning.py: "42e99e554f5110dac07cbb55cb12ad1527dabbc3"
+    verification:
+      - The original 19 tests failed as expected against the unimplemented baseline.
+      - All 20 approved corrected feature tests and 52 related tests passed locally.
+      - Offline and default suites each passed 1548 tests and 100 subtests.
+      - Ruff, diff whitespace and requirements schema checks passed.
+    limitations: Browser acceptance awaits FEAT-06. Remote CI and live provider checks were not run.
+    human_review: The user explicitly accepted local FEAT-04 verification for the CLI and shared warning contract after receiving Stage D results.
+    precommit_correction:
+      human_approval: User approved the narrow-terminal patch and its three regression cases before application.
+      finding: At 40 and 50 columns, the first warning line showed cumulative usage but clipped the threshold.
+      change: Size the warning region to the rendered line count.
+      approved_test_blob: "5f2d870d8fc7fc2b14e1ce4dee1fc4e033b69e25"
+      verification: 23 feature tests, 173 targeted tests and 1551 offline tests passed. The offline run also passed 100 subtests, skipped one optional Bedrock test and deselected one integration test. Ruff and diff whitespace checks passed.
