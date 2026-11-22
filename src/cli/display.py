@@ -15,6 +15,7 @@ from rich.spinner import Spinner
 from rich.table import Table
 from rich.text import Text
 
+from cli.stats_handler import TokenWarning
 from tradingagents.graph.analyst_execution import (
     ANALYST_NODE_SPECS,
     AnalystExecutionPlan,
@@ -165,6 +166,7 @@ def create_layout():
     layout.split_column(
         Layout(name="header", size=3),
         Layout(name="main"),
+        Layout(name="token_warning", size=1, visible=False),
         Layout(name="footer", size=3),
     )
     layout["main"].split_column(
@@ -173,6 +175,25 @@ def create_layout():
     layout["upper"].split_row(
         Layout(name="progress", ratio=2), Layout(name="messages", ratio=3)
     )
+    return layout
+
+
+def format_token_warning(warning: TokenWarning) -> Text:
+    return Text(
+        f"Token usage warning: {warning.total_tokens:,} used (threshold {warning.threshold:,})",
+        style="bold yellow",
+    )
+
+
+def render_live_layout(layout, stats_handler, target_console):
+    """Render FR-TOK-01 independently of when the graph next yields output."""
+    warning = stats_handler.token_warning
+    if warning is not None:
+        region = layout["token_warning"]
+        message = format_token_warning(warning)
+        region.size = len(message.wrap(target_console, target_console.width))
+        region.update(message)
+        region.visible = True
     return layout
 
 

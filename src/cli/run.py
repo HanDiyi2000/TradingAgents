@@ -4,6 +4,7 @@ import os
 import sys
 import time
 import webbrowser
+from contextlib import ExitStack
 from functools import wraps
 from pathlib import Path
 
@@ -17,16 +18,18 @@ from cli.display import (
     console,
     create_layout,
     display_complete_report,
+    format_token_warning,
     message_buffer,
+    render_live_layout,
     update_analyst_statuses,
     update_display,
     update_research_team_status,
 )
 from cli.selections import depth_from_env, get_user_selections, unattended_gaps
-from cli.stats_handler import StatsCallbackHandler
+from cli.stats_handler import StatsCallbackHandler, TokenWarning
 from tradingagents.agents.rating import is_review, run_rating
 from tradingagents.dataflows.symbols import safe_ticker_component
-from tradingagents.default_config import DEFAULT_CONFIG
+from tradingagents.default_config import DEFAULT_CONFIG, DEFAULT_TOKEN_WARNING_THRESHOLD
 from tradingagents.graph.analyst_execution import (
     build_analyst_execution_plan,
 )
@@ -112,7 +115,20 @@ def run_analysis(checkpoint: bool | None = None, portfolio=None, flags=None):
 
     config = _build_run_config(selections, checkpoint)
 
-    stats_handler = StatsCallbackHandler()
+    # This UI setting must not change the graph's checkpoint identity.
+    threshold = config.pop("token_warning_threshold", DEFAULT_TOKEN_WARNING_THRESHOLD)
+    live = None
+
+    def notify_token_warning(warning: TokenWarning) -> None:
+        if live is not None and live.console.is_terminal and not live.console.is_dumb_terminal:
+            live.refresh()
+        else:
+            console.print(format_token_warning(warning))
+
+    stats_handler = StatsCallbackHandler(
+        warning_threshold=threshold,
+        on_token_warning=notify_token_warning,
+    )
 
     # Normalize analyst selection to predefined order (selection is a 'set', order is fixed)
     selected_set = {analyst.value for analyst in selections["analysts"]}
@@ -178,15 +194,29 @@ def run_analysis(checkpoint: bool | None = None, portfolio=None, flags=None):
                         f.write(text)
         return wrapper
 
-    message_buffer.add_message = save_message_decorator(message_buffer, "add_message")
-    message_buffer.add_tool_call = save_tool_call_decorator(message_buffer, "add_tool_call")
-    message_buffer.update_report_section = save_report_section_decorator(message_buffer, "update_report_section")
-
     layout = create_layout()
 
     # The alternate screen keeps a layout taller than the window from redrawing
     # by scrolling; the final report prints after this block, on the normal screen.
-    with Live(layout, refresh_per_second=4, screen=True):
+    with ExitStack() as logging_scope, Live(
+        get_renderable=lambda: render_live_layout(
+            layout, stats_handler, live.console if live is not None else console,
+        ),
+        refresh_per_second=4,
+        screen=True,
+    ) as active_live:
+        live = active_live
+        for name, decorate in (
+            ("add_message", save_message_decorator),
+            ("add_tool_call", save_tool_call_decorator),
+            ("update_report_section", save_report_section_decorator),
+        ):
+            if name in vars(message_buffer):
+                logging_scope.callback(setattr, message_buffer, name, getattr(message_buffer, name))
+            else:
+                logging_scope.callback(delattr, message_buffer, name)
+            setattr(message_buffer, name, decorate(message_buffer, name))
+
         # Initial display
         update_display(layout, stats_handler=stats_handler, start_time=start_time)
 
