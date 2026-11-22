@@ -13,9 +13,14 @@ human-approved yet.
 
 A real-judge run needs a live structured model call, so it is excluded from the
 default offline suite with the ``integration`` marker and only runs when
-``TRADINGAGENTS_DEBATE_EVAL_LIVE=1`` is set and a judge is available. The
-default (offline) path only validates the fixture and the judge contract, so CI
-stays hermetic and no TradingAgents model call is made in this stage.
+``DEBATE_EVAL_LIVE=1`` is set and a judge is available. The default (offline) path
+only validates the fixture and the judge contract, so CI stays hermetic and no
+TradingAgents model call is made in this stage.
+
+The opt-in uses ``DEBATE_EVAL_LIVE`` (not a ``TRADINGAGENTS_*`` name) on purpose:
+``test/conftest.py`` blanks every ``TRADINGAGENTS_*`` variable at import time, so
+an opt-in under that prefix would always read as unset (the same reason the CityU
+probe uses ``CITYU_PROBE``).
 
 Pass criteria for a live run (documented, applied when opted in):
 - Build the judge through the same leaf contract the bear node uses.
@@ -25,8 +30,8 @@ Pass criteria for a live run (documented, applied when opted in):
 - Acceptance: 100% of the six archetypes correct (exact match). Near-miss
   variants, if added later, are reported as precision/recall and are advisory.
 
-Requirement: FR-DEB-01. Entry point for the future live check:
-    TRADINGAGENTS_DEBATE_EVAL_LIVE=1 python -m pytest \\
+Requirement: FR-DEB-01. Entry point for the live check (CityU DeepSeek endpoint):
+    DEBATE_EVAL_LIVE=1 python -m pytest \\
         test/offline/test_debate_semantics_eval.py -m integration -q
 """
 
@@ -41,6 +46,11 @@ import pytest
 CASES_PATH = Path(__file__).parent / "debate_progress_eval" / "cases.json"
 
 REQUIRED_ARRAYS = {"cases"}
+
+# CityU DeepSeek endpoint used for the live run (same as the guarded probe). The
+# client is built directly so no TRADINGAGENTS_* provider config is required.
+CITYU_BASE_URL_DEFAULT = "https://llm.cs.cityu.edu.hk/v1"
+CITYU_MODEL = "CS5351/DeepSeek-V4-Flash"
 
 
 def _load_cases():
@@ -91,6 +101,20 @@ def test_fixture_is_well_formed():
     assert sem_05a["expect_bear"] == {"new_evidence": False, "first_reply": False}
     assert sem_05a["expect_outcome"] == "NO_PROGRESS"
 
+    # SEM-06 is history-relative: A is before the reply, B after it, same text.
+    sem_06 = next(c for c in cases if c["id"] == "SEM-06")
+    assert sem_06["history_a"] not in (None, "")
+    assert sem_06["history_b"] not in (None, "")
+    assert sem_06["reply_text"] not in (None, "")
+    # The reply the thing under judgement must not already appear in history A,
+    # otherwise "is this a first reply?" is ill-posed.
+    assert sem_06["reply_text"] not in sem_06["history_a"]
+    # B already contains the delivered reply.
+    assert sem_06["reply_text"] in sem_06["history_b"]
+    # Approved labels: A = new fact + first reply; B = repeat + no first reply.
+    assert sem_06["expect_in_history_a"] == {"new_evidence": True, "first_reply": True}
+    assert sem_06["expect_in_history_b"] == {"new_evidence": False, "first_reply": False}
+
 
 def _judge_judgement(judge, history, bull_turn, bear_turn):
     """Run the real judge's structured path for one pair; return the model or None.
@@ -118,15 +142,22 @@ def _score_cases(judge, cases):
     failures = []
     for case in cases:
         if case["archetype"] == "same-text-different-history":
-            judgement = _judge_judgement(
-                judge, case["history_a"], case["reply_text"], ""
-            )
-            if judgement is None:
-                failures.append((case["id"], "A", "no structured judgement", None))
-                continue
-            got = _score_side(judgement, "bull")
-            if got != case["expect_in_history_a"]:
-                failures.append((case["id"], "A", got, case["expect_in_history_a"]))
+            # Score the SAME current reply text against both histories: A is the
+            # state before the reply, B is after it. This is what makes the
+            # "same text, different history" archetype well-posed.
+            for history_key, expect_key, label in (
+                ("history_a", "expect_in_history_a", "A"),
+                ("history_b", "expect_in_history_b", "B"),
+            ):
+                judgement = _judge_judgement(
+                    judge, case[history_key], case["reply_text"], ""
+                )
+                if judgement is None:
+                    failures.append((case["id"], label, "no structured judgement", None))
+                    continue
+                got = _score_side(judgement, "bull")
+                if got != case[expect_key]:
+                    failures.append((case["id"], label, got, case[expect_key]))
             continue
 
         judgement = _judge_judgement(
@@ -189,20 +220,38 @@ def test_runner_scores_model_derived_outcomes_against_labels_with_fake_llm():
 
     cases = _load_cases()["cases"]
 
-    def judgement_for_case(case):
+    def _judgement(bull_flags, bear_flags, outcome):
+        return DebateJudgement(
+            bull=_SideJudgement(**bull_flags, confidence="high"),
+            bear=_SideJudgement(**bear_flags, confidence="high"),
+            outcome=outcome,
+        )
+
+    def judgement_for_case(case, *, history_key=None):
         if case["archetype"] == "same-text-different-history":
-            flags = case["expect_in_history_a"]
+            # Both histories carry the same reply text; distinguish by the
+            # expected labels for the history being scored.
+            key = "expect_in_history_a" if history_key == "history_a" else "expect_in_history_b"
+            flags = case[key]
+            outcome = "PROGRESS" if (flags["new_evidence"] or flags["first_reply"]) else "NO_PROGRESS"
             side = _SideJudgement(**flags, confidence="high")
-            return DebateJudgement(bull=side, bear=side, outcome="PROGRESS")
-        bull = _SideJudgement(**case["expect_bull"], confidence="high")
-        bear = _SideJudgement(**case["expect_bear"], confidence="high")
-        return DebateJudgement(bull=bull, bear=bear, outcome=case["expect_outcome"])
+            return DebateJudgement(bull=side, bear=side, outcome=outcome)
+        return _judgement(case["expect_bull"], case["expect_bear"], case["expect_outcome"])
 
     # Map each rendered prompt to its case by a unique substring: the full bear
-    # turn (unique per case) or, for SEM-06, the reply text.
+    # turn (unique per case). For SEM-06 the A and B prompts differ only by the
+    # presence of history B's distinguishing line, so key on that.
     def judge_for_prompt(prompt):
         for case in cases:
-            marker = case.get("reply_text") or case.get("bear_turn")
+            if case["archetype"] == "same-text-different-history":
+                reply = case["reply_text"]
+                if reply not in prompt:
+                    continue
+                # History B already contains the reply (so it appears twice: once
+                # in the history, once as the current turn); history A does not.
+                history_key = "history_b" if prompt.count(reply) >= 2 else "history_a"
+                return judgement_for_case(case, history_key=history_key)
+            marker = case.get("bear_turn")
             if marker and marker in prompt:
                 return judgement_for_case(case)
         raise AssertionError("fake LLM saw an unknown prompt")
@@ -322,22 +371,44 @@ def test_structured_call_failure_propagates_from_both_methods():
         judge.invoke("prompt")
 
 
+def _build_cityu_judge():
+    """The real judge on the CityU DeepSeek endpoint, bounded for a single run.
+
+    Uses the existing ``deepseek`` OpenAI-compatible client (the same provider
+    family the quick tier uses) pointed at the CityU base URL with the exact
+    model id. This avoids relying on TRADINGAGENTS_* provider config, which
+    ``test/conftest.py`` blanks. ``DEEPSEEK_API_KEY`` (no such prefix) is read by
+    the client itself and is never printed here.
+    """
+    from tradingagents.agents.debate_progress import build_debate_judge
+    from tradingagents.llm_clients import create_llm_client
+
+    base_url = (
+        os.environ.get("CITYU_BASE_URL")
+        or os.environ.get("TRADINGAGENTS_CITYU_BASE_URL")  # may be blanked by conftest
+        or CITYU_BASE_URL_DEFAULT
+    )
+    client = create_llm_client(
+        provider="deepseek",
+        model=CITYU_MODEL,
+        base_url=base_url,
+        max_retries=1,
+        timeout=60,
+    )
+    return build_debate_judge(client.get_llm())
+
+
 @pytest.mark.integration
 def test_live_judge_meets_labelled_cases():
-    """Gated: evaluate a real judge against the proposed labels.
+    """Gated: evaluate the real CityU judge against the proposed labels.
 
-    Skipped unless opted in, because it needs live structured model calls and
-    this stage does not run TradingAgents model calls. Builds the real quick-tier
-    LLM from the run configuration, builds the real judge, and scores the seven
-    cases through the same structured path the bear node uses.
+    Skipped unless opted in, because it makes live structured model calls. Builds
+    the quick-tier-style deepseek client at the CityU endpoint with the exact model
+    ``CS5351/DeepSeek-V4-Flash``, builds the real judge, and scores the seven cases
+    through the same structured path the bear node uses.
     """
-    if os.environ.get("TRADINGAGENTS_DEBATE_EVAL_LIVE") != "1":
-        pytest.skip("set TRADINGAGENTS_DEBATE_EVAL_LIVE=1 to run the live judge evaluation")
+    if os.environ.get("DEBATE_EVAL_LIVE") != "1":
+        pytest.skip("set DEBATE_EVAL_LIVE=1 to run the live judge evaluation")
 
-    from tradingagents.agents.debate_progress import build_debate_judge
-    from tradingagents.dataflows.config import get_config
-    from tradingagents.llm_clients import create_tier_client
-
-    llm = create_tier_client(get_config(), "quick").get_llm()
-    judge = build_debate_judge(llm)
+    judge = _build_cityu_judge()
     _assert_judge_matches_labels(judge, _load_cases()["cases"])

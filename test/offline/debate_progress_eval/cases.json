@@ -19,22 +19,22 @@
       "archetype": "reused-number-new-fact",
       "history": "Bull Analyst: Revenue grew by 10% this year.",
       "bull_turn": "Bull Analyst: Gross margin was 10% and holding.",
-      "bear_turn": "Bear Analyst: A 10% gross margin is thin for this sector.",
+      "bear_turn": "Bear Analyst: Free cash flow turned negative last quarter and the company drew 250 million from its credit line.",
       "expect_bull": {"new_evidence": true, "first_reply": false},
       "expect_bear": {"new_evidence": true, "first_reply": false},
       "expect_outcome": "PROGRESS",
-      "rationale": "The number 10 is reused, but gross margin is a different fact from revenue growth; both sides introduce new evidence."
+      "rationale": "The number 10 is reused, but gross margin is a different fact from revenue growth; the bear adds a distinct new fact (negative free cash flow and a credit-line draw), not the 10% margin already stated by the bull in this pair."
     },
     {
       "id": "SEM-02",
       "archetype": "qualitative-fact-no-unit",
       "history": "Bull Analyst: Revenue grew 10%.\nBear Analyst: Valuation is stretched.",
       "bull_turn": "Bull Analyst: Management signalled a durable competitive moat from its new brand partnerships.",
-      "bear_turn": "Bear Analyst: Brand partnerships can be terminated at will, so they are fragile.",
+      "bear_turn": "Bear Analyst: The company's largest distributor recently discontinued its product line without public notice.",
       "expect_bull": {"new_evidence": true, "first_reply": false},
       "expect_bear": {"new_evidence": true, "first_reply": false},
       "expect_outcome": "PROGRESS",
-      "rationale": "A new qualitative fact with no number, entity, or ID is still new evidence."
+      "rationale": "A new qualitative fact with no number, entity, or ID is still new evidence. The bear adds an independent qualitative observation (a distributor discontinuing the line) rather than rebutting the bull's current moat argument, so it is new evidence but not a first reply to that point."
     },
     {
       "id": "SEM-03",
@@ -50,13 +50,13 @@
     {
       "id": "SEM-04",
       "archetype": "first-reply-without-marker",
-      "history": "Bull Analyst: Margins are expanding.\nBear Analyst: Rising input costs will compress margins.",
-      "bull_turn": "Bull Analyst: Input-cost contracts are fixed through next year, so the compression the bear expects will not occur.",
-      "bear_turn": "Bear Analyst: Fixed contracts expire, leaving exposure after year end.",
+      "history": "Bull Analyst: Margins are expanding while input costs are rising.\nBear Analyst: Rising input costs will compress those margins.",
+      "bull_turn": "Bull Analyst: You say rising input costs will compress margins, but margins have been expanding while input costs are rising, so the compression you expect has not occurred.",
+      "bear_turn": "Bear Analyst: You say margins have been expanding while input costs are rising, but this does not rule out delayed cost pass-through. If those rising costs affect margins later, compression could still occur. Therefore, the current margin expansion does not disprove your concern about future compression.",
       "expect_bull": {"new_evidence": false, "first_reply": true},
       "expect_bear": {"new_evidence": false, "first_reply": true},
       "expect_outcome": "PROGRESS",
-      "rationale": "The bull's turn is a first substantive reply to the bear's unanswered margin-compression point, with no explicit reply marker; the bear then replies first to the bull's contract point."
+      "rationale": "Both turns reuse only the facts already in the history (expanding margins, rising input costs). The bull's turn is a first substantive reply to the bear's unanswered margin-compression point with no explicit reply marker; the bear then replies first to the bull's expansion point. No new evidence is introduced."
     },
     {
       "id": "SEM-05a",
@@ -83,12 +83,12 @@
     {
       "id": "SEM-06",
       "archetype": "same-text-different-history",
-      "history_a": "Bear Analyst: Demand is cyclical.\nBull Analyst: Backlog is multi-year, so demand is insulated.",
-      "history_b": "Bear Analyst: Demand is cyclical.\nBull Analyst: Backlog is multi-year, so demand is insulated.\nBear Analyst: Backlog can be cancelled.",
+      "history_a": "Bear Analyst: Demand is cyclical.",
+      "history_b": "Bear Analyst: Demand is cyclical.\nBull Analyst: Backlog is multi-year, so demand is insulated.",
       "reply_text": "Bull Analyst: Backlog is multi-year, so demand is insulated.",
-      "expect_in_history_a": {"new_evidence": false, "first_reply": true},
+      "expect_in_history_a": {"new_evidence": true, "first_reply": true},
       "expect_in_history_b": {"new_evidence": false, "first_reply": false},
-      "rationale": "The identical reply is a first response in history A (the bear's cyclicality point was unanswered) and a repeat in history B (already answered)."
+      "rationale": "History A is the state before the reply (only the bear's cyclical-demand point, unanswered), so the same bull turn is a first reply and introduces the backlog fact. History B already contains that bull reply, so the identical turn is a repeat of an already-delivered reply: no new evidence, not a first reply."
     }
   ]
 }

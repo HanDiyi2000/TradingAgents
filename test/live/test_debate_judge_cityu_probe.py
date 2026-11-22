@@ -10,10 +10,15 @@ Enable and run it only when you have authorised the call:
 
     # PowerShell (values are read from the environment; never printed)
     $env:DEEPSEEK_API_KEY = "<your CityU token>"      # your token, not shown here
-    $env:TRADINGAGENTS_CITYU_PROBE = "1"
-    $env:TRADINGAGENTS_CITYU_BASE_URL = "https://llm.cs.cityu.edu.hk/v1"  # optional
+    $env:CITYU_PROBE = "1"
+    $env:CITYU_BASE_URL = "https://llm.cs.cityu.edu.hk/v1"  # optional
     & .\\.venv\\Scripts\\python.exe -m pytest `
         test/live/test_debate_judge_cityu_probe.py -m integration -q -s
+
+The opt-in uses ``CITYU_PROBE`` (not a ``TRADINGAGENTS_*`` name) on purpose:
+``test/conftest.py`` blanks every ``TRADINGAGENTS_*`` variable at import time, so
+an opt-in under that prefix would always read as unset. ``DEEPSEEK_API_KEY`` has
+no such prefix and is untouched.
 
 Nothing here prints the API key or the base URL's credentials. On any outcome the
 test prints a single, secret-free diagnostic line and asserts the selected
@@ -43,7 +48,8 @@ BEAR_TURN = "Bear Analyst: To address your backlog point, the backlog can be can
 
 
 def _probe_enabled() -> bool:
-    return os.environ.get("TRADINGAGENTS_CITYU_PROBE") == "1"
+    # Not a TRADINGAGENTS_* name: test/conftest.py blanks those at import time.
+    return os.environ.get("CITYU_PROBE") == "1"
 
 
 def _has_real_key() -> bool:
@@ -54,7 +60,7 @@ def _has_real_key() -> bool:
 pytestmark = [
     pytest.mark.integration,
     pytest.mark.skipif(not _probe_enabled(),
-                       reason="set TRADINGAGENTS_CITYU_PROBE=1 to authorise the one live call"),
+                       reason="set CITYU_PROBE=1 to authorise the one live call"),
     pytest.mark.skipif(not _has_real_key(),
                        reason="DEEPSEEK_API_KEY not set (or placeholder); skipping live probe"),
 ]
@@ -65,7 +71,11 @@ def _build_judge():
     from tradingagents.agents.debate_progress import build_debate_judge
     from tradingagents.llm_clients import create_llm_client
 
-    base_url = os.environ.get("TRADINGAGENTS_CITYU_BASE_URL", CITYU_BASE_URL_DEFAULT)
+    base_url = (
+        os.environ.get("CITYU_BASE_URL")
+        or os.environ.get("TRADINGAGENTS_CITYU_BASE_URL")  # may be blanked by conftest
+        or CITYU_BASE_URL_DEFAULT
+    )
     client = create_llm_client(
         provider="deepseek",
         model=CITYU_MODEL,
