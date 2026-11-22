@@ -18,3 +18,11 @@ The acceptance is supported by OpenCode's reported 34 passing feature tests and 
 Remaining verification limitations: lint was unavailable and has not passed; independent full-suite reproduction in the review chat ended with exit code 139. OpenCode's successful runs used the documented mixed Python environment. Team CI and other applicable blocking gates remain required before merge. The sentence-boundary heuristic's abbreviation limitation remains documented.
 
 Evidence: [Haobin Yan's annotated transcript](../transcripts/60642891-Haobin-Yan.md), [individual reflection](../Report.md), [FEAT-03 tests](../test/offline/test_company_background.py), the trace matrix and AI-use log. The raw session remains unchanged outside the repository; its SHA-256 is recorded in the transcript. This record was transcribed by the review assistant under the student's authorization, rather than generated as an independent human review by the coding agent. No commit, push or PR has been performed as part of recording this acceptance.
+
+## FEAT-03 CI import-only cleanup (no PR)
+
+CI for commit `ca6bb65` (run 45026962649, job 137221978655) failed only the Ruff check. A human-approved, import-only cleanup was applied to `src/tradingagents/agents/state.py` (UP035: import `NotRequired` from `typing`, keeping `TypedDict` from `typing_extensions`) and `test/offline/test_company_background.py` (I001 plus two F401: removed the unused `get_current_date` and `set_config` imports and merged/ordered the `yahoo` imports). No business logic, test case, assertion or expected outcome changed.
+
+The test file's import-only cleanup hash is `f56a01511a1e409b16b3214108bd197a7c6eda3b`; it is recorded as a cleanup, not as an originally approved hash (original approval `821e88d2…`; correction approval `1023b4c9…`).
+
+Local verification after the cleanup: `python -m ruff check .` → `All checks passed!` (four errors reproduced before the change; `ruff==0.17.6` installed into the existing `.venv` only); FEAT-03 file `34 passed`; full offline `1528 passed, 1 skipped, 1 deselected, 100 subtests passed`; `git diff --check` clean. Remote CI has not been re-run, so it is not claimed to have passed. Human verdict pending.

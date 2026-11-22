@@ -1,7 +1,7 @@
-from typing import Annotated
+from typing import Annotated, NotRequired
 
 from langgraph.graph import MessagesState
-from typing_extensions import NotRequired, TypedDict
+from typing_extensions import TypedDict
 
 
 # Researcher team state

@@ -232,3 +232,32 @@ sessions:
         - "Recorded final local acceptance and verification limitations in docs/review-memo.md."
       raw_export_sha256: "9c7389bcdb91af21f520ee38099204da4f63c0c691b8550bf2f83977766c5363"
       status: "No code changes, commit, push or PR in this delivery-preparation step."
+    ci_import_cleanup:
+      date: "2026-11-22"
+      reason: >
+        GitHub CI for commit ca6bb65 failed only the Ruff check (run 45026962649,
+        job 137221978655): UP035 (import NotRequired from typing, not typing_extensions)
+        in src/tradingagents/agents/state.py, and I001 plus two F401 (unused
+        get_current_date and set_config imports) in test/offline/test_company_background.py.
+      approved_scope: "Human-approved import-only cleanup of the two code paths and factual evidence updates."
+      approval_history:
+        - "Original FEAT-03 tests approved at blob 821e88d24eae95fcd7f01bf094fb23a90bff52b2."
+        - "Correction regression tests approved separately at blob 1023b4c964fa96bf7d5f734f1f97632df58c0b43 (not part of the original approval)."
+      approved_test_blob: "test/offline/test_company_background.py at 1023b4c964fa96bf7d5f734f1f97632df58c0b43"
+      new_test_blob: "test/offline/test_company_background.py at f56a01511a1e409b16b3214108bd197a7c6eda3b (import-only cleanup; not the originally approved hash)"
+      changes:
+        - "agents/state.py: import NotRequired from typing; keep TypedDict from typing_extensions (no logic change)."
+        - "test/offline/test_company_background.py: remove unused get_current_date and set_config imports; merge and order the yahoo imports (import-only; no test body, assertion or expected outcome changed)."
+      verification:
+        lint_command: "python -m ruff check . (ruff==0.17.6 installed into the existing .venv only)"
+        lint_result: "All checks passed! (4 errors reproduced before the change)"
+        feature: "34 passed via test/offline/test_company_background.py"
+        offline_suite: "1528 passed, 1 skipped, 1 deselected, 100 subtests passed (python -m pytest -q test/offline)"
+        diff_check: "git diff --check clean"
+      environment: >-
+        interpreter .venv/bin/python (3.13.5); pytest supplied via
+        PYTHONPATH=/Users/gem/miniconda3/lib/python3.13/site-packages with
+        PYTEST_DISABLE_PLUGIN_AUTOLOAD=1; ruff==0.17.6 installed into .venv only; no
+        dependency manifests or other environments changed.
+      remote_ci: "Not re-run; no claim that remote CI has passed."
+      human_review: pending

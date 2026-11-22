@@ -47,12 +47,9 @@ from offline.test_graph_end_to_end import ScriptedModel
 from tradingagents.agents import context
 from tradingagents.agents.analysts import sentiment_analyst
 from tradingagents.dataflows import router
-from tradingagents.dataflows.date_window import get_current_date
-from tradingagents.dataflows.vendors.yahoo import market as yahoo_market
-from tradingagents.dataflows.vendors.yahoo import snapshot
-from tradingagents.graph import trading_graph
-from tradingagents.dataflows.config import set_config
+from tradingagents.dataflows.vendors.yahoo import market as yahoo_market, snapshot
 from tradingagents.default_config import DEFAULT_CONFIG
+from tradingagents.graph import trading_graph
 
 # A fixed clock. All date-sensitive code reads ``get_current_date`` (via
 # ``date_window.is_historical`` and ``trading_graph._validate_trade_date``), so
