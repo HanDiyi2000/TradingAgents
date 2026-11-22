@@ -49,3 +49,11 @@ For historical runs, follow the identity rule in `src/tradingagents/agents/conte
 The CLI creates a statistics handler for each analysis. Reuse its input and output counters and read the warning threshold from the run configuration. A call with no reported usage contributes nothing to the measured total. Check the total and mark the first crossing under the handler's existing lock so simultaneous completions produce a single warning. Send the crossing total and configured threshold to the terminal. The graph continues normally.
 
 The run-level warning threshold is independent of `TRADINGAGENTS_MAX_TOKENS`, which controls output length per model call.
+
+## FEAT-05 — Paragraph citations in the research debate
+
+At the handoff from analysts to researchers, assign a stable report prefix and a sequence starting at 01 within each supplied report. For example, `[MKT-01]` identifies the first market paragraph and `[FUN-02]` the second fundamentals paragraph. Treat blank lines as body paragraph boundaries and skip headings and empty blocks. Preserve the original paragraph text. A selected Options Analyst report uses its own sequence (`OPT`). The company background added at export falls outside the debate inputs.
+
+Give both researchers the same labelled text. Each argument carries the ID or IDs for its evidence. Before recording a turn, check each ID against this run's paragraphs. Display “Invalid citation” beside unknown IDs and “No citation provided” beside an argument with none. Preserve these annotations in the debate history and continue. Both consolidated renderers use the original labels so a reader can search for the cited source.
+
+FEAT-02 evaluates progress separately. A first reply to an unanswered opposing point can advance the debate even when both speakers cite the same paragraph.

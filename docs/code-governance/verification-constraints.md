@@ -51,3 +51,13 @@ Proposed offline cases. Feed scripted usage metadata from multiple agents into a
 | --- | --- | --- |
 | TOK-T1 | Set the threshold to 1000. Supply input/output pairs (700, 200), (80, 20), (60, 40) and (100, 100). | Cumulative totals are 900, 1000, 1100 and 1300. Exactly one warning appears, at 1100, showing 1100 used and a threshold of 1000. The final report is produced. |
 | TOK-T2 | Leave the threshold unset. Run two analyses in the same process. In each, reach 100000, receive one completion with no usage metadata, then add one reported token. | Each analysis starts at zero, stays quiet through 100000, and warns once at 100001 with the default threshold of 100000. |
+
+## FEAT-05 — Paragraph citations (FR-CIT-01)
+
+Use fixed analyst reports and scripted turns. Inspect both researcher inputs and the exported Markdown and HTML. These cases are proposed for review before implementation.
+
+| Case | Setup | Expected outcome |
+| --- | --- | --- |
+| CIT-T1 | Supply a fundamentals report with a heading and two distinct body paragraphs separated by a blank line. Bull cites the first and bear the second. Repeat with an options report added to the inputs. | Both researchers see FUN-01 and FUN-02 on the same original paragraphs in both runs. The heading has no ID. The options report starts at OPT-01. Each export contains one matching source paragraph per citation, with the ID also beside the correct argument. |
+| CIT-T2 | Script a claim citing two valid paragraphs, one citing an absent FUN-99, and one with no citation. | Both valid references remain beside the first claim. The unknown ID carries an invalid-citation notice and the uncited claim carries a missing-citation notice in both exports. The debate reaches the Research Manager. |
+| CIT-T3 | Below the round cap, bear first answers an outstanding bull argument using the same valid paragraph ID as bull. | Both citations resolve to that paragraph. FEAT-02 recognizes the first reply as progress. |

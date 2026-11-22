@@ -28,3 +28,9 @@
 | Requirement | Component | Test or evidence | Runtime monitor |
 | --- | --- | --- | --- |
 | FR-TOK-01 | Run configuration, CLI statistics handler and terminal display | TOK-T1 and TOK-T2 | First crossing total and threshold displayed during the run |
+
+## FEAT-05 — Paragraph citations in the research debate
+
+| Requirement | Component | Test or evidence | Runtime monitor |
+| --- | --- | --- | --- |
+| FR-CIT-01 | Analyst-to-research handoff, bull/bear histories, consolidated report renderers | CIT-T1 through CIT-T3 | Source labels, argument citations and missing or invalid citation notices in the run report |

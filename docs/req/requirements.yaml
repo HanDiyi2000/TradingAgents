@@ -116,3 +116,17 @@ requirements:
     metric: Scripted runs with incorrect warning count, timing, displayed values or report completion
     threshold: 0
     verification: TOK-T1 and TOK-T2 in docs/code-governance/verification-constraints.md
+- id: FR-CIT-01
+  type: functional
+  priority: Must
+  statement: >
+    Before the debate, number the body paragraphs of each analyst report supplied to the researchers.
+    Each bull or bear argument drawing on a report shall carry the cited paragraph IDs beside that argument.
+    Preserve the IDs on source paragraphs and arguments in consolidated Markdown and HTML.
+    Mark any unknown reference as invalid and any argument lacking a reference as uncited. Continue the debate in both cases.
+  source: Team lead, FEAT-05 scope confirmed on 2026-11-22. Baseline inputs in src/tradingagents/agents/researchers/ and exports in src/tradingagents/reporting.py.
+  tradeoff: ID checks let readers locate the original wording. Readers judge how well it supports an inference.
+  fit_criterion:
+    metric: Offline cases with a misplaced, ambiguous or wrongly flagged citation, inconsistent export, or interrupted debate
+    threshold: 0
+    verification: CIT-T1 through CIT-T3 in docs/code-governance/verification-constraints.md

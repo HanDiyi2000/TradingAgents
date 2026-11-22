@@ -37,3 +37,9 @@ sessions:
     task: Document FEAT-04 and its boundary and reset cases.
     human_instruction: Keep the warning simple. The lead approved the configurable 100000-token default and one terminal warning per CLI analysis.
     scope: Specification and proposed offline acceptance cases.
+
+  - date: "2026-11-22"
+    tool: Codex
+    task: Specify FEAT-05 and draft paragraph citation acceptance cases.
+    human_instruction: The lead confirmed the numbering scope, inline references and non-blocking checks before document edits.
+    scope: Requirements, design and proposed offline acceptance cases.
