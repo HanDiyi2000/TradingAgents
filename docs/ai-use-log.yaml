@@ -49,3 +49,28 @@ sessions:
     task: Document FEAT-06 and extend FR-TOK-01 to web runs.
     human_instruction: Open the browser automatically and show intermediate analysis content as it appears in the terminal, including the preceding five features.
     scope: Requirements and design approved for documentation. Offline acceptance scenarios are proposed.
+
+  - date: "2026-11-22"
+    tool: OpenCode
+    feature: FEAT-01
+    task: Implement the Options Analyst and complete the offline and live acceptance evidence.
+    human_instruction: >
+      Approved the plan after choosing yfinance current snapshots, prefetching the chain,
+      a core chain-only indicator set, excluding options from crypto runs, preselecting the
+      original four plus options on a fresh CLI stock run, and the exact unavailable notice.
+    decisions:
+      - "Selection key: options; node: Options Analyst; state and report key: options_report."
+      - "Provider: yfinance current snapshot only; historical runs use the unavailable notice."
+      - "Prefetch the eligible chain before the model; no options tool is bound."
+      - "Core indicators: ATM IV, put/call OI and volume ratios, total OI and volume, ATM spread, term structure, OI concentration and max pain."
+      - "Crypto runs exclude the options analyst."
+    changes:
+      - "Added the options adapter, yfinance vendor, Options Analyst node, graph/CLI/report integration and five-consumer delivery."
+      - "Added 31 offline tests and one live yfinance smoke test."
+      - "Updated trace matrix, review memo and the FEAT-01 transcript."
+    verification:
+      - "python -m pytest -q: 1443 passed, 6 skipped, 3 deselected, 100 subtests passed."
+      - "python -m pytest test/live/test_options_yfinance_live.py -m integration -q: 2 passed."
+      - "ruff check src test: All checks passed."
+    human_review: pending
+    evidence: "transcripts/60468699-Ruihan Zhou.md"

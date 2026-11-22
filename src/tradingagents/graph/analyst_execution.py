@@ -43,6 +43,11 @@ ANALYST_NODE_SPECS: dict[str, AnalystNodeSpec] = {
         report_key="fundamentals_report",
         tools=fundamentals_analyst.TOOLS,
     ),
+    "options": AnalystNodeSpec(
+        key="options",
+        agent_node="Options Analyst",
+        report_key="options_report",
+    ),
 }
 
 

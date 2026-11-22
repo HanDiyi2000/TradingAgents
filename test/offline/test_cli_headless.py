@@ -38,7 +38,7 @@ class TestFlagValues:
 
     def test_analysts_are_named_and_checked_against_the_asset(self):
         assert prompts.parse_analysts(" Market, news ", AssetType.STOCK) == [AnalystType.MARKET, AnalystType.NEWS]
-        with pytest.raises(ValueError, match="market, sentiment, news, fundamentals"):
+        with pytest.raises(ValueError, match="market, sentiment, news, fundamentals, options"):
             prompts.parse_analysts("market,macro", AssetType.STOCK)
         with pytest.raises(ValueError, match="crypto"):
             prompts.parse_analysts("fundamentals", AssetType.CRYPTO)

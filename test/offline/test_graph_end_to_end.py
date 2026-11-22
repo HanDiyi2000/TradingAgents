@@ -137,12 +137,13 @@ def test_a_full_run_reaches_a_logged_decision(tmp_path, monkeypatch, offline, st
 
     assert signal == state["final_rating"] == "Overweight"
     for key in ("market_report", "sentiment_report", "news_report", "fundamentals_report",
-                "investment_plan", "trader_investment_plan", "final_trade_decision"):
+                "options_report", "investment_plan", "trader_investment_plan",
+                "final_trade_decision"):
         assert state[key].strip(), key
     tool_methods = {"get_stock_data", "get_indicators", "get_news", "get_global_news",
                     "get_macro_indicators", "get_prediction_markets", "get_fundamentals",
                     "get_balance_sheet", "get_cashflow", "get_income_statement",
-                    "get_insider_transactions", "ohlcv"}
+                    "get_insider_transactions", "get_option_chain", "ohlcv"}
     assert offline == tool_methods
     assert [e["rating"] for e in graph.memory_log.load_entries()] == ["Overweight"]
 
@@ -207,7 +208,8 @@ def test_each_report_streams_as_soon_as_its_analyst_files_it(tmp_path, monkeypat
     """The main state takes the analysts' reports only when the slowest one is
     done; the CLI shows each report, and stops each clock, as it lands."""
     graph = _graph(tmp_path, monkeypatch, ScriptedModel())
-    reports = ("market_report", "sentiment_report", "news_report", "fundamentals_report")
+    reports = ("market_report", "sentiment_report", "news_report", "fundamentals_report",
+               "options_report")
 
     first = next(state for _, state in graph.stream_run(graph.create_run_state("NVDA", TRADE_DATE),
                                                         **graph.propagator.get_graph_args())

@@ -12,7 +12,10 @@ import importlib
 
 import pytest
 
-ANALYSTS = ["market_analyst", "sentiment_analyst", "news_analyst", "fundamentals_analyst"]
+ANALYSTS = [
+    "market_analyst", "sentiment_analyst", "news_analyst", "fundamentals_analyst",
+    "options_analyst",
+]
 
 
 @pytest.mark.unit

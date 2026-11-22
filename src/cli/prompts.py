@@ -23,6 +23,7 @@ ANALYST_CHOICES = [
     ("Sentiment Analyst", AnalystType.SOCIAL),
     ("News Analyst", AnalystType.NEWS),
     ("Fundamentals Analyst", AnalystType.FUNDAMENTALS),
+    ("Options Analyst", AnalystType.OPTIONS),
 ]
 
 CRYPTO_SUFFIXES = ("-USD", "-USDT", "-USDC", "-BTC", "-ETH")
@@ -149,7 +150,7 @@ def filter_analysts_for_asset_type(
     return [
         analyst
         for analyst in analysts
-        if analyst != AnalystType.FUNDAMENTALS
+        if analyst not in (AnalystType.FUNDAMENTALS, AnalystType.OPTIONS)
     ]
 
 
@@ -161,16 +162,18 @@ def _matching_choice(options, default):
 def select_analysts(asset_type: AssetType = AssetType.STOCK, default=None) -> list[AnalystType]:
     """Select analysts using an interactive checkbox.
 
-    ``default`` pre-checks the previous run's analysts; the prompt still shows.
+    ``default`` pre-checks the previous run's analysts; a fresh run checks every
+    analyst the asset type allows, including the options analyst for stocks.
     """
     available_analysts = filter_analysts_for_asset_type(
         [value for _, value in ANALYST_CHOICES],
         asset_type,
     )
+    checked = [analyst.value for analyst in available_analysts] if default is None else default
     choices = questionary.checkbox(
         "Select Your [Analysts Team]:",
         choices=[
-            questionary.Choice(display, value=value, checked=value.value in (default or []))
+            questionary.Choice(display, value=value, checked=value.value in checked)
             for display, value in ANALYST_CHOICES
             if value in available_analysts
         ],

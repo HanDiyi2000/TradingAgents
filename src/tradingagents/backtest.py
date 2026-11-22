@@ -146,7 +146,7 @@ def run_backtest(
     config: dict,
     asset_type: str = "stock",
     portfolio=None,
-    selected_analysts=("market", "social", "news", "fundamentals"),
+    selected_analysts=("market", "social", "news", "fundamentals", "options"),
     run_id: str | None = None,
     progress: Callable[[int, int, str, str], None] | None = None,
 ) -> BacktestResult:

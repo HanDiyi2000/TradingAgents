@@ -38,6 +38,9 @@ from tradingagents.dataflows.vendors.yahoo.market import (
     get_YFin_data_online,
 )
 from tradingagents.dataflows.vendors.yahoo.news import get_global_news_yfinance, get_news_yfinance
+from tradingagents.dataflows.vendors.yahoo.options import (
+    get_option_chain as get_yfinance_option_chain,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -83,6 +86,12 @@ TOOLS_CATEGORIES = {
         "tools": [
             "get_prediction_markets",
         ]
+    },
+    "options_data": {
+        "description": "Stock option-chain observations with availability timestamps",
+        "tools": [
+            "get_option_chain",
+        ]
     }
 }
 
@@ -91,7 +100,7 @@ TOOLS_CATEGORIES = {
 # sentinel instead of aborting the run (a bad LLM-supplied indicator, a missing
 # key, or a network blip should not crash an analysis over flavour data). Core
 # categories (prices, fundamentals, news) still raise so a broken primary is loud.
-OPTIONAL_CATEGORIES = {"macro_data", "prediction_markets"}
+OPTIONAL_CATEGORIES = {"macro_data", "prediction_markets", "options_data"}
 
 # Mapping of methods to their vendor-specific implementations
 VENDOR_METHODS = {
@@ -145,6 +154,10 @@ VENDOR_METHODS = {
     # prediction_markets
     "get_prediction_markets": {
         "polymarket": get_polymarket_prediction_markets,
+    },
+    # options_data
+    "get_option_chain": {
+        "yfinance": get_yfinance_option_chain,
     },
 }
 
