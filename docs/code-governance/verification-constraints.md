@@ -43,9 +43,9 @@ Proposed offline cases. Use fixed profile data and exercise the existing CLI and
 | RPT-T3 | No profile fields are available. | Both sections show an unavailable notice. The analysis and final decision still appear in the export. |
 | RPT-T4 | Historical analysis with only a current name, current industry and current business description. | Both sections label the name as current and omit the undated industry and business description. |
 
-## FEAT-04 — CLI token usage warning (FR-TOK-01)
+## FEAT-04 — Per-run token usage warning (FR-TOK-01)
 
-Proposed offline cases. Feed scripted usage metadata from multiple agents into a CLI analysis and capture its terminal warnings.
+Proposed offline cases. Feed scripted usage metadata from multiple agents through each entry point. Capture terminal warnings for CLI runs and browser activity warnings for web runs.
 
 | Case | Setup | Expected outcome |
 | --- | --- | --- |
@@ -61,3 +61,14 @@ Use fixed analyst reports and scripted turns. Inspect both researcher inputs and
 | CIT-T1 | Supply a fundamentals report with a heading and two distinct body paragraphs separated by a blank line. Bull cites the first and bear the second. Repeat with an options report added to the inputs. | Both researchers see FUN-01 and FUN-02 on the same original paragraphs in both runs. The heading has no ID. The options report starts at OPT-01. Each export contains one matching source paragraph per citation, with the ID also beside the correct argument. |
 | CIT-T2 | Script a claim citing two valid paragraphs, one citing an absent FUN-99, and one with no citation. | Both valid references remain beside the first claim. The unknown ID carries an invalid-citation notice and the uncited claim carries a missing-citation notice in both exports. The debate reaches the Research Manager. |
 | CIT-T3 | Below the round cap, bear first answers an outstanding bull argument using the same valid paragraph ID as bull. | Both citations resolve to that paragraph. FEAT-02 recognizes the first reply as progress. |
+
+## FEAT-06 — Local web interface
+
+Proposed offline cases use a local browser, a scripted graph and fixed report fixtures.
+
+| Case | Setup and expected outcome |
+| --- | --- |
+| WEB-T1 · FR-WEB-01 | Observe the launcher opening the printed URL after readiness. Simulate a failed browser launch and open that URL manually. Verify the configuration form, default options analyst and quick/deep model choices. An empty ticker starts zero runs. Submit valid non-default selections twice rapidly and verify exactly one run receives those settings. |
+| WEB-T2 · FR-WEB-02 | Replay the same events to CLI and web. Pause after a tool call, an analyst report and a bull turn. All three must already be visible in the browser, with later turns absent. Resume with a repeated snapshot, bear reply, stop reason, manager plan, trader proposal, three risk opinions and decision. Compare visible content and roles with the CLI at each checkpoint, checking prior turns remain visible once. Include options data or its unavailable notice, valid and invalid citations, token totals and one threshold warning. |
+| WEB-T3 · FR-WEB-02 | Fail the graph after a published report. The page retains that report, shows the failure reason and allows a new analysis. Verify retry starts with its own events and token counters. |
+| WEB-T4 · FR-WEB-03 | Complete two runs with different tickers and distinct report markers. For each, check ticker, date and rating, then match the preview and download to that run's HTML and Markdown exports. Check company background and numbered source paragraphs. After the second run, both artifacts must contain its marker. |

@@ -23,14 +23,22 @@
 | --- | --- | --- | --- |
 | FR-RPT-01 | Profile/date handling and shared report export (reporting.py, report_html.py) | RPT-T1 through RPT-T4 | Company Background section in exported Markdown and HTML |
 
-## FEAT-04 — CLI token usage warning
+## FEAT-04 — Per-run token usage warning
 
 | Requirement | Component | Test or evidence | Runtime monitor |
 | --- | --- | --- | --- |
-| FR-TOK-01 | Run configuration, CLI statistics handler and terminal display | TOK-T1 and TOK-T2 | First crossing total and threshold displayed during the run |
+| FR-TOK-01 | Run configuration, shared statistics handler and active terminal or web display | TOK-T1 and TOK-T2 | First crossing total and threshold displayed during the run |
 
 ## FEAT-05 — Paragraph citations in the research debate
 
 | Requirement | Component | Test or evidence | Runtime monitor |
 | --- | --- | --- | --- |
 | FR-CIT-01 | Analyst-to-research handoff, bull/bear histories, consolidated report renderers | CIT-T1 through CIT-T3 | Source labels, argument citations and missing or invalid citation notices in the run report |
+
+## FEAT-06 — Local web interface
+
+| Requirement | Component | Test or evidence | Runtime monitor |
+| --- | --- | --- | --- |
+| FR-WEB-01 | Local launcher, configuration form and analysis runner | WEB-T1 | Ready URL, resolved selections and active run |
+| FR-WEB-02 | Graph event stream, usage handler and browser activity/content views | WEB-T2 and WEB-T3 | Ordered role-labelled output, warning and failure state |
+| FR-WEB-03 | Report writer and run-specific results view | WEB-T4 | Displayed run metadata, HTML preview and Markdown download |

@@ -105,9 +105,9 @@ requirements:
   type: functional
   priority: Must
   statement: >
-    For each CLI analysis, start the usage total at zero. After each completed model call across
+    For each CLI or web analysis, start the usage total at zero. After each completed model call across
     all agents, add its provider-reported input and output token counts. On the first total strictly
-    greater than the threshold, display one terminal warning with the total and threshold. Continue
+    greater than the threshold, display one warning in the active interface with the total and threshold. Continue
     the analysis through normal report generation. The threshold defaults to 100000 tokens and accepts
     a positive integer override via TRADINGAGENTS_TOKEN_WARNING_THRESHOLD in .env.
   source: Team lead, FEAT-04 approval on 2026-11-22. Existing accounting in src/cli/stats_handler.py and src/cli/run.py.
@@ -130,3 +130,40 @@ requirements:
     metric: Offline cases with a misplaced, ambiguous or wrongly flagged citation, inconsistent export, or interrupted debate
     threshold: 0
     verification: CIT-T1 through CIT-T3 in docs/code-governance/verification-constraints.md
+- id: FR-WEB-01
+  type: functional
+  priority: Must
+  statement: The local web command shall start the service, print its local URL and open that URL in the default
+    browser once ready. On one page the user can choose ticker, analysis date, configured provider, quick and deep
+    models, analysts, research depth and report language. Apply the existing input validation and defaults, including
+    FEAT-01 selection. Allow one active analysis at a time.
+  source: Team lead, FEAT-06 discussion and confirmation, 2026-11-22.
+  tradeoff: Using locally configured credentials and provider defaults keeps browser setup short.
+  fit_criterion:
+    metric: Incorrect launches, accepted invalid submissions or duplicate starts
+    threshold: 0
+    verification: WEB-T1 in docs/code-governance/verification-constraints.md
+- id: FR-WEB-02
+  type: functional
+  priority: Must
+  statement: During analysis the page shall show the same user-visible agent statuses, messages, tool activity,
+    intermediate reports, debate turns, plans, decisions and reported token usage as the CLI for the same run events.
+    Display each new item as it becomes available, once, with its role or source. Earlier output remains readable.
+    On failure show the reason, preserve output and allow retry.
+  source: Team lead, FEAT-06 discussion and confirmation, 2026-11-22.
+  tradeoff: Event-level updates let readers follow the run without requiring token-by-token text streaming.
+  fit_criterion:
+    metric: Scripted runs with missing, duplicated, premature or mismatched output or a failed retry flow
+    threshold: 0
+    verification: WEB-T2 and WEB-T3 in docs/code-governance/verification-constraints.md
+- id: FR-WEB-03
+  type: functional
+  priority: Must
+  statement: On success the same page shall show the ticker, analysis date and final rating, display the full HTML
+    report and offer the corresponding Markdown download. Both artifacts must belong to the completed run.
+  source: Team lead, FEAT-06 discussion and confirmation, 2026-11-22.
+  tradeoff: Reusing the report exporter keeps both formats consistent with the CLI.
+  fit_criterion:
+    metric: Completed runs displaying incorrect metadata or serving artifacts from a different run
+    threshold: 0
+    verification: WEB-T4 in docs/code-governance/verification-constraints.md

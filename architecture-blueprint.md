@@ -44,9 +44,9 @@ The shared CLI and Python export path prepares one factual introduction from the
 
 For historical runs, follow the identity rule in `src/tradingagents/agents/context.py`. A current name may identify the company if explicitly labelled as current. Present industry and business details as historical facts only when supported for the analysis date. Omit missing fields and show an unavailable notice if the profile supplies none.
 
-## FEAT-04 — CLI token usage warning
+## FEAT-04 — Per-run token usage warning
 
-The CLI creates a statistics handler for each analysis. Reuse its input and output counters and read the warning threshold from the run configuration. A call with no reported usage contributes nothing to the measured total. Check the total and mark the first crossing under the handler's existing lock so simultaneous completions produce a single warning. Send the crossing total and configured threshold to the terminal. The graph continues normally.
+The CLI and web entry points share the same per-analysis statistics handler design. Reuse its input and output counters and read the warning threshold from the run configuration. A call with no reported usage contributes nothing to the measured total. Check the total and mark the first crossing under the handler's existing lock so simultaneous completions produce a single warning. Send the crossing total and configured threshold to the active terminal or browser activity view. The graph continues normally.
 
 The run-level warning threshold is independent of `TRADINGAGENTS_MAX_TOKENS`, which controls output length per model call.
 
@@ -57,3 +57,14 @@ At the handoff from analysts to researchers, assign a stable report prefix and a
 Give both researchers the same labelled text. Each argument carries the ID or IDs for its evidence. Before recording a turn, check each ID against this run's paragraphs. Display “Invalid citation” beside unknown IDs and “No citation provided” beside an argument with none. Preserve these annotations in the debate history and continue. Both consolidated renderers use the original labels so a reader can search for the cited source.
 
 FEAT-02 evaluates progress separately. A first reply to an unanswered opposing point can advance the debate even when both speakers cite the same paragraph.
+
+## FEAT-06 — Local web interface (specified)
+
+The planned `tradingagents web` entry point serves one local user. Print the local URL and open the default browser after the service is ready. The printed URL also works when automatic opening fails. The existing CLI command continues to open the terminal interface.
+
+| Handoff | Contract |
+| --- | --- |
+| Form to run | Reuse CLI validation, provider/model choices, analyst defaults and graph configuration. Read credentials on the host. Disable Start during an active run and accept only one start for that run. |
+| Run to browser | Consume the existing graph stream that feeds the CLI. Show agent status, messages and tool calls in the activity view. In the content view preserve analyst reports, individual bull/bear turns, the research manager's plan, trader proposal, all three risk opinions and the final decision. Append new content in observed order and suppress duplicate items from cumulative snapshots. |
+| Feature interactions | FEAT-01 supplies options selection and report or unavailable notice. FEAT-02 supplies the early-stop reason before the manager takes over. FEAT-04 supplies token totals and its single threshold warning. FEAT-05 supplies paragraph IDs, inline citations and validation notices during the debate. |
+| Run to results | Use the existing report writer for this run's HTML preview and Markdown download, including FEAT-03 company background and FEAT-05 source labels. Associate results with the run even when two analyses use the same ticker and date. On failure, retain partial activity, show a concise error and re-enable Start. |

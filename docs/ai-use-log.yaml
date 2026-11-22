@@ -43,3 +43,9 @@ sessions:
     task: Specify FEAT-05 and draft paragraph citation acceptance cases.
     human_instruction: The lead confirmed the numbering scope, inline references and non-blocking checks before document edits.
     scope: Requirements, design and proposed offline acceptance cases.
+
+  - date: "2026-11-22"
+    tool: Codex
+    task: Document FEAT-06 and extend FR-TOK-01 to web runs.
+    human_instruction: Open the browser automatically and show intermediate analysis content as it appears in the terminal, including the preceding five features.
+    scope: Requirements and design approved for documentation. Offline acceptance scenarios are proposed.
