@@ -1,0 +1,94 @@
+{
+  "_meta": {
+    "requirement": "FR-DEB-01",
+    "status": "PROPOSED — labels are authored by the coding agent and await human review. Not human-approved.",
+    "purpose": "Fixed semantic evaluation set for the debate-progress judge. Each case gives the prior history, the pair under judgement, and the expected per-side labels. The judge is correct on a case when its new_evidence and first_reply flags match the expected flags for both sides, and its outcome matches the expected outcome.",
+    "fields": {
+      "history": "the debate history before the pair under judgement (speaker-labelled turns)",
+      "bull_turn": "the bull turn of the pair under judgement",
+      "bear_turn": "the bear turn of the pair under judgement",
+      "expect_bull": "expected {new_evidence, first_reply} for the bull turn, judged against history",
+      "expect_bear": "expected {new_evidence, first_reply} for the bear turn, judged against history plus the bull turn",
+      "expect_outcome": "PROGRESS or NO_PROGRESS",
+      "archetype": "which semantic case this exercises"
+    }
+  },
+  "cases": [
+    {
+      "id": "SEM-01",
+      "archetype": "reused-number-new-fact",
+      "history": "Bull Analyst: Revenue grew by 10% this year.",
+      "bull_turn": "Bull Analyst: Gross margin was 10% and holding.",
+      "bear_turn": "Bear Analyst: A 10% gross margin is thin for this sector.",
+      "expect_bull": {"new_evidence": true, "first_reply": false},
+      "expect_bear": {"new_evidence": true, "first_reply": false},
+      "expect_outcome": "PROGRESS",
+      "rationale": "The number 10 is reused, but gross margin is a different fact from revenue growth; both sides introduce new evidence."
+    },
+    {
+      "id": "SEM-02",
+      "archetype": "qualitative-fact-no-unit",
+      "history": "Bull Analyst: Revenue grew 10%.\nBear Analyst: Valuation is stretched.",
+      "bull_turn": "Bull Analyst: Management signalled a durable competitive moat from its new brand partnerships.",
+      "bear_turn": "Bear Analyst: Brand partnerships can be terminated at will, so they are fragile.",
+      "expect_bull": {"new_evidence": true, "first_reply": false},
+      "expect_bear": {"new_evidence": true, "first_reply": false},
+      "expect_outcome": "PROGRESS",
+      "rationale": "A new qualitative fact with no number, entity, or ID is still new evidence."
+    },
+    {
+      "id": "SEM-03",
+      "archetype": "relabelled-repetition",
+      "history": "Bull Analyst: Revenue grew 10% [FUN-01].\nBear Analyst: Valuation is stretched [MKT-02].",
+      "bull_turn": "Bull Analyst: Revenue grew 10% [FUN-07].",
+      "bear_turn": "Bear Analyst: Valuation is stretched [MKT-09].",
+      "expect_bull": {"new_evidence": false, "first_reply": false},
+      "expect_bear": {"new_evidence": false, "first_reply": false},
+      "expect_outcome": "NO_PROGRESS",
+      "rationale": "Only the citation labels changed; the facts and rebuttals are repeats."
+    },
+    {
+      "id": "SEM-04",
+      "archetype": "first-reply-without-marker",
+      "history": "Bull Analyst: Margins are expanding.\nBear Analyst: Rising input costs will compress margins.",
+      "bull_turn": "Bull Analyst: Input-cost contracts are fixed through next year, so the compression the bear expects will not occur.",
+      "bear_turn": "Bear Analyst: Fixed contracts expire, leaving exposure after year end.",
+      "expect_bull": {"new_evidence": false, "first_reply": true},
+      "expect_bear": {"new_evidence": false, "first_reply": true},
+      "expect_outcome": "PROGRESS",
+      "rationale": "The bull's turn is a first substantive reply to the bear's unanswered margin-compression point, with no explicit reply marker; the bear then replies first to the bull's contract point."
+    },
+    {
+      "id": "SEM-05a",
+      "archetype": "marker-repeats-already-answered-rebuttal",
+      "history": "Bull Analyst: Growth is durable.\nBear Analyst: To address growth, I note demand is cyclical.\nBull Analyst: Demand is not cyclical because backlog is multi-year.\nBear Analyst: To address your backlog point, the backlog can be cancelled.",
+      "bull_turn": "Bull Analyst: Regarding your demand point, demand is not cyclical because backlog is multi-year.",
+      "bear_turn": "Bear Analyst: To address your backlog point, the backlog can be cancelled.",
+      "expect_bull": {"new_evidence": false, "first_reply": false},
+      "expect_bear": {"new_evidence": false, "first_reply": false},
+      "expect_outcome": "NO_PROGRESS",
+      "rationale": "Both turns carry reply markers but each merely re-asserts a rebuttal already made and answered earlier; neither side introduces evidence or a first reply to a still-unanswered point."
+    },
+    {
+      "id": "SEM-05b",
+      "archetype": "marker-repeat-but-other-side-first-reply",
+      "history": "Bull Analyst: Growth is durable.\nBear Analyst: To address growth, I note demand is cyclical.\nBull Analyst: Demand is not cyclical because backlog is multi-year.",
+      "bull_turn": "Bull Analyst: Regarding your demand point, demand is not cyclical because backlog is multi-year.",
+      "bear_turn": "Bear Analyst: To address your backlog point: multi-year backlog does not refute cyclical demand; demand is cyclical regardless of how long the backlog runs.",
+      "expect_bull": {"new_evidence": false, "first_reply": false},
+      "expect_bear": {"new_evidence": false, "first_reply": true},
+      "expect_outcome": "PROGRESS",
+      "rationale": "The bull repeats its earlier backlog rebuttal behind a marker (no progress). The bear's turn gives its first substantive response to that backlog point, using only already-known facts (multi-year backlog, cyclical demand) and introducing no new evidence; the first reply alone is progress."
+    },
+    {
+      "id": "SEM-06",
+      "archetype": "same-text-different-history",
+      "history_a": "Bear Analyst: Demand is cyclical.\nBull Analyst: Backlog is multi-year, so demand is insulated.",
+      "history_b": "Bear Analyst: Demand is cyclical.\nBull Analyst: Backlog is multi-year, so demand is insulated.\nBear Analyst: Backlog can be cancelled.",
+      "reply_text": "Bull Analyst: Backlog is multi-year, so demand is insulated.",
+      "expect_in_history_a": {"new_evidence": false, "first_reply": true},
+      "expect_in_history_b": {"new_evidence": false, "first_reply": false},
+      "rationale": "The identical reply is a first response in history A (the bear's cyclicality point was unanswered) and a repeat in history B (already answered)."
+    }
+  ]
+}

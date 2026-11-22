@@ -74,3 +74,43 @@ sessions:
       - "ruff check src test: All checks passed."
     human_review: pending
     evidence: "transcripts/60468699-Ruihan Zhou.md"
+
+  - date: "2026-11-22"
+    tool: OpenCode
+    feature: FEAT-02
+    task: Implement the research-debate early stop and complete offline acceptance evidence.
+    approval_sequence:
+      - "Plan: revised high-level approach approved for the environment-preparation and tests-only stage."
+      - "Tests: revised test design approved (DEB-T1–T5, negatives, structured contract, corrected SEM-05a/SEM-05b)."
+      - "Implementation: approved for the final verification and evidence-documentation stage; explicitly not final acceptance of semantic accuracy."
+    human_instruction: >
+      Apply early stopping only to the bull/bear research debate. One round is one bull and one
+      bear turn; never stop the opening round; from round two assess progress only after both
+      spoke; continue on new evidence or a first substantive reply; otherwise record the reason and
+      pass the full history to the Research Manager. The configured cap stays binding and wins.
+    decisions:
+      - "Structured semantic judgement over a heuristic: reused numbers, entities, citation labels and reply markers are neither necessary nor sufficient."
+      - "Three outcomes PROGRESS / NO_PROGRESS / UNKNOWN; failed or uncertain judgement is UNKNOWN (continue), never NO_PROGRESS; no free-text retry."
+      - "Judgement computed once in the bear node when the post-increment count is even and 4 <= count < 2*max_debate_rounds; the bear reuses the existing quick-tier LLM."
+      - "Persist progress_outcome, progress_round and progress_reason before the Research Manager runs; the router consumes the saved decision and the manager preserves it without re-judging."
+      - "Exact early-stop reason: 'No new evidence or first response in this round'."
+    changes:
+      - "Added leaf module tradingagents/agents/debate_progress.py (judge, structured contract, classify_judgement)."
+      - "Extended InvestDebateState with optional progress fields; carried them through bull/bear/manager; logged them in the run state."
+      - "Rewrote ConditionalLogic.should_continue_debate (cap-first, parity order, persisted NO_PROGRESS gate); risk router unchanged."
+      - "Wired build_debate_judge(quick_llm) into GraphSetup for the bear node only."
+      - "Added test/offline/test_debate_early_stop.py, test/offline/test_debate_semantics_eval.py and the debate_progress_eval fixtures."
+    verification:
+      - "python -m pytest test/offline/test_debate_early_stop.py test/offline/test_debate_semantics_eval.py -q: 40 passed, 1 deselected."
+      - "python -m pytest -q: 1483 passed, 6 skipped, 4 deselected, 100 subtests passed."
+      - "ruff check on changed src files and the new tests: All checks passed."
+    corrections:
+      - "Six bear-node judge-scheduling fixtures assumed judgement on the input count; corrected to input counts 3 and 5 (post-increment 4 and 6) with explicit cap=3. Assertions strengthened, not weakened."
+    open_gap: >
+      Live semantic evaluation not run. The gated runner test_live_judge_meets_labelled_cases is
+      now wired to the implemented judge via the additive DebateJudge.evaluate() accessor; it has
+      been verified offline with an injected fake LLM but not executed against a real model. A
+      separate single-request guarded probe (test/live/test_debate_judge_cityu_probe.py) is
+      prepared for the CityU DeepSeek endpoint and has not been run.
+    human_review: implementation approved for verification/evidence stage; semantic accuracy pending
+    evidence: "transcripts/FEAT-02-annotated-session.md (raw session: ses_dfdfdad54ffemNA5rq3445en7M, export pending)"

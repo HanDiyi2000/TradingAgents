@@ -4,9 +4,15 @@ from tradingagents.agents.context import (
     opponent_argument_or_opening,
     report_or_absent,
 )
+from tradingagents.agents.debate_progress import (
+    EARLY_STOP_REASON,
+    NO_PROGRESS,
+    evaluate_pair,
+)
+from tradingagents.dataflows.config import get_config
 
 
-def create_bear_researcher(llm):
+def create_bear_researcher(llm, judge=None):
     def bear_node(state) -> dict:
         investment_debate_state = state["investment_debate_state"]
         history = investment_debate_state.get("history", "")
@@ -56,14 +62,48 @@ Use this information to deliver a compelling bear argument, refute the bull's cl
 
         argument = f"Bear Analyst: {response.content}"
 
+        new_history = history + "\n" + argument
+        new_count = investment_debate_state["count"] + 1
         new_investment_debate_state = {
-            "history": history + "\n" + argument,
+            "history": new_history,
             "bear_history": bear_history + "\n" + argument,
             "bull_history": investment_debate_state.get("bull_history", ""),
             "current_response": argument,
-            "count": investment_debate_state["count"] + 1,
+            "count": new_count,
+            # Carry any earlier decision forward; a fresh judgement may replace it.
+            "progress_outcome": investment_debate_state.get("progress_outcome", ""),
+            "progress_round": investment_debate_state.get("progress_round", 0),
+            "progress_reason": investment_debate_state.get("progress_reason", ""),
         }
+
+        # FEAT-02: judge only a completed pair between round two and the cap, i.e.
+        # an even new count with 4 <= count < 2*cap. The cap and the opening pair
+        # never invoke the judge.
+        if judge is not None and _is_eligible_pair(new_count):
+            round_number = new_count // 2
+            previous_bull = investment_debate_state.get("bull_history", "")
+            bull_turn = _latest_bull_turn(previous_bull)
+            result = evaluate_pair(judge, history, bull_turn, argument, round_number)
+            new_investment_debate_state["progress_outcome"] = result.outcome
+            new_investment_debate_state["progress_round"] = result.evaluated_round
+            new_investment_debate_state["progress_reason"] = (
+                EARLY_STOP_REASON if result.outcome == NO_PROGRESS else ""
+            )
 
         return {"investment_debate_state": new_investment_debate_state}
 
     return bear_node
+
+
+def _is_eligible_pair(new_count: int) -> bool:
+    """A completed pair that sits between round two and the configured cap."""
+    if new_count % 2 != 0:
+        return False
+    cap = int(get_config().get("max_debate_rounds", 1))
+    return 4 <= new_count < 2 * cap
+
+
+def _latest_bull_turn(bull_history: str) -> str:
+    """The most recent bull turn from the accumulated bull history."""
+    lines = [line for line in (bull_history or "").splitlines() if line.strip()]
+    return lines[-1] if lines else ""

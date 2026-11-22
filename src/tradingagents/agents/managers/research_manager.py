@@ -64,6 +64,10 @@ Write these sections, in this order, starting with the recommendation on its own
             "bull_history": investment_debate_state.get("bull_history", ""),
             "current_response": investment_plan,
             "count": investment_debate_state["count"],
+            # FEAT-02: preserve the bear node's recorded decision; do not re-judge.
+            "progress_outcome": investment_debate_state.get("progress_outcome", ""),
+            "progress_round": investment_debate_state.get("progress_round", 0),
+            "progress_reason": investment_debate_state.get("progress_reason", ""),
         }
 
         return {

@@ -60,6 +60,11 @@ Use this information to deliver a compelling bull argument, refute the bear's co
             "bear_history": investment_debate_state.get("bear_history", ""),
             "current_response": argument,
             "count": investment_debate_state["count"] + 1,
+            # FEAT-02: carry the persisted progress decision; only the bear node
+            # judges a pair, so it must survive the bull's rewrite.
+            "progress_outcome": investment_debate_state.get("progress_outcome", ""),
+            "progress_round": investment_debate_state.get("progress_round", 0),
+            "progress_reason": investment_debate_state.get("progress_reason", ""),
         }
 
         return {"investment_debate_state": new_investment_debate_state}

@@ -22,6 +22,7 @@ from tradingagents.agents import (
     create_trader,
 )
 from tradingagents.agents.analysts.turn import WRAP_UP
+from tradingagents.agents.debate_progress import build_debate_judge
 from tradingagents.agents.state import AgentState
 
 from .analyst_execution import build_analyst_execution_plan
@@ -135,7 +136,11 @@ class GraphSetup:
         }
 
         bull_researcher_node = create_bull_researcher(self.quick_thinking_llm)
-        bear_researcher_node = create_bear_researcher(self.quick_thinking_llm)
+        # FEAT-02: the bear node owns the once-per-pair progress judgement; it
+        # reuses the same quick-tier LLM (no new client or provider).
+        bear_researcher_node = create_bear_researcher(
+            self.quick_thinking_llm, judge=build_debate_judge(self.quick_thinking_llm)
+        )
         research_manager_node = create_research_manager(self.deep_thinking_llm)
         trader_node = create_trader(self.quick_thinking_llm)
 

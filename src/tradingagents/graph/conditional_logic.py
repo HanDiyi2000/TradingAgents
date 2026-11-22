@@ -1,3 +1,4 @@
+from tradingagents.agents.debate_progress import NO_PROGRESS
 from tradingagents.agents.state import AgentState
 
 
@@ -10,14 +11,35 @@ class ConditionalLogic:
         self.max_risk_discuss_rounds = max_risk_discuss_rounds
 
     def should_continue_debate(self, state: AgentState) -> str:
-        """Determine if debate should continue."""
+        """Determine if debate should continue.
 
-        if (
-            state["investment_debate_state"]["count"] >= 2 * self.max_debate_rounds
-        ):  # max_debate_rounds turns each for bull and bear
+        The round cap is checked first and always wins. The opening round always
+        lets both researchers speak. From round two, a completed pair whose
+        persisted judgement (written by the bear node) is NO_PROGRESS for this
+        round ends the debate; the router never re-judges.
+        """
+        debate = state["investment_debate_state"]
+        count = debate["count"]
+
+        # Cap takes priority over any progress verdict.
+        if count >= 2 * self.max_debate_rounds:
             return "Research Manager"
-        if state["investment_debate_state"]["current_response"].startswith("Bull"):
+
+        bull_spoke = debate.get("current_response", "").startswith("Bull")
+
+        # An incomplete round gives the other side its turn (order preserved).
+        if count % 2 != 0:
+            return "Bear Researcher" if bull_spoke else "Bull Researcher"
+        if bull_spoke:
             return "Bear Researcher"
+
+        # Completed pair: stop only on a confirmed NO_PROGRESS for this round.
+        if (
+            debate.get("progress_outcome") == NO_PROGRESS
+            and debate.get("progress_round") == count // 2
+        ):
+            return "Research Manager"
+
         return "Bull Researcher"
 
     def should_continue_risk_analysis(self, state: AgentState) -> str:

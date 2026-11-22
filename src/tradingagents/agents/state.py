@@ -15,6 +15,15 @@ class InvestDebateState(TypedDict):
     history: Annotated[str, "Conversation history"]
     current_response: Annotated[str, "Latest response"]
     count: Annotated[int, "Length of the current conversation"]
+    # FEAT-02: the persisted progress decision for the most recent judged pair.
+    # Optional so older states and saved logs stay readable (read with .get()).
+    progress_outcome: Annotated[
+        str, "PROGRESS, NO_PROGRESS or UNKNOWN from the last completed pair judgement"
+    ]
+    progress_round: Annotated[int, "Round number the last judgement evaluated"]
+    progress_reason: Annotated[
+        str, "Early-stop reason recorded when the debate ends without progress"
+    ]
 
 
 # Risk management team state

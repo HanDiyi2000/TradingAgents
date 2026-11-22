@@ -1,0 +1,74 @@
+{
+  "_meta": {
+    "requirement": "FR-DEB-01",
+    "status": "PROPOSED contract — authored by the coding agent, awaits human review. Not implemented in src/ and not human-approved.",
+    "purpose": "Structured judgement the bear node asks the quick-tier model for once per complete round satisfying 2 <= round < cap. The node maps this to exactly one of PROGRESS / NO_PROGRESS / UNKNOWN and persists it before the Research Manager runs.",
+    "delimiter": "The judge is invoked at most max(0, cap-2) times per run; zero for cap 1 and 2. The router and manager never re-judge."
+  },
+  "schema": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": ["bull", "bear", "outcome"],
+    "properties": {
+      "bull": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["new_evidence", "first_reply", "confidence"],
+        "properties": {
+          "new_evidence": {
+            "type": "boolean",
+            "description": "The bull turn introduces a fact/observation not already present in the prior debate history, judged by meaning (numbers, qualitative claims, or held/refuted points alike)."
+          },
+          "first_reply": {
+            "type": "boolean",
+            "description": "The bull turn gives a first substantive response to a specific opposing argument that had no prior substantive response in this history."
+          },
+          "confidence": {
+            "type": "string",
+            "enum": ["low", "medium", "high"],
+            "description": "The judge's confidence in the two booleans for this side."
+          }
+        }
+      },
+      "bear": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["new_evidence", "first_reply", "confidence"],
+        "properties": {
+          "new_evidence": {
+            "type": "boolean",
+            "description": "The bear turn introduces a fact/observation not already present in the prior history plus the current bull turn."
+          },
+          "first_reply": {
+            "type": "boolean",
+            "description": "The bear turn gives a first substantive response to a bull point that had no prior substantive response, including a first reply within the same pair."
+          },
+          "confidence": {
+            "type": "string",
+            "enum": ["low", "medium", "high"]
+          }
+        }
+      },
+      "outcome": {
+        "type": "string",
+        "enum": ["PROGRESS", "NO_PROGRESS", "UNKNOWN"],
+        "description": "The judge may also return UNKNOWN directly when it cannot decide."
+      }
+    }
+  },
+  "deterministic_mapping": {
+    "rule": "outcome_of(judgement) is computed by the node, not taken on trust if inconsistent.",
+    "steps": [
+      "If the structured call fails, returns None, or the payload is not an object with the required keys -> UNKNOWN.",
+      "If any confidence is 'low' for a side whose flags are all false (i.e. we would otherwise stop on that side's weakness) -> UNKNOWN (do not stop on a weak negative).",
+      "If the payload's own outcome field contradicts the booleans (PROGRESS with all flags false, or NO_PROGRESS with any flag true) -> UNKNOWN (inconsistent).",
+      "PROGRESS if any of bull.new_evidence, bull.first_reply, bear.new_evidence, bear.first_reply is true.",
+      "NO_PROGRESS only if all four flags are false AND both sides' confidence is at least 'medium' AND the outcome field agrees.",
+      "Anything else -> UNKNOWN."
+    ]
+  },
+  "failure_handling": {
+    "unknown": "Continue the debate (fail open). The round cap and speaker order are unchanged; the persisted outcome is UNKNOWN with an empty early-stop reason.",
+    "no_freetext_retry": "A failed structured judgement becomes UNKNOWN once. The judge is never retried as free text. Provider/SDK-level transport retries (existing client behaviour) are not judgement attempts and are not counted as such."
+  }
+}

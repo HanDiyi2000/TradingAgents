@@ -452,6 +452,15 @@ class TradingAgentsGraph:
                 "current_response": final_state["investment_debate_state"][
                     "current_response"
                 ],
+                "progress_outcome": final_state["investment_debate_state"].get(
+                    "progress_outcome", ""
+                ),
+                "progress_round": final_state["investment_debate_state"].get(
+                    "progress_round", 0
+                ),
+                "progress_reason": final_state["investment_debate_state"].get(
+                    "progress_reason", ""
+                ),
             },
             "trader_investment_plan": final_state["trader_investment_plan"],
             "risk_debate_state": {

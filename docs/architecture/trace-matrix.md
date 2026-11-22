@@ -29,7 +29,31 @@ Offline regression: `python -m pytest -q` reported `1443 passed, 6 skipped, 3 de
 
 | Requirement | Component | Test or evidence | Runtime monitor |
 | --- | --- | --- | --- |
-| FR-DEB-01 | Research debate state, bull/bear router and Research Manager handoff | DEB-T1 through DEB-T5 | Ordered speaker history, completed round count and recorded reason on early stop |
+| FR-DEB-01 | Bear-researcher progress judgement (`agents/debate_progress.py`), research-debate state, bull/bear router (`graph/conditional_logic.py`) and Research Manager handoff | DEB-T1 through DEB-T5; semantic fixture set (SEM-01, SEM-02, SEM-03, SEM-04, SEM-05a, SEM-05b, SEM-06) | `progress_outcome`, `progress_round` and `progress_reason` in the debate state and saved run log; ordered speaker history |
+
+### FEAT-02 verification evidence (2026-11-22)
+
+Implementation on branch `CS5351`. The end-to-end behaviour was verified offline; the semantic accuracy of the live judge is **not yet evaluated** (see the gap note below).
+
+| Case | Implemented evidence | Result |
+| --- | --- | --- |
+| DEB-T1 · FR-DEB-01 | `test_debate_early_stop.py::test_deb_t1_opening_round_gives_bear_then_begins_round_two`, `::test_after_bull_speaks_in_round_two_the_bear_still_gets_a_turn` | Passed |
+| DEB-T2 · FR-DEB-01 | `test_debate_early_stop.py::test_deb_t2_second_round_repetition_stops_after_the_bear_speaks`, `::test_cap_stop_is_not_labelled_no_progress` | Passed |
+| DEB-T3 · FR-DEB-01 | `test_debate_early_stop.py::test_deb_t3_new_report_fact_continues_to_round_three` | Passed |
+| DEB-T4 · FR-DEB-01 | `test_debate_early_stop.py::test_deb_t4_first_reply_continues_to_round_three` | Passed |
+| DEB-T5 · FR-DEB-01 | `test_debate_early_stop.py::test_deb_t5_cap_one_hands_off_after_one_round`, `::test_deb_t5_cap_two_hands_off_after_two_rounds`, `::test_different_caps_keep_independent_final_rounds` | Passed |
+| Judgement scheduling / cap precedence | `::test_judgement_is_scheduled_only_for_complete_rounds_between_two_and_cap`, `::test_bear_node_judges_only_round_two_not_the_opening_round`, `::test_bear_node_does_not_judge_at_or_after_the_cap` | Passed |
+| Reason before/after manager, persistence | `::test_bear_node_records_no_progress_reason_before_the_manager_runs`, `::test_manager_preserves_the_reason_it_was_given`, `::test_manager_preserves_full_history_on_early_stop`, `::test_saved_run_log_records_outcome_and_reason` | Passed |
+| UNKNOWN / fail-open / stale / old-state | `::test_failed_judgement_becomes_unknown_without_a_freetext_retry`, `::test_unknown_outcome_continues_and_keeps_speaker_order`, `::test_stale_no_progress_does_not_stop_the_opening_round`, `::test_stale_no_progress_does_not_stop_a_later_round_without_a_current_judgement`, `::test_older_state_without_progress_fields_still_routes_and_logs` | Passed |
+| Structured contract (`classify_judgement`) | `::test_contract_clean_progress_maps_to_progress`, `::test_contract_confirmed_repetition_maps_to_no_progress`, `::test_contract_malformed_inconsistent_or_uncertain_is_unknown` (8 payload variants), `::test_contract_explicit_unknown_passes_through`, `::test_contract_schema_file_matches_rules` | Passed |
+| FEAT-01 regression (options→researchers) | `::test_options_report_still_reaches_the_bull_researcher`, `::test_options_report_still_reaches_the_bear_researcher`; `test_options_analyst.py` and `test_options_data.py` unchanged and green | Passed |
+| Semantic fixture well-formedness | `test_debate_semantics_eval.py::test_fixture_is_well_formed` (7 cases, labels validated) | Passed |
+
+Offline regression: `python -m pytest -q` reported `1483 passed, 6 skipped, 4 deselected, 100 subtests passed` (1443 prior + 40 FEAT-02). FEAT-02 file alone: `40 passed, 1 deselected`. Structural check: `ruff check` on the changed src files and the two new test files reported no findings.
+
+**Test-fixture correction recorded.** Six bear-node judge-scheduling tests and their helper initially assumed judgement on the *input* count (pairs "complete at even input counts"), which conflicted with the authoritative rule that the bear node receives the count before its turn and increments it. The rule is: judgement happens only after the bear completes a pair, when the resulting (post-increment) count is even and `4 <= new_count < 2 * max_debate_rounds`. The tests were corrected with explicit `cap=3` for round-two judgement and pre-bear input counts 3 (round two) and 5 (round three); assertions were strengthened (e.g. asserting the resulting `count == 4`), not weakened. Production logic was not changed to satisfy the tests.
+
+**Live semantic-evaluation gap (outstanding).** `test_debate_semantics_eval.py::test_live_judge_meets_labelled_cases` is gated behind `TRADINGAGENTS_DEBATE_EVAL_LIVE=1` and has **not** been executed against a real model; no real-model semantic accuracy result exists. The runner is now wired to the implemented judge through the additive `DebateJudge.evaluate()` accessor (offline-verified with an injected fake LLM, including mismatch detection and failure/uncertainty handling). A separate single-request guarded probe, `test/live/test_debate_judge_cityu_probe.py`, is prepared for the CityU DeepSeek endpoint (`deepseek` provider, base URL `https://llm.cs.cityu.edu.hk/v1`, model `CS5351/DeepSeek-V4-Flash`) and has **not** been run. Running either live path remains outstanding work.
 
 ## FEAT-03 — Company background in the consolidated report
 
