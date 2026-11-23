@@ -6,7 +6,7 @@
 
 ## CS5351 team project
 
-The team extends TradingAgents 0.7.1. Four analyst nodes gather market, sentiment, news and fundamental evidence. Research and risk agents debate it before the portfolio manager produces a rating. The CLI, graph, model adapters and data vendors remain independently importable. The team has specified a fifth analyst for stock options. See the [requirements registry](docs/req/requirements.yaml) for the planned extension.
+The team extends TradingAgents 0.7.1. Five stock analyst nodes gather market, sentiment, news, fundamental and options evidence. Research and risk agents debate it before the portfolio manager produces a rating. The CLI, graph, model adapters and data vendors remain independently importable. FEAT-01 through FEAT-06 are implemented; the [requirements registry](docs/req/requirements.yaml), architecture records and trace matrix define and qualify their evidence.
 
 Team repository: [HanDiyi2000/TradingAgents, CS5351 branch](https://github.com/HanDiyi2000/TradingAgents/tree/CS5351).
 
@@ -14,8 +14,9 @@ Team repository: [HanDiyi2000/TradingAgents, CS5351 branch](https://github.com/H
 | --- | --- |
 | `src/tradingagents/`, `src/cli/`, `src/main.py` | Canonical implementation, CLI and example. The root package links and example launcher preserve existing entry points. |
 | `test/offline/`, `test/live/`, `test/conftest.py` | Baseline regression tests, real-provider tests and shared isolation fixtures. |
-| `docs/req/` | Product scope, requirement registry and its validation schema. Feature IDs FEAT-01 through FEAT-06 identify the six planned features. FEAT-01 covers the Options Analyst. FEAT-02 covers early stopping in the research debate. FEAT-03 adds company background to the consolidated report. FEAT-04 covers cumulative token warnings in CLI and web runs. FEAT-05 links research arguments to analyst report paragraphs. FEAT-06 specifies a local browser interface for the full analysis workflow. |
-| `architecture-blueprint.md`, `docs/architecture/` | Master blueprint, ADR, invariants, traceability, state, permissions, runtime policies and candidate evaluations. |
+| `docs/req/` | Product scope, requirement registry and its validation schema. Feature IDs FEAT-01 through FEAT-06 identify the six implemented features. FEAT-01 covers the Options Analyst. FEAT-02 covers early stopping in the research debate. FEAT-03 adds company background to the consolidated report. FEAT-04 covers cumulative token warnings in CLI and web runs. FEAT-05 links research arguments to analyst report paragraphs. FEAT-06 provides a local browser interface for the full analysis workflow. |
+| `architecture-blueprint.md` | Master architecture constraint document read by the planning agent. |
+| `docs/architecture/` | ADRs, invariants, traceability, state, permissions, runtime policies and candidate evaluations. |
 | `AGENTS.md`, `Prompt.md`, `.agent/`, `.opencode/`, `docs/code-governance/` | Coding and verification workflow. The team must author the human-only rules and define and enforce its role permissions. |
 | `prompts/` | Reserved versioned prompt artifacts. Active baseline prompts are in the source. |
 | `docs/ai-use-log.yaml`, `docs/review-memo.md`, `docs/debt-register.md`, `docs/bug-diary.md` | Running evidence for AI assistance, PR reviews, debt and bugs. |

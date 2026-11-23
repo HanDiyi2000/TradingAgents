@@ -2,12 +2,13 @@
 
 ## Team and relative contributions
 
-This section records the FEAT-01 contribution of Ruihan Zhou, the FEAT-03 contribution of Haobin Yan and the FEAT-06 contribution of Han Diyi. The team must add the remaining members and agree the final relative weights so the team average equals 1.0.
+This section records the FEAT-01 contribution of Ruihan Zhou, the FEAT-03 contribution of Haobin Yan, the FEAT-05 contribution of Wanxin Ma and the FEAT-06 contribution of Han Diyi. The team must add the remaining members and agree the final relative weights so the team average equals 1.0.
 
 | Name | Student ID | Rotated roles | Contribution | Evidence | Relative weight |
 | --- | --- | --- | --- | --- | --- |
 | Ruihan Zhou | 60468699 | FEAT-01 implementation and verification; role rotation to be confirmed by the team | Read the FEAT-01 requirements and architecture artifacts; produced the plan; implemented the data adapter, yfinance vendor, Options Analyst node, selection, graph, CLI, delivery and export integration; added offline and live tests; completed the verification and delivery records | `src/tradingagents/dataflows/options.py`, `src/tradingagents/dataflows/vendors/yahoo/options.py`, `src/tradingagents/agents/analysts/options_analyst.py`, `test/offline/test_options_data.py`, `test/offline/test_options_analyst.py`, `test/live/test_options_yfinance_live.py`, `docs/architecture/trace-matrix.md`, `docs/review-memo.md`, `docs/ai-use-log.yaml`, this file | To be agreed by the team; the team average must equal 1.0 |
 | Haobin Yan | 60642891 | FEAT-03 requirements clarification, coding-agent supervision and manual acceptance; role rotation to be confirmed by the team | Directed OpenCode through plan revisions, test approval, implementation and correction rounds with assistance from a separate review chat; ran AAPL acceptance without the Fundamentals Analyst; reviewed and accepted the transcript annotations and individual reflection | `test/offline/test_company_background.py`, `transcripts/60642891-Haobin-Yan.md`, `docs/architecture/trace-matrix.md`, `docs/review-memo.md`, `docs/ai-use-log.yaml`; AAPL 2026-11-22 manual run recorded in the transcript | To be agreed by the team; the team average must equal 1.0 |
+| Wanxin Ma | 60013670 | FEAT-05 planning, coding-agent supervision, test approval and live citation evaluation; role rotation to be confirmed by the team | Directed OpenCode through plan revisions and explicit test/implementation gates; reviewed supplementary and regression tests before production fixes; verified paragraph numbering, citation validation, resume and exports; requested a six-turn real-model citation-quality evaluation and limited the final correction to the demonstrated duplicate-notice display defect | `src/tradingagents/agents/citations.py`, `test/offline/test_debate_citations*.py`, `docs/evaluations/feat05-live/`, `transcripts/60013670-Wanxin-Ma.md`, `docs/architecture/trace-matrix.md`, `docs/review-memo.md`, `docs/ai-use-log.yaml` | To be agreed by the team; the team average must equal 1.0 |
 | Han Diyi | 60021318 | FEAT-06 planning, coding-agent supervision, browser acceptance and delivery records; role rotation to be confirmed by the team | Directed an OpenCode session through a read-only plan approval, an offline-test round (tests first, allowed to fail pending implementation), an implementation round, and two evidence-driven fixes found in browser acceptance (ChatGPT subscription model selection; the long analysis-process page); performed the browser acceptance checks | `src/cli/web/`, `src/cli/stream.py`, `src/cli/static/`, `test/offline/test_web_*.py`, `docs/architecture/adr/003-local-web-interface.md`, `docs/architecture/trace-matrix.md` (FEAT-06 D4 record), `docs/bug-diary.md`, `docs/review-memo.md`, `transcripts/60021318-Han-Diyi.md`, this file | To be agreed by the team; the team average must equal 1.0 |
 
 ## Engineering process and improvements
@@ -38,6 +39,41 @@ The implementation followed those artifacts in order: data adapter, provider, an
 
 The evidence loops back into the trace matrix and review memo. Offline verification is deterministic and runs without network. The live yfinance test complements it by checking the actual provider path. This separation makes the claim precise: the offline suite proves behavior, and the live suite proves provider integration.
 
+### FEAT-05: test evidence revising the citation architecture
+
+FEAT-05 used the same supervised order but required more revision rounds. The
+first plan defined a deterministic authority boundary: the model may write
+paragraph IDs, while code owns paragraph numbering, per-argument extraction,
+validation, notices, state and export. The student required plan approval first,
+then a test-only patch, explicit test approval, implementation review and final
+verification. The accepted tests covered stable numbering for both researchers,
+invalid and absent references, Options compatibility, the FEAT-02 judge input,
+legacy states, exports and real checkpoint resume.
+
+Implementation evidence then exposed six behaviors missing from the approved
+cases: the prompts did not explicitly tell researchers how to cite; citation
+state fields were required rather than optional; labels past 99 did not
+round-trip; headings became arguments; fenced code was split; and bull/bear
+turn numbers used a shared scale. Supplementary tests were reviewed before the
+source was corrected. A later probe found three more segmentation/rendering
+defects: a heading could consume a numbered entry and duplicate the last body,
+prose immediately above a fence could be dropped, and a debate fence could be
+misclassified as its own argument. Regression tests again preceded the source
+change. This sequence changed the architecture of the citation leaf from a
+blank-line iterator into a fence-aware source/argument parser while preserving
+the approved state and graph interfaces.
+
+The final offline acceptance proved deterministic behavior, not citation
+meaning. The student therefore requested a separate live evaluation using six
+real researcher turns. It found that all 139 written IDs resolved, but the
+AI-assisted semantic review marked some valid-ID claims as insufficiently
+supported. It also reproduced an obvious display defect: when the model echoed
+an italic notice, rendering appended the same notice again. The student limited
+the final change to that demonstrated duplication; a focused regression test
+was added and the wider semantic-quality result remained explicitly unaccepted.
+This distinction between syntactic validity, deterministic traceability and
+semantic support is retained in the trace matrix, review memo and debt register.
+
 ### FEAT-06: requirements, design and tests changing together
 
 FEAT-06 shows a feature whose design changed because of what the browser actually did, not because of a new requirement. The plan reused the CLI's analysis, event interpretation and report writer, and the first offline round passed: 27 web tests green inside a full offline suite of 1647 passed. Those tests pinned the approved interface and behaviour, but they ran against stubbed graphs and did not exercise the real provider and model choices.
@@ -54,6 +90,24 @@ A second acceptance note — the analysis-process page grew very long — led to
 4. The human asked for the verification boundary to be explained. This clarified that the offline suite uses fixed chains and a recording model, while the live test is a separate provider check.
 5. The human asked for a delivery audit, then authorized completion of the missing records and fixed the English name form to `Ruihan Zhou`. This produced the trace-matrix evidence, review memo, AI-use entry, annotated transcript and this report section.
 6. No Git branch or PR could be created because the delivered directory has no `.git` metadata. This remains a repository-level delivery task for the team.
+
+### FEAT-05 human interventions (Wanxin Ma)
+
+1. Required OpenCode to read the governing requirements and architecture and to
+   produce only a plan, with unresolved decisions returned for human approval.
+2. Approved the corrected plan, then limited the next stage to tests and stopped
+   implementation until those tests were explicitly accepted.
+3. Rejected contradictory or weak test assumptions, including the resume fail
+   point, notice ownership, fenced-code behavior and exact HTML association,
+   until probes demonstrated what each case would detect.
+4. Approved implementation only after the approved test hashes were recorded,
+   then requested supplementary tests when review probes found six uncovered
+   behaviors.
+5. Requested a small real-model evaluation to separate valid-ID handling from
+   the quality of the evidence-to-claim relationship.
+6. Restricted the final code change to the reproduced duplicate-notice display
+   problem and stopped further modification when no other obvious display fix
+   was authorized.
 
 ### FEAT-06 human interventions (Han Diyi)
 

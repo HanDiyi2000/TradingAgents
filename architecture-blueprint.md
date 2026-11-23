@@ -1,74 +1,248 @@
 # Architecture blueprint
 
-## Existing application
+## 1. Scope and status
 
-The CLI in `src/cli/` collects run settings and invokes the graph. `src/tradingagents/graph/` coordinates the four analysts, research debate, trader, risk discussion and portfolio manager. Data tools route through `dataflows/`; model clients live in `llm_clients/`. The graph produces a decision and reports. The memory package records prior decisions and reflections.
+TradingAgents-CS5351 is a local, single-user multi-agent stock-analysis system.
+It accepts a ticker, analysis date, analyst selection, model/provider settings
+and optional portfolio context; gathers cutoff-eligible evidence; produces
+specialist reports; runs research and risk debates; emits a final rating and
+decision; and writes Markdown/HTML artifacts. The terminal and local web page
+are two views over the same analysis graph.
 
-## Team design pending
+FEAT-01 through FEAT-06 are present in the current implementation. This
+blueprint describes the implemented architecture, while the requirements,
+ADRs, trace matrix and verification records retain the approval/evidence
+history. It does not claim that live-model semantic quality is established by
+offline tests.
 
-After requirement review, record scope, architectural drivers, external and authority boundaries, integration contracts, workflow changes, permissions, verification, observability and change policy here. Identify the deterministic component that constrains each safety-relevant AI output and link its invariant and negative test.
+## 2. Architectural drivers
 
-## FEAT-01 — Options Analyst (specified)
+1. **Point-in-time evidence.** A historical analysis must not see observations
+   or learned outcomes that were unavailable at its analysis date.
+2. **One workflow.** CLI and web must not diverge into separate analysis or
+   report implementations.
+3. **Supervised AI authority.** Models generate interpretations and prose;
+   deterministic code owns eligibility, routing bounds, validation,
+   persistence, paths and failure policy.
+4. **Traceable output.** Saved artifacts retain the run identity, analyst
+   evidence and debate-to-source citation records needed for review.
+5. **Resume and compatibility.** Optional checkpointing recovers interrupted
+   compatible runs; additive fields do not make old states/logs unreadable.
+6. **Bounded execution.** Analyst tool loops and both debates have configured
+   caps. Token usage is measured and warned once without stopping the run.
+7. **Local security boundary.** Credentials stay with provider clients; the web
+   server is loopback/single-user; reports use deterministic escaping and CSP.
 
-For stock runs, add a fifth parallel analyst to the default selection. Explicit selections take precedence. The proposed selection key is `options` and the proposed state field is `options_report`. The report describes what stock options imply about risk using eligible option-chain evidence. The Market Analyst owns the underlying stock's price and volume analysis.
+## 3. System and external boundaries
 
-| Boundary | Producer and consumer contract |
-| --- | --- |
-| Data access | The data layer receives the stock and analysis cutoff and filters records before model invocation. The model interprets eligible records. The application controls eligibility and the unavailable status. |
-| First-stage state | The analyst publishes one options report or an explicit unavailable notice. A deselected analyst issues no lookup or report. Older explicit selections and saved outputs without this field remain readable. |
-| Raw evidence | Both researchers and all three risk debaters receive the report, including its unavailable status. |
-| Derived evidence | Research Manager reads the debate. Trader reads the investment plan and retains the separate technical market report for price levels. Portfolio Manager reads the risk debate, research plan and trade proposal. A rating change is not required. |
-| Presentation and storage | CLI progress and report panels, graph state and saved run logs expose the selected analyst's result. The shared report writer emits a separate Markdown file and a section in the combined Markdown and requested HTML output. |
+| Boundary | Inside the system | Outside / input |
+| --- | --- | --- |
+| User interface | CLI command, Rich live display, local web server and static page | User choices, optional portfolio file, browser |
+| Model boundary | Provider-neutral clients, structured-output helper, callbacks | OpenAI-compatible and other configured providers; model outputs are untrusted/advisory inputs |
+| Market-data boundary | Dataflow router, vendor adapters, cutoff/identity filtering | Yahoo/SEC/FRED/other configured sources; availability and completeness are not assumed |
+| Execution boundary | LangGraph topology, state, deterministic routers and checkpoint lifecycle | OS process and local filesystem |
+| Artifact boundary | JSON run log, Markdown/HTML report tree, decision memory | User-managed storage/retention |
 
-The scope decision is recorded in [ADR 001](docs/architecture/adr/001-architecture-choice.md). The [trace matrix](docs/architecture/trace-matrix.md) links each contract to its planned verification.
+Provider credentials are read from environment/provider auth storage by the
+owning client. They are not state fields, run-log fields, report content or
+transcript evidence.
 
-## FEAT-02 — Research debate early stop
+## 4. Components and ownership
 
-The bull and bear researchers already alternate turns. Extend the routing decision in
-`src/tradingagents/graph/conditional_logic.py` at the end of a bull–bear pair. The research
-debate history is the reference for identifying evidence already cited and opposing arguments
-already answered. A paraphrase of the same fact or rebuttal adds no progress.
+| Layer | Responsibility | Principal owners |
+| --- | --- | --- |
+| Entry and presentation | Collect settings, display shared events, launch one local browser run | `src/cli/main.py`, `run.py`, `display.py`, `stream.py`, `web/` |
+| Graph orchestration | Construct the graph, parallel analyst plan, route debates, create/resume state | `src/tradingagents/graph/` |
+| Agents | Analyst reports, bull/bear research, research plan, trader proposal, risk opinions, final decision | `src/tradingagents/agents/` |
+| Deterministic AI constraints | Debate-progress classification, citation numbering/validation, structured-output guards | `agents/debate_progress.py`, `agents/citations.py`, `agents/structured.py` |
+| Evidence access | Route configured vendors, normalize symbols, enforce option eligibility/cutoff | `src/tradingagents/dataflows/` |
+| Model transport | Provider/client selection, authentication and callbacks | `src/tradingagents/llm_clients/` |
+| Memory | Append decisions, settle outcomes, generate/retrieve lessons | `src/tradingagents/memory/` |
+| Artifacts | Per-agent/consolidated Markdown, self-contained HTML, final JSON projection | `reporting.py`, `report_html.py`, `TradingAgentsGraph._log_state` |
 
-| Decision point | Next step |
-| --- | --- |
-| Only the bull has spoken in this round | Give the bear its turn. |
-| Both have spoken and the round limit is reached | Hand the history to the Research Manager under the existing limit. |
-| Opening round complete and below the limit | Start round two. |
-| Later round complete and below the limit | Continue if either side cited a new fact or first addressed an unanswered opposing point. Otherwise record “No new evidence or first response in this round” with the debate and hand the full history to the Research Manager. |
+Detailed module ownership and dependency constraints are in
+[structural-constraints.md](../code-governance/structural-constraints.md).
 
-The rule operates on the research debate regardless of which analysts supplied reports. The separate risk debate uses its existing routing.
+## 5. End-to-end workflow
 
-## FEAT-03 — Company background in the consolidated report
+1. The entry point validates settings and constructs one `TradingAgentsGraph`.
+   Run initialization resolves instrument context/profile once, loads optional
+   portfolio context and creates the baseline state.
+2. The selected analyst subgraphs run in parallel. The default stock selection
+   contains Market, Sentiment, News, Fundamentals and Options. The memory step
+   runs alongside them and supplies point-in-time past lessons for the Portfolio
+   Manager.
+3. Each analyst publishes only its report key. Tool-enabled analysts have a
+   bounded tool loop; the Options Analyst receives a deterministic prefiltered
+   chain or the exact unavailable notice.
+4. The Bull and Bear Researchers receive the same numbered analyst paragraphs.
+   Each turn is segmented and its written IDs are validated before the recorded
+   debate history moves forward.
+5. One round is one bull and one bear turn. The configured cap wins. The opening
+   round cannot stop early. From round two, the bear node requests one structured
+   progress judgement after both sides speak; the deterministic classifier maps
+   malformed/uncertain output to `UNKNOWN`, which continues.
+6. The Research Manager receives the full recorded history and produces an
+   investment plan. The Trader turns it into a transaction proposal.
+7. Aggressive, Conservative and Neutral risk debaters alternate under their
+   configured cap. The Portfolio Manager receives the plans, risk history,
+   optional portfolio context and memory lessons, and produces the final
+   decision/rating.
+8. A successful run records the decision in long-lived memory, clears its
+   checkpoint, writes the final JSON projection and can export the shared report
+   tree. The web path stores artifacts in a run-specific directory.
 
-The shared CLI and Python export path prepares one factual introduction from the run's eligible company profile. Both renderers place it between the report header and the analyst reports. Reuse the ticker in the title. The introduction is independent of the Fundamentals Analyst and requires no additional agent or model call.
+## 6. Authority model
 
-A run retains its cleaned profile once at initialization: `create_run_state` resolves the instrument identity a single time and keeps only `company_name`, `industry` and `business_description` in the optional state field `company_identity` (declared `NotRequired`, so a run without it stays loadable). A custom `resolve_instrument_context` override still supplies the run's context string; the profile is retained from that same single resolution, and a failed resolution is not retried, so no extra vendor request is made. That field flows through the graph and is persisted in the run log. The exporter reads only stored run data — no lookup, cache access, prompt-text parsing or model call — prepares the background once in `write_report_tree`, and shares the same raw source text between Markdown and the requested HTML. Each renderer escapes for its own format: Markdown escapes Markdown-significant characters so the source text shows literally, and HTML escapes for HTML, so both formats show the same visible text. An independent `Company Background` section (English labels `Name`, `Industry`, `Business`) sits after the header and before the numbered analyst sections; the HTML contents list names it first. The business description keeps one or two complete source sentences split at sentence boundaries, with no character cap.
+| Decision | Advisory input | Authoritative component and fallback |
+| --- | --- | --- |
+| Which evidence is eligible | Vendor records | Dataflow adapters enforce ticker/date/contract rules; missing eligible options become the fixed unavailable notice |
+| Analyst/research/risk interpretation | LLM prose | Graph fixes recipients, order, state keys and round/tool caps |
+| Whether a debate pair progressed | Structured quick-tier judgement | `debate_progress.classify_judgement`; inconsistent, malformed or low-confidence negative results become `UNKNOWN`; cap-first router decides the edge |
+| Which paragraph supports an argument | IDs written by researcher | `agents/citations.py` validates against this run's stored paragraph map; unknown and absent IDs receive deterministic notices |
+| Token usage warning | Provider-reported usage | Run-local locked `StatsCallbackHandler` totals usage and emits only the first strict threshold crossing |
+| What is persisted or served | Completed state and artifacts | State/log/report/run managers select fields and paths; model output cannot select a path or mark itself valid |
 
-For historical runs, follow the identity rule in `src/tradingagents/agents/context.py`. A current name may identify the company if explicitly labelled as current. Present industry and business details as historical facts only when supported for the analysis date. Omit missing fields and show an unavailable notice if the profile supplies none.
+## 7. State, memory and recovery
 
-## FEAT-04 — Per-run token usage warning
+`AgentState` is the live contract. Optional compatibility fields are declared
+`NotRequired` and consumed with `.get()`. Checkpointing is disabled by default;
+when enabled it stores per-ticker SQLite state under the data-cache root and
+uses ticker/date plus a graph signature to prevent incompatible resume. Success
+clears the relevant checkpoint.
 
-The CLI and web entry points share the same per-analysis statistics handler design. Reuse its input and output counters and read the warning threshold from the run configuration. A call with no reported usage contributes nothing to the measured total. Check the total and mark the first crossing under the handler's existing lock so simultaneous completions produce a single warning. Send the crossing total and configured threshold to the active terminal or browser activity view. The graph continues normally.
+The final JSON log is an audit projection, not recovery state. The report tree
+is a deterministic view of completed state. The append-only decision memory
+survives sessions and later settles outcomes/reflections; historical retrieval
+filters lessons by the date they became knowable. Full retention, deletion and
+privacy rules are in [memory-design.md](memory-design.md).
 
-The run-level warning threshold is independent of `TRADINGAGENTS_MAX_TOKENS`, which controls output length per model call.
+## 8. Feature contracts
 
-The CLI implements this contract with a run-local `StatsCallbackHandler`. The existing callback chain accounts for usage. A `TokenWarning(total_tokens, threshold)` is available through the handler snapshot and an optional one-shot receiver. Rich refreshes the current view at the crossing; a terminal without live display support receives a plain warning. See [ADR 002](docs/architecture/adr/002-token-warning.md) for configuration, checkpoint compatibility and the planned FEAT-06 integration.
+### FEAT-01 — Options Analyst (`FR-OPT-*`, `INV-OPT-01`)
 
-## FEAT-05 — Paragraph citations in the research debate
+- Stock runs include the `options` analyst by default; explicit selections take
+  precedence. Crypto runs exclude options.
+- `dataflows/options.py` owns identity, availability, expiry and deduplication.
+  It prefetches the chain before model invocation and renders a core indicator
+  set. The model is not given an unrestricted option-chain tool.
+- The node publishes `options_report` or the exact unavailable notice. Both
+  researchers and all three risk debaters receive it; CLI, log and report
+  export retain it. Old states without the field remain readable.
 
-At the handoff from analysts to researchers, assign a stable report prefix and a sequence starting at 01 within each supplied report. For example, `[MKT-01]` identifies the first market paragraph and `[FUN-02]` the second fundamentals paragraph. Treat blank lines as body paragraph boundaries and skip headings and empty blocks. Preserve the original paragraph text. A selected Options Analyst report uses its own sequence (`OPT`). The company background added at export falls outside the debate inputs.
+The scope choice is recorded in [ADR 001](adr/001-architecture-choice.md).
 
-Give both researchers the same labelled text. Each argument carries the ID or IDs for its evidence. Before recording a turn, check each ID against this run's paragraphs. Display “Invalid citation” beside unknown IDs and “No citation provided” beside an argument with none. Preserve these annotations in the debate history and continue. Both consolidated renderers use the original labels so a reader can search for the cited source.
+### FEAT-02 — Research-debate early stopping (`FR-DEB-01`)
 
-FEAT-02 evaluates progress separately. A first reply to an unanswered opposing point can advance the debate even when both speakers cite the same paragraph.
+- Applies only to the bull/bear research debate; the risk debate is unchanged.
+- Never stop the opening round. From round two, assess progress only after both
+  speakers have completed the pair. New evidence or a first substantive reply
+  continues; confirmed absence of both records the fixed reason and hands the
+  full history to the Research Manager.
+- The configured round cap is checked first and always wins. Judgement failure
+  is `UNKNOWN` and continues; no free-text retry converts uncertainty into a
+  stop.
 
-## FEAT-06 — Local web interface (implemented)
+Offline tests establish routing and failure behavior. The trace matrix records
+that three live semantic evaluations did not pass; semantic accuracy is not
+claimed as accepted.
 
-The `tradingagents web` entry point serves one local user. Print the local URL and open the default browser after the service is ready. The printed URL also works when automatic opening fails. The existing CLI command continues to open the terminal interface. See [ADR 003](docs/architecture/adr/003-local-web-interface.md) for the shared event interpretation, the standard-library server, per-run results and display-only citation anchors.
+### FEAT-03 — Company background (`FR-RPT-01`)
 
-| Handoff | Contract |
-| --- | --- |
-| Form to run | Reuse CLI validation, provider/model choices, analyst defaults and graph configuration. Read credentials on the host. Disable Start during an active run and accept only one start for that run. |
-| Run to browser | Consume the existing graph stream that feeds the CLI. Show agent status, messages and tool calls in the activity view. In the content view preserve analyst reports, individual bull/bear turns, the research manager's plan, trader proposal, all three risk opinions and the final decision. Append new content in observed order and suppress duplicate items from cumulative snapshots. |
-| Feature interactions | FEAT-01 supplies options selection and report or unavailable notice. FEAT-02 supplies the early-stop reason before the manager takes over. FEAT-04 supplies token totals and its single threshold warning. FEAT-05 supplies paragraph IDs, inline citations and validation notices during the debate. |
-| Run to results | Use the existing report writer for this run's HTML preview and Markdown download, including FEAT-03 company background and FEAT-05 source labels. Associate results with the run even when two analyses use the same ticker and date. On failure, retain partial activity, show a concise error and re-enable Start. |
+- Initialization retains one cleaned optional `company_identity` containing
+  name, industry and business description, while respecting a custom
+  `resolve_instrument_context` hook and avoiding an export-time lookup.
+- `write_report_tree` prepares one raw profile view. Markdown and HTML escape it
+  for their own formats so the same literal information appears in both.
+- Exactly one Company Background section appears after the header and before
+  numbered analyst sections. Historical output may label the current name but
+  must not present undated industry/business details as historical facts.
+
+### FEAT-04 — Per-run token warning (`FR-TOK-01`)
+
+- The CLI and web each create a fresh run-local statistics handler. Missing
+  provider usage contributes zero. When the measured total becomes strictly
+  greater than the configured threshold, the active interface receives exactly
+  one warning with the total and threshold; the analysis continues.
+- `TRADINGAGENTS_TOKEN_WARNING_THRESHOLD` configures the warning. It is separate
+  from `TRADINGAGENTS_MAX_TOKENS`, which limits model output per call.
+
+See [ADR 002](adr/002-token-warning.md).
+
+### FEAT-05 — Paragraph citations (`FR-CIT-01`)
+
+- `agents/citations.py` numbers stored analyst-report body paragraphs with
+  stable per-report prefixes (`MKT`, `SEN`, `NWS`, `FUN`, `OPT`) and sequences
+  beginning at `01`. Headings and fenced code retain their place but receive no
+  ID; source text is not duplicated or dropped.
+- Both researchers see the same labelled sources and are instructed to put
+  bracketed IDs beside supported arguments. Validation reads only IDs actually
+  written in that argument. Unknown IDs remain visible with `Invalid citation`;
+  arguments with none receive `No citation provided`; debate execution
+  continues.
+- Raw turns and resolved argument records are stored separately so resume and
+  re-export do not duplicate notices. Consolidated Markdown/HTML and individual
+  research files preserve the source/argument association.
+- FEAT-02 progress remains a separate semantic decision; reuse of a valid source
+  ID does not by itself determine progress.
+
+### FEAT-06 — Local web interface (`FR-WEB-*`)
+
+- `tradingagents web` serves a single-user page on loopback, prints the URL and
+  optionally opens the browser. The terminal command remains available.
+- The page reuses CLI validation/model catalogs, `cli.stream` interpretation,
+  the graph and report writer. `RunManager` accepts at most one active run,
+  publishes ordered cursor-indexed events, retains partial output on failure and
+  owns run-specific artifact paths.
+- Success displays ticker/date/rating, a preview of that run's HTML and the
+  matching Markdown download. Citation anchors are added only to the preview;
+  saved files are unchanged.
+
+See [ADR 003](adr/003-local-web-interface.md).
+
+## 9. Permissions and security
+
+- Runtime data/tool access is constrained by the configured data vendors,
+  provider clients and the loopback HTTP boundary.
+- HTML rendering disables raw HTML and external image loading and preserves the
+  CSP. User/model text is escaped by the responsible renderer.
+- Credentials remain in environment variables or provider-specific auth files
+  and are excluded from state/log/report schemas.
+- The coding-agent role/path allowlist is **not yet approved**:
+  `docs/architecture/permission-model.md` is intentionally blank. No tool or
+  agent should infer permissions from this blueprint; a team decision is needed
+  before claiming enforcement.
+
+## 10. Verification and observability
+
+- `docs/architecture/trace-matrix.md` maps requirements to cases and records
+  actual evidence. `docs/code-governance/verification-constraints.md` defines
+  required gates. Offline scripted-model tests prove deterministic contracts;
+  live evaluations are reported separately and cannot be promoted to passes.
+- Runtime observability consists of ordered CLI/web events, agent/tool/report
+  labels, token counters/warning, explicit unavailable/error notices, persisted
+  debate progress/citation records, the final JSON state log, report artifacts
+  and decision memory.
+- Evidence records must state exact commands, failures, skips and environment.
+  Requirements, approvals, live semantic quality and human review verdicts may
+  not be inferred from a passing unit suite.
+
+## 11. Change policy and open decisions
+
+1. Requirement and architecture changes precede code. Safety-critical authority,
+   graph-shape, persistence or public-interface changes require human approval
+   and, where appropriate, an ADR.
+2. Extend one owning module and its declared interfaces. Update traceability,
+   tests and memory/permission documentation when those contracts change.
+3. Preserve approved tests; if evidence exposes a contradictory test or design,
+   stop and return the conflict for human decision before changing it.
+4. Do not commit credentials, claim unrun evidence or rewrite human approvals.
+
+Two architecture items remain explicitly unresolved rather than invented here:
+
+- the exact prompt-context token cap/compaction threshold proposed by ADR 001;
+- the coding-agent permission allowlist and enforcement mechanism.
+
+Until approved, the implementation retains its current round/tool/output caps
+without project-wide prompt compaction, and the permission model remains a
+documented gap.
