@@ -105,6 +105,23 @@ def analyze(
 
 
 @app.command()
+def web(
+    port: int = typer.Option(8000, "--port", help="Port for the local web service"),
+    no_browser: bool = typer.Option(False, "--no-browser", help="Do not open a browser automatically"),
+):
+    """Serve the local web interface for one stock analysis (FEAT-06).
+
+    Starts a local service on 127.0.0.1, prints its URL, and opens the browser
+    once. The terminal CLI stays available as the bare command.
+    """
+    from cli.web import run_web
+
+    code = run_web(port=port, open_browser=not no_browser)
+    if code != 0:
+        raise typer.Exit(code=code)
+
+
+@app.command()
 def backtest(
     tickers: str = typer.Argument(..., help="Comma-separated tickers, e.g. NVDA,AAPL"),
     start: str = typer.Option(..., "--start", help="First analysis date, YYYY-MM-DD"),

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TradingAgents — Local Analysis</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<div class="layout">
+  <aside class="config">
+    <h1>TradingAgents</h1>
+    <form id="config-form" autocomplete="off">
+      <label>Stock code
+        <input id="ticker" name="ticker" value="NVDA" required>
+      </label>
+      <label>Analysis date
+        <input id="date" name="date" type="date" required>
+      </label>
+      <label>Provider
+        <select id="provider" name="provider"></select>
+      </label>
+      <div class="row">
+        <label>Quick model
+          <select id="quick_think_llm" name="quick_think_llm"></select>
+          <input id="quick_custom" placeholder="custom model ID" hidden>
+        </label>
+        <label>Deep model
+          <select id="deep_think_llm" name="deep_think_llm"></select>
+          <input id="deep_custom" placeholder="custom model ID" hidden>
+        </label>
+      </div>
+      <p id="model-hint" class="hint" role="note" hidden></p>
+      <fieldset>
+        <legend>Analysts</legend>
+        <div id="analysts" class="analysts"></div>
+      </fieldset>
+      <div class="row">
+        <label>Research depth
+          <select id="research_depth" name="research_depth"></select>
+        </label>
+        <label>Report language
+          <select id="output_language" name="output_language">
+            <option>English</option>
+            <option>Chinese</option>
+            <option>Japanese</option>
+            <option>Korean</option>
+            <option>Spanish</option>
+          </select>
+        </label>
+      </div>
+      <button id="start" type="submit">Start analysis</button>
+      <p id="config-error" class="error" role="alert"></p>
+    </form>
+  </aside>
+
+  <main class="content">
+    <nav class="tabs">
+      <button id="tab-progress" class="tab active" type="button">Analysis process</button>
+      <button id="tab-report" class="tab" type="button" disabled>Final report</button>
+      <a id="download" class="download" href="#" hidden>Download Markdown</a>
+    </nav>
+    <div id="status" class="status" role="status"></div>
+    <section id="view-progress" class="view">
+      <ol id="events" class="events"></ol>
+      <p id="empty" class="muted">No analysis yet. Fill in the form and press Start.</p>
+    </section>
+    <section id="view-report" class="view" hidden>
+      <div id="report-meta" class="report-meta"></div>
+      <iframe id="report-frame" class="report-frame" title="Final report"></iframe>
+    </section>
+  </main>
+</div>
+<script src="/app.js"></script>
+</body>
+</html>

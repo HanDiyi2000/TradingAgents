@@ -45,7 +45,7 @@ _own_file_locations()
 
 
 def pytest_configure(config):
-    for marker in ("unit", "integration", "smoke"):
+    for marker in ("unit", "integration", "smoke", "loopback"):
         config.addinivalue_line("markers", f"{marker}: {marker}-level tests")
     # yfinance caches each symbol's time zone on disk, in the home directory
     # by default; the suite keeps it in a directory of its own.
@@ -58,8 +58,32 @@ def pytest_configure(config):
 
 @pytest.fixture(autouse=True)
 def _no_network(request, monkeypatch):
-    """Tests do not reach the network; one that must is marked integration."""
+    """Tests do not reach the network; one that must is marked integration.
+
+    A ``loopback``-marked test may connect to 127.0.0.1 only (the local web
+    service under test): outbound non-loopback connections are still refused.
+    """
     if request.node.get_closest_marker("integration"):
+        return
+
+    if request.node.get_closest_marker("loopback"):
+        real_connect = socket.socket.connect
+        real_getaddrinfo = socket.getaddrinfo
+
+        def loopback_only(self, address, *args, **kwargs):
+            host = address[0] if isinstance(address, tuple) else address
+            if host in ("127.0.0.1", "::1", "localhost"):
+                return real_connect(self, address, *args, **kwargs)
+            raise OSError(f"test tried to reach the network: {address!r}")
+
+        def loopback_resolve(host, *a, **k):
+            if host in ("127.0.0.1", "::1", "localhost"):
+                return real_getaddrinfo(host, *a, **k)
+            raise OSError(f"test tried to resolve the network host: {host!r}")
+
+        monkeypatch.setattr(socket.socket, "connect", loopback_only)
+        monkeypatch.setattr(socket.socket, "connect_ex", loopback_only)
+        monkeypatch.setattr(socket, "getaddrinfo", loopback_resolve)
         return
 
     def refuse(*args, **kwargs):
