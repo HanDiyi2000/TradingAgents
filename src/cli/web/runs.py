@@ -339,35 +339,40 @@ def _add_citation_anchors(html: str) -> str:
     their notices stay. The saved report files are never modified; only the
     preview string returned to the page passes through here.
     """
-    valid = set()
-    for match in _P_BLOCK.finditer(html):
+    # report_html emits this heading once for the analyst section. Repeated
+    # labels in later decisions are citations even at the start of a paragraph.
+    source = re.search(r'<section id="s[0-9]+"><h2>I\. Analyst Team Reports</h2>(.*?)</section>',
+                       html, re.DOTALL)
+    if source is None:
+        return html
+    targets: dict[str, tuple[int, int]] = {}
+    for match in _P_BLOCK.finditer(html, source.start(1), source.end(1)):
         start = _PARA_START.match(match.group(2) or "")
         if start:
-            valid.add(start.group(1))
-    if not valid:
+            targets.setdefault(start.group(1), (match.start(), match.start(2) + start.end()))
+    if not targets:
         return html
 
-    def link_ids(text):
-        return _CITE_LABEL.sub(
-            lambda m: f'<a class="cite" href="#para-{m.group(1)}">[{m.group(1)}]</a>'
-            if m.group(1) in valid else m.group(0),
-            text,
-        )
+    # Work on generated HTML tokens: preserve attributes, existing hyperlinks
+    # and literal code. Handle prose in list items and tables as well as <p>.
+    source_starts = {offset: (pid, end) for pid, (offset, end) in targets.items()}
 
-    def fix_block(match):
-        attrs = match.group(1) or ""
-        inner = match.group(2) or ""
-        start = _PARA_START.match(inner)
-        if start:
-            pid = start.group(1)
-            # Add the id to the paragraph (unless one is already present).
-            if "id=" not in attrs:
-                attrs = f' id="para-{pid}"' + attrs
-            # Keep the leading marker plain (no self-link); link the rest.
-            head_end = start.end()
-            inner = inner[:head_end] + link_ids(inner[head_end:])
-        else:
-            inner = link_ids(inner)
-        return f"<p{attrs}>{inner}</p>"
-
-    return _P_BLOCK.sub(fix_block, html)
+    token = re.compile(
+        r"<(a|pre|code|script|style)\b[^>]*>.*?</\1>|<[^>]+>|[^<]+",
+        re.DOTALL | re.IGNORECASE,
+    )
+    pieces = []
+    marker_end = -1
+    for item in token.finditer(html):
+        content = item.group()
+        if item.start() in source_starts:
+            pid, marker_end = source_starts[item.start()]
+            content = content[:-1] + f' id="para-{pid}">'
+        elif not content.startswith("<"):
+            skip = max(0, marker_end - item.start())
+            content = content[:skip] + _CITE_LABEL.sub(
+                lambda m: f'<a class="cite" href="#para-{m[1]}">{m[0]}</a>'
+                if m[1] in targets else m[0], content[skip:],
+            )
+        pieces.append(content)
+    return "".join(pieces)

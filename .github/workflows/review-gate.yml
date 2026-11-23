@@ -1,0 +1,20 @@
+name: Refresh review gate
+on:
+  pull_request_review:
+    types: [submitted, dismissed]
+permissions:
+  contents: read
+  actions: write
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Re-evaluate CI for the reviewed PR revision
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          ids=$(gh api "repos/$REPO/actions/workflows/ci.yml/runs?event=pull_request&head_sha=$HEAD_SHA" --jq ".workflow_runs[] | select(.status==\"completed\") | select(any(.pull_requests[]?; .number==$PR_NUMBER)) | .id")
+          for id in $ids; do gh api --method POST "repos/$REPO/actions/runs/$id/rerun"; done

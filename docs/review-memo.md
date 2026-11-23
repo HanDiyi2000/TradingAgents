@@ -44,10 +44,33 @@ A follow-up review reproduced clipping of the threshold at 40 and 50 columns. Th
 
 ## FEAT-06 local verification — review draft (no PR)
 
-The FEAT-06 implementation is in the working tree on branch `CS5351` and has not been committed or opened as a PR, so this is a review draft to be linked to the PR once it exists. It is not a final verdict.
+The local verification began before the implementation was committed. The shared branch now contains `ccfb4ea` (tests), `a1c9f65` (implementation) and `ee8a752` (delivery records). No reviewed PR is identified here, so this is a review draft to be linked to the PR once it exists. It is not a final verdict.
 
 | PR | Spec and architecture alignment | Code and tests | Security and efficiency | Operational evidence | Reviewer and verdict |
 | --- | --- | --- | --- | --- | --- |
 | FEAT-06 local review draft (no PR yet) | Matches FR-WEB-01..FR-WEB-03 and the FEAT-06 blueprint handoffs, and reuses the CLI exactly: the per-step reading of `graph.stream_run()` is the shared `src/cli/stream.py`, both paths export through `graph.save_reports`, and the form options come from `cli.prompts` and `DEFAULT_CONFIG`. FEAT-05 anchors are display-only; saved files are unchanged. | `src/cli/web/` (launcher, `RunManager`, HTTP server, config), `src/cli/stream.py`, the `web` subcommand in `cli/main.py`, and `src/cli/static/`. Seven offline files, 37 cases; full offline suite `1657 passed, 1 skipped, 1 deselected, 100 subtests passed`; `ruff check` clean on changed files. | Binds loopback only; the two HTTP tests carry a `loopback` marker that permits 127.0.0.1 and still refuses outbound connections. ChatGPT models come from the existing subscription sign-in, not `OPENAI_API_KEY`; the page never logs credentials. Reuses one graph and one export per run, so no extra model calls or duplicate exports. | Offline: launcher/URL, HTTP end-to-end with a paused stream, failure/retry, per-run isolation, provider/model selection, and the collapsible event stream. Browser (developer-run): URL auto-open, tab auto-switch, click-to-source, fixed header with a scrolling process list, collapse/expand preserved across tabs. A live failure/retry, an unavailable-options notice, a live early-stop and a live token-warning crossing were not triggered and remain offline-only. | Human verdict pending; to be completed after the PR exists |
 
 **Local acceptance.** Han Diyi reported that the browser issues had been resolved and requested preparation for submission. The PR identifier, reviewer decision and remote CI result belong to the subsequent PR review.
+
+## Review disposition for the local submission candidate
+
+Scope: repository verification, including the existing browser citation regression. The full offline suite produced 1,656 passes, one failure, one optional-provider skip and one deselected live evaluation (100 passing subtests). A preview contained two DOM elements with `id="para-OPT-02"`. The expected count is one, with the target in Analyst Team Reports. This failure concerns report navigation and does not establish a defect in the saved Markdown or the citation validator. Preserve the fixture and rerun the full suite after a scoped preview correction. Hosted status and a human PR verdict must be attached to the actual PR.
+
+Technical review verdict: **CHANGES REQUIRED**.
+
+
+### Local correction and regression
+
+The preview now derives its targets from the analyst section and links repeated citations in later prose and lists. The original assertion passes without any change to the test expectation. The full offline run passed 1,663 tests and 100 subtests, with one optional-provider skip. CI gate acceptance tests include late approval, modified approved tests, missing log, missing ADR and absent independent review. The remaining release conditions include hosted protection, live semantic evidence, a human-authored rules file and team sign-off.
+
+Local release-readiness verdict: **CHANGES REQUIRED**.
+
+### GitHub PR #1 — FEAT-04 token threshold
+
+[PR #1](https://github.com/HanDiyi2000/TradingAgents/pull/1) targeted `CS5351` and GitHub reports it merged on 22 November 2026 at 15:21 UTC. Its commits were `0e25c56` (tests), `3b14c97` (implementation) and `a99c19b` (delivery evidence). GitHub returned no submitted reviews. The recorded student acceptance covers the local feature and the narrow-terminal correction; the GitHub merge metadata does not establish independent PR review.
+
+**Spec and architecture.** FR-TOK-01's strict first crossing is owned by the shared callback. The advisory warning does not interrupt the run or change the output limit. **Code and tests.** The retained test-first commit and local results exercise cumulative counting, concurrency, terminal width and compatibility. **Security and efficiency.** No credentials are needed for the fixtures. Both interfaces reuse one accumulator, avoiding a second inference call or polling-based counting. **Operations.** The course branch returned `protected: false` when inspected. The supplied ruleset describes the required hosted controls; it has not been activated by this checkout.
+
+The missing independent review prevents a retrospective process approval.
+
+**CHANGES REQUIRED**

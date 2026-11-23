@@ -5,6 +5,28 @@
 
 时间为香港时间。包含用户和 Codex 的可见文字消息。附件以名称或占位符表示。
 
+## Intervention notes
+
+Times identify the original user messages below. The descriptions are retrospective interpretations of the recorded requests.
+
+| Hong Kong time | Action and purpose |
+| --- | --- |
+| 2026-11-21 21:13:56 | Established six-feature scope and asked for distinct, feasible requirements. |
+| 2026-11-22 22:10:27 | Located the assigned token-warning feature before narrowing the work. |
+| 2026-11-22 22:11:15 | Repeated the scope and requested confirmation of the assigned feature. |
+| 2026-11-22 22:14:44 | Specified FR-TOK-01, branch, staged work and human approval boundaries. |
+| 2026-11-22 22:25:54 | Approved the implementation plan so the agent could prepare the proposed tests. |
+| 2026-11-22 22:31:35 | Approved the test diff before implementation. |
+| 2026-11-22 22:36:31 | Approved the scoped revision following review of the differences. |
+| 2026-11-22 22:40:11 | Accepted local verification and retained the next decision for human review. |
+| 2026-11-22 22:46:24 | Requested a pre-commit check of the feature contract and regressions against existing features. |
+| 2026-11-22 22:52:10 | Approved the correction and added tests after the narrow-terminal issue was reproduced. |
+| 2026-11-22 23:01:01 | Reviewed the GitHub submission step and supplied its supporting screenshot. |
+| 2026-11-22 23:03:15 | Authorized the Git identity used for the local commits. |
+| 2026-11-22 23:10:40 | Asked how to authenticate the CLI after the remote operation failed. |
+| 2026-11-22 23:14:20 | Confirmed login and authorized the pending operation to resume. |
+| 2026-11-22 23:21:04 | Requested delivery directly on the shared course branch and removal of the temporary feature branch. |
+
 ## 用户 · 2026-11-21 21:13:56
 
 # Files mentioned by the user:

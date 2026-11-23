@@ -86,3 +86,99 @@ jobs:
         # The repo is fully clean under the strict select, so we lint everything
         # (generated results/ is excluded via pyproject extend-exclude).
         run: ruff check .
+
+  static-checks:
+    name: types and dependencies
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - run: python -m pip install -e ".[dev]" mypy
+      - run: python -m pip check
+      - name: Type-check source and reject new errors
+        env:
+          BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
+        run: |
+          base="$BASE"
+          if ! git cat-file -e "$base^{commit}" 2>/dev/null; then
+            base=$(git rev-parse HEAD^)
+          fi
+          python .github/scripts/check_types.py "$base"
+
+  change-control:
+    name: supervised change approval
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+    outputs:
+      semantic: ${{ steps.scope.outputs.semantic }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Check approvals against the trusted base policy
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BASE: ${{ github.event.pull_request.base.sha }}
+        run: |
+          git show "$BASE:.github/scripts/course_gates.py" > "$RUNNER_TEMP/course_gates.py"
+          python "$RUNNER_TEMP/course_gates.py"
+      - id: scope
+        name: Detect prompt, model and source changes
+        env:
+          BASE: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          if git diff --quiet "$BASE...$HEAD_SHA" -- src prompts pyproject.toml opencode.json; then
+            echo 'semantic=false' >> "$GITHUB_OUTPUT"
+          else
+            echo 'semantic=true' >> "$GITHUB_OUTPUT"
+          fi
+
+  safety:
+    name: contracts public API security and permissions
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - run: python -m pip install -e ".[dev]" bandit
+      - run: python .github/scripts/check_permissions.py
+      - run: bandit --recursive --severity-level high --confidence-level high src
+      - run: python -m pytest -q test/offline/test_layering.py test/offline/test_graph_end_to_end.py test/offline/test_cli_commands.py test/offline/test_web_http.py test/offline/test_safe_ticker_component.py test/offline/test_options_data.py test/offline/test_prompt_integrity.py
+
+  semantic:
+    name: fixed-set model evaluation
+    needs: change-control
+    if: needs.change-control.outputs.semantic == 'true'
+    runs-on: ubuntu-latest
+    environment: course-evaluation
+    permissions:
+      contents: read
+    steps:
+      - name: Reject untrusted fork execution with provider credentials
+        if: github.event.pull_request.head.repo.full_name != github.repository
+        run: exit 1
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - run: python -m pip install -e ".[dev]"
+      - name: Replay the labelled cases and reject skipped evaluations
+        env:
+          DEBATE_EVAL_LIVE: "1"
+          DEEPSEEK_API_KEY: ${{ secrets.CITYU_EVALUATION_KEY }}
+        run: |
+          test -n "$DEEPSEEK_API_KEY"
+          python -m pytest -m integration test/live/test_debate_semantics_eval_live.py --junitxml=semantic.xml
+          python -c "from xml.etree import ElementTree as E; cases=E.parse('semantic.xml').findall('.//testcase'); assert cases and all(c.find('skipped') is None for c in cases)"

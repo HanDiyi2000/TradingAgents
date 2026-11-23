@@ -280,3 +280,22 @@ and does not yank a reader who scrolled up. Covered by `test_web_display.py`
 Browser re-check (manual): expand/collapse a long report and a tool call; scroll
 up while the run continues and confirm the view does not jump; after completion
 switch to Final report and back and confirm expanded items remain expanded.
+
+## Cross-cutting acceptance criteria
+
+| Requirement | Owner | Executable evidence | Monitor |
+| --- | --- | --- | --- |
+| QA-WEB-01 | cli.web.runs | `test/offline/test_web_events.py::test_a_repeated_snapshot_does_not_duplicate_prior_events` | Event cursor and run ID |
+| PERF-WEB-01 | cli.web.runs | `test/offline/test_web_events.py::test_the_first_event_is_visible_before_the_run_finishes` | First event while run status is running |
+| COST-WEB-01 | cli.web.runs | `test/offline/test_web_reports.py::test_viewing_and_downloading_after_completion_starts_no_new_run` | Run ID and artifact directory |
+| GOV-DEP-01 | tradingagents.dataflows | `test/offline/test_layering.py::test_vendor_libraries_are_imported_only_by_the_data_layer` | Structural CI output |
+| SEC-OPT-01 | tradingagents.dataflows.options | `test/offline/test_options_data.py::test_adapter_keeps_only_matching_and_cutoff_eligible_records` | Accepted record identity and timestamp |
+
+
+### Integrated verification of the submission candidate
+
+| Requirement | Observation |
+| --- | --- |
+| FR-CIT-01 / FR-WEB-03 | The preview test initially counted two source targets for OPT-02. After limiting source discovery to the analyst section, the original test finds one target, three links in the research section and no target for OPT-99. Saved artifact bytes remain unchanged. |
+| FR-DEB-01 | The live semantic invocation now lives in `test/live/test_debate_semantics_eval_live.py`. The fixed cases and offline scoring checks remain under `test/offline/`. Historical paths above identify the revision that produced each result. |
+| D4 / D7 | The integrated offline suite passed 1,663 tests and 100 subtests, with one optional Bedrock-provider skip. Registry schema, resolved role configuration, local dependency consistency and Ruff checks also passed. The hosted CI jobs and protected-environment semantic replay require the published candidate. |

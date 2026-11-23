@@ -1,6 +1,6 @@
 # Verification constraints
 
-Reference a requirement or invariant in each new test. Cover every fit criterion and include a violation test for each invariant and a negative test per feature. Have a human approve the proposed tests before implementation.
+Reference a requirement or invariant in each test, either directly or through its exact node ID in the trace matrix. Cover every fit criterion and include a violation test for each invariant and a negative test per feature. Have a human approve the proposed tests before implementation.
 
 Verify structural boundaries and permissions, run all previous regression suites, and measure behavior against approved thresholds. Record failures and rerun evidence in the review memo.
 
@@ -80,3 +80,18 @@ Verified 2026-11-23: the offline cases below are covered by `test_web_launcher.p
 | WEB-T2 · FR-WEB-02 | Replay the same events to CLI and web. Pause after a tool call, an analyst report and a bull turn. All three must already be visible in the browser, with later turns absent. Resume with a repeated snapshot, bear reply, stop reason, manager plan, trader proposal, three risk opinions and decision. Compare visible content and roles with the CLI at each checkpoint, checking prior turns remain visible once. Include options data or its unavailable notice, valid and invalid citations, token totals and one threshold warning. |
 | WEB-T3 · FR-WEB-02 | Fail the graph after a published report. The page retains that report, shows the failure reason and allows a new analysis. Verify retry starts with its own events and token counters. |
 | WEB-T4 · FR-WEB-03 | Complete two runs with different tickers and distinct report markers. For each, check ticker, date and rating, then match the preview and download to that run's HTML and Markdown exports. Check company background and numbered source paragraphs. After the second run, both artifacts must contain its marker. |
+
+## Pull-request gate acceptance cases
+
+| Gate | Case that must pass | Case that must block |
+| --- | --- | --- |
+| Test approval | A human reviewer approved the tests-only revision before the first implementation revision, and the approved test content remains identifiable. | Implementation already existed at approval, the reviewed tests were subsequently weakened, or the only approval is authored by a bot. |
+| Static and safety checks | Lint, types and dependencies pass. A safety-path change supplies an ADR, human review, and passing contract, public API, security and permission checks. | A type error, unresolvable dependency, broken interface or permission expansion without review blocks the change. |
+| Schema | The registry meets the checked-in JSON schema. | A required field is missing or a value has an invalid type. |
+| Semantic evaluation | Prompt or model changes replay the fixed, versioned cases against the candidate and meet the documented threshold. | A case disagrees with the label, the required provider is unavailable, or an expected evaluation was skipped. |
+| Regression | Run all previously required suites and attach the results for this revision. | A failing assertion or missing required suite prevents a clean verdict. |
+| AI-use log | Code/prompt changes are accompanied by a meaningful log update. Documentation-only changes are evaluated separately. | A code or prompt PR with no corresponding log change is blocked. |
+
+Configure required checks on the course branch. Review and provider decisions must be tied to the proposed revision. A successful check on another revision does not authorize merge.
+
+Current fixed-set live entry point: `DEBATE_EVAL_LIVE=1 python -m pytest -m integration test/live/test_debate_semantics_eval_live.py`. Use CityU credentials. The offline suite still tests fixture integrity and scorer behavior.

@@ -73,3 +73,5 @@ The path-level coding-agent permission allowlist remains unapproved and blank in
 `docs/architecture/permission-model.md`. This document describes runtime data
 ownership; it does not grant an AI agent permission to read or write these
 paths.
+
+The prospective per-turn input budget, compaction order and reinjection policy are specified in [ADR 001](adr/001-architecture-choice.md#input-context-design-and-implementation-boundary). Current runtime bounds and retained state above describe the deployed implementation.

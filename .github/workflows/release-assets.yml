@@ -26,6 +26,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      actions: read
     env:
       TAG: ${{ inputs.tag || github.event.release.tag_name }}
       GH_TOKEN: ${{ github.token }}
@@ -34,6 +35,18 @@ jobs:
         with:
           # Release branches share their tag's name, so name the tag explicitly.
           ref: refs/tags/${{ env.TAG }}
+          fetch-depth: 0
+      - name: Verify the tagged release passed course CI on the protected branch
+        env:
+          REPO: ${{ github.repository }}
+        run: |
+          sha=$(git rev-parse HEAD)
+          test "$(gh api "repos/$REPO/branches/CS5351" --jq '.protected')" = true
+          git fetch --no-tags origin refs/heads/CS5351
+          git merge-base --is-ancestor "$sha" FETCH_HEAD
+          count=$(gh api "repos/$REPO/actions/workflows/ci.yml/runs?branch=CS5351&head_sha=$sha&event=push&status=success" --jq '.total_count')
+          test "$count" -gt 0
+
       - uses: actions/setup-python@v7
         with:
           python-version: "3.13"

@@ -1280,3 +1280,15 @@ sessions:
       - Five offline report tests passed. A Node check exercised the completion handler with two run IDs and resolved the citation URL for each.
       - Full offline run had 1640 passes, 10 failures and 7 errors. Sixteen cases hit loopback permission errors. The unrelated retry timing test passed on isolated rerun.
     human_review: Browser acceptance on the deployed site is pending.
+
+  - date: "2026-11-23"
+    tool: Codex
+    task: Repository submission maintenance and local verification.
+    changes:
+      - Aligned governance documents, requirements, versioned prompt snapshots and existing evidence indexes.
+      - Added course CI checks, separated the live judge test and corrected analyst-source navigation.
+    verification:
+      - Requirements registry passed schema validation; prompt snapshots matched their source revisions.
+      - The citation regression reproduced before correction; full offline suite passed with one optional-provider skip.
+    limitations:
+      - Hosted protections, reviewer decisions, team contributions and live semantic acceptance require independent evidence.

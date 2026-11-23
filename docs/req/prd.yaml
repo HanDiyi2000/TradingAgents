@@ -40,6 +40,5 @@ features:
   - id: FEAT-06
     name: Local web interface for stock analysis
     requirement_ids: [FR-WEB-01, FR-WEB-02, FR-WEB-03]
-open_questions:
-- Select a provider after checking timestamp provenance and historical coverage.
-- Choose report indicators supported by the selected source.
+cross_cutting_requirements: [QA-WEB-01, PERF-WEB-01, COST-WEB-01, GOV-DEP-01, SEC-OPT-01]
+provider_decision: See ADR 001 and FR-OPT-05 for current-chain provenance and the unavailable-data fallback.

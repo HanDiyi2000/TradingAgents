@@ -130,7 +130,7 @@ privacy rules are in [memory-design.md](memory-design.md).
   researchers and all three risk debaters receive it; CLI, log and report
   export retain it. Old states without the field remain readable.
 
-The scope choice is recorded in [ADR 001](adr/001-architecture-choice.md).
+The scope choice is recorded in [ADR 001](docs/architecture/adr/001-architecture-choice.md).
 
 ### FEAT-02 — Research-debate early stopping (`FR-DEB-01`)
 
@@ -167,7 +167,7 @@ claimed as accepted.
 - `TRADINGAGENTS_TOKEN_WARNING_THRESHOLD` configures the warning. It is separate
   from `TRADINGAGENTS_MAX_TOKENS`, which limits model output per call.
 
-See [ADR 002](adr/002-token-warning.md).
+See [ADR 002](docs/architecture/adr/002-token-warning.md).
 
 ### FEAT-05 — Paragraph citations (`FR-CIT-01`)
 
@@ -198,7 +198,7 @@ See [ADR 002](adr/002-token-warning.md).
   matching Markdown download. Citation anchors are added only to the preview;
   saved files are unchanged.
 
-See [ADR 003](adr/003-local-web-interface.md).
+See [ADR 003](docs/architecture/adr/003-local-web-interface.md).
 
 ## 9. Permissions and security
 
@@ -208,10 +208,7 @@ See [ADR 003](adr/003-local-web-interface.md).
   CSP. User/model text is escaped by the responsible renderer.
 - Credentials remain in environment variables or provider-specific auth files
   and are excluded from state/log/report schemas.
-- The coding-agent role/path allowlist is **not yet approved**:
-  `docs/architecture/permission-model.md` is intentionally blank. No tool or
-  agent should infer permissions from this blueprint; a team decision is needed
-  before claiming enforcement.
+- Plan, Build, Test author and Verify use the file allowlists in `.opencode/permissions.jsonc` and the matching project configuration. Writes require a human-approved scope and individual confirmation. Human-authored rules remain frozen.
 
 ## 10. Verification and observability
 
@@ -238,11 +235,4 @@ See [ADR 003](adr/003-local-web-interface.md).
    stop and return the conflict for human decision before changing it.
 4. Do not commit credentials, claim unrun evidence or rewrite human approvals.
 
-Two architecture items remain explicitly unresolved rather than invented here:
-
-- the exact prompt-context token cap/compaction threshold proposed by ADR 001;
-- the coding-agent permission allowlist and enforcement mechanism.
-
-Until approved, the implementation retains its current round/tool/output caps
-without project-wide prompt compaction, and the permission model remains a
-documented gap.
+ADR 001 specifies an input-budget design for review. Runtime enforcement still uses model-output and graph/tool-loop limits. The project config defines the coding roles; the team must approve the paths released for each feature.

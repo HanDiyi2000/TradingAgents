@@ -167,3 +167,61 @@ requirements:
     metric: Completed runs displaying incorrect metadata or serving artifacts from a different run
     threshold: 0
     verification: WEB-T4 in docs/code-governance/verification-constraints.md
+
+- id: QA-WEB-01
+  type: quality
+  priority: Must
+  statement: Repeated reads with the same event cursor shall preserve the same ordered
+    events without adding duplicates.
+  source: FR-WEB-02; test/offline/test_web_events.py
+  tradeoff: One cursor per run adds state but preserves a reader’s position.
+  fit_criterion:
+    metric: Duplicate events in the repeated-cursor fixture
+    threshold: 0
+    verification: test/offline/test_web_events.py::test_a_repeated_snapshot_does_not_duplicate_prior_events
+- id: PERF-WEB-01
+  type: performance
+  priority: Must
+  statement: The first published event shall be readable before a paused analysis
+    completes.
+  source: FR-WEB-02; test/offline/test_web_events.py
+  tradeoff: Incremental delivery requires keeping the event stream in memory.
+  fit_criterion:
+    metric: Fixture runs requiring graph completion before first delivery
+    threshold: 0
+    verification: test/offline/test_web_events.py::test_the_first_event_is_visible_before_the_run_finishes
+- id: COST-WEB-01
+  type: cost
+  priority: Must
+  statement: Reviewing or downloading a completed report shall start zero additional
+    analyses.
+  source: FR-WEB-03; test/offline/test_web_reports.py
+  tradeoff: Retaining per-run artifacts consumes local disk space.
+  fit_criterion:
+    metric: Additional graph runs triggered by review and download
+    threshold: 0
+    verification: test/offline/test_web_reports.py::test_viewing_and_downloading_after_completion_starts_no_new_run
+- id: GOV-DEP-01
+  type: governance
+  priority: Must
+  statement: Direct imports of market vendor libraries must stay within the data layer.
+  source: docs/code-governance/structural-constraints.md; test/offline/test_layering.py
+  tradeoff: New consumers must use an adapter even when a direct vendor call would
+    be shorter.
+  fit_criterion:
+    metric: Vendor imports outside permitted modules under the existing architecture
+      fitness test
+    threshold: 0
+    verification: test/offline/test_layering.py::test_vendor_libraries_are_imported_only_by_the_data_layer
+- id: SEC-OPT-01
+  type: security
+  priority: Must
+  statement: The options evidence boundary must reject observations for another instrument
+    or an unverifiable or later observation time before model input.
+  source: INV-OPT-01; test/offline/test_options_data.py
+  tradeoff: Historical coverage falls when the data source cannot establish the observation
+    time.
+  fit_criterion:
+    metric: Disallowed observations reaching the accepted fixture set
+    threshold: 0
+    verification: test/offline/test_options_data.py::test_adapter_keeps_only_matching_and_cutoff_eligible_records

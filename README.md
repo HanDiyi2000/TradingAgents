@@ -17,8 +17,8 @@ Team repository: [HanDiyi2000/TradingAgents, CS5351 branch](https://github.com/H
 | `docs/req/` | Product scope, requirement registry and its validation schema. Feature IDs FEAT-01 through FEAT-06 identify the six implemented features. FEAT-01 covers the Options Analyst. FEAT-02 covers early stopping in the research debate. FEAT-03 adds company background to the consolidated report. FEAT-04 covers cumulative token warnings in CLI and web runs. FEAT-05 links research arguments to analyst report paragraphs. FEAT-06 provides a local browser interface for the full analysis workflow. |
 | `architecture-blueprint.md` | Master architecture constraint document read by the planning agent. |
 | `docs/architecture/` | ADRs, invariants, traceability, state, permissions, runtime policies and candidate evaluations. |
-| `AGENTS.md`, `Prompt.md`, `.agent/`, `.opencode/`, `docs/code-governance/` | Coding and verification workflow. The team must author the human-only rules and define and enforce its role permissions. |
-| `prompts/` | Reserved versioned prompt artifacts. Active baseline prompts are in the source. |
+| `AGENTS.md`, `Prompt.md`, `.agent/`, `.opencode/`, `docs/code-governance/` | Coding and verification workflow. The OpenCode project configuration loads the role permissions and human-owned rules. |
+| `prompts/` | Versioned snapshots of the bull/bear prompt templates, with the exact source commit and runtime interpolation owner. |
 | `docs/ai-use-log.yaml`, `docs/review-memo.md`, `docs/debt-register.md`, `docs/bug-diary.md` | Running evidence for AI assistance, PR reviews, debt and bugs. |
 | `transcripts/`, `Report.md` | Annotated raw sessions, team contributions, process evidence and individual reflections. |
 
@@ -39,11 +39,15 @@ The same analysis can be run from a local web page with `python -m cli.main web`
 | Live DeepSeek API, with DEEPSEEK_API_KEY | `python -m pytest -q -m integration test/live` |
 | Offline and live, clearing the default marker filter | `python -m pytest -q -o addopts= test` |
 
-The live case skips without a key. The offline OAuth callback tests require permission to bind a loopback port.
+The DeepSeek case skips without a key. The CityU single-call probe also needs `CITYU_PROBE=1`; the fixed-set judge evaluation needs `DEBATE_EVAL_LIVE=1` and CityU credentials. To include the latter, run `DEBATE_EVAL_LIVE=1 python -m pytest -m integration test/live/test_debate_semantics_eval_live.py`. The offline OAuth callback tests require permission to bind a loopback port.
 
 ### CI and remaining course gates
 
-The workflow runs regression, Ruff, package installation and registry schema validation on pushes and pull requests. Schema validation checks the shape of the draft registry; the team reviews completeness. Remaining work for D7 includes pre-implementation test approval, type and dependency checks, safety-path contract/security/API/permission checks, fixed-set evaluation of prompt or model changes, and enforcement of AI-use log updates. Configure required status checks and safety-path review with an ADR in the team GitHub repository.
+The CI workflow runs the previous offline suites on four Python versions, a timezone variant, Ruff, a clean install, requirements schema validation, dependency consistency, a source type-regression check, security and API/contract fixtures, and permission-policy checks. On a PR, the change-control job reads independent GitHub reviews of the tests-only revision before the implementation revision. It requires a net AI-use log update for code or prompt changes and an ADR plus head review for safety paths. The review memo belongs to the actual PR. Review the tests first and retain the approved tree through that round.
+
+Changes to source, prompts or model configuration also replay the seven labelled debate cases in the protected `course-evaluation` environment. A missing credential, skipped evaluation or label mismatch fails the job. This benchmark measures the debate judge; citation meaning and other model-specific behaviors need their own reviewed evidence. The live evaluation needs a CityU-compatible `CITYU_EVALUATION_KEY` secret. Set a human deployment reviewer on that environment. Keep that secret outside the repository.
+
+The checked-in ruleset `.github/course-branch-ruleset.json` specifies the course branch and check names. Install it only after the workflows have been introduced on GitHub. A maintainer must protect the course branch with required CI checks, required independent reviews, dismissal of stale head approvals, and restricted bypass. The review gate reads the policy from the trusted base revision. For first-time installation, a maintainer must independently review and seed that policy on the base branch before relying on it for subsequent PRs. Historical local acceptance records remain separate from hosted approvals.
 
 ### Starting the six feature branches
 

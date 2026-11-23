@@ -17,6 +17,8 @@ compare the on-disk files and the Markdown download against those captured bytes
 
 from __future__ import annotations
 
+import re
+
 import pytest
 
 from cli.web import RunManager
@@ -74,7 +76,8 @@ class _Done:
             "market_report": f"Market report {self._marker}.",
             "options_report": "Options report first paragraph.\n\nSecond paragraph cites the chain.",
             "investment_debate_state": {
-                "bull_history": f"Bull Analyst: Demand is strong [OPT-02] {self._marker}\n",
+                "bull_history": f"Bull Analyst: Demand is strong [OPT-02] {self._marker}\n\n"
+                                "[OPT-02] Repeated reference.\n\n- Again [OPT-02]\n\n[OPT-99] Unknown.",
                 "bear_history": "Bear Analyst: Valuations are stretched [OPT-01]\n",
                 "report_paragraphs": [
                     {"id": "OPT-01", "report_key": "options_report",
@@ -171,9 +174,12 @@ def test_preview_adds_citation_anchors_without_altering_saved_files(tmp_path):
     manager.wait_until_done(run_id, timeout=5.0)
 
     result = manager.result(run_id)
-    # The preview carries an anchor for the cited paragraph.
-    assert 'id="para-OPT-02"' in result["html"]
-    assert 'href="#para-OPT-02"' in result["html"]
+    analyst, research = result["html"].split("<h2>II. Research Team Decision</h2>")
+    assert '<p id="para-OPT-02">[OPT-02] Second paragraph cites the chain.' in analyst
+    assert result["html"].count('id="para-OPT-02"') == 1
+    assert 'id="para-OPT-99"' not in result["html"]
+    assert 'href="#para-OPT-99"' not in result["html"]
+    assert len(re.findall(r'href="#para-OPT-02"', research)) == 3
 
     # Exactly one export happened; the on-disk files match the bytes it wrote.
     assert graph.report_calls == 1

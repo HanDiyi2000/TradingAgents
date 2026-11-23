@@ -2,7 +2,7 @@
 
 These constraints extend the TradingAgents baseline. They define module
 ownership and dependency direction; they do not create a coding-agent path
-allowlist. The latter remains pending in
+allowlist. The role model is defined in
 `docs/architecture/permission-model.md`.
 
 ## Baseline preservation
@@ -42,7 +42,7 @@ allowlist. The latter remains pending in
 | Per-run token accounting | `src/cli/stats_handler.py` | usage totals and one crossing event | Provider usage is input; locked accumulation and first-crossing behavior are authoritative |
 | Web run lifecycle | `src/cli/web/runs.py` | one-active-run manager, ordered event cursor, run-specific artifacts | Authoritative run/event ownership; no analysis logic is reimplemented here |
 | Local HTTP transport | `src/cli/web/server.py` | loopback endpoints | Authoritative request validation and bytes served; reports come from the report owner |
-| Web presentation | `src/cli/web/static/` | form, activity/content views and preview | Presentation only; it must not reinterpret graph state or fabricate results |
+| Web presentation | `src/cli/static/` | form, activity/content views and preview | Presentation only; it must not reinterpret graph state or fabricate results |
 
 ## Dependency direction
 
@@ -112,7 +112,6 @@ compatible.
   skips; do not convert them into passes by description.
 - Do not weaken an approved test or edit human-owned requirements/rules to make
   an implementation pass. Return the conflict for human decision.
-- New modules and non-obvious enforcement functions should name the requirement,
-  ADR or invariant they implement in their module/function documentation. The
+- Every module and function must be traceable to its governing architecture decision and applicable invariant. Record common ownership at module level and identify narrower enforcement responsibilities at the function. Name the relevant requirement and ADR, together with each applicable invariant, in their module/function documentation. The
   current invariant register contains `INV-OPT-01`; do not claim unapproved
   FEAT-05 or permission invariants.
