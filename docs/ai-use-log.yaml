@@ -1,4 +1,30 @@
 sessions:
+  - date: '2026-11-23'
+    tool: Codex
+    feature: FEAT-02
+    student: Xia Yue (60472258)
+    task: Consolidate session references and remove redundant current-tree sidecars.
+    human_instruction: Use the already uploaded complete annotated record; update references
+      and remove the three duplicate attachments. Keep all functional code and the original
+      implementation unchanged.
+    changes:
+    - Pointed the AI-use log and trace matrix at the self-contained student-named Markdown
+      record.
+    - Removed only the redundant raw export, earlier annotation sidecar and first-run
+      output sidecar from the current tree.
+    verification:
+    - Compared all 405 embedded raw messages with the original JSON; all matched.
+    - Confirmed 27 marked interventions and complete historical note/test output are
+      embedded.
+    - Created a local archive of the original source files and pre-edit documents; source
+      objects also remain in Git history.
+    - Only two documentation files and three redundant sidecars are changed; no source,
+      tests, CI configuration or repair code is included.
+    limitations: All historical failed semantic evaluations remain recorded; this cleanup
+      does not claim new functional or semantic acceptance.
+    human_review: Documentation cleanup authorized by the student in the current conversation.
+    evidence: transcripts/60472258-Xia Yue.md
+
   - date: "2026-11-22"
     tool: Codex
     task: Prepare the CS5351 repository structure from the existing TradingAgents baseline.
@@ -120,7 +146,7 @@ sessions:
           - "SEM-04 bear: got {new_evidence: true, first_reply: true}; expected {new_evidence: false, first_reply: true}"
           - "SEM-06 history A: got {new_evidence: false, first_reply: false}; expected {new_evidence: false, first_reply: true}"
         cause: "Fixture/evaluation-design defects, not established model errors."
-        captured_output: "transcripts/FEAT-02-live-eval-2026-11-22.txt"
+        captured_output: "transcripts/60472258-Xia Yue.md"
       - run: 2
         command: "DEBATE_EVAL_LIVE=1 python -m pytest test/offline/test_debate_semantics_eval.py -m integration -q"
         endpoint: "CityU DeepSeek; provider deepseek; base URL https://llm.cs.cityu.edu.hk/v1; model CS5351/DeepSeek-V4-Flash"
@@ -162,7 +188,7 @@ sessions:
       Functional logic (routing, handoff, persistence, UNKNOWN fail-open, round cap) is verified offline;
       semantic-quality acceptance remains unverified.
     human_review: implementation approved for verification/evidence stage; semantic accuracy pending
-    evidence: "transcripts/FEAT-02-annotated-session.md (annotated) and transcripts/FEAT-02-session.json (redacted session export; session ses_dfdfdad54ffemNA5rq3445en7M). Live-failure capture: transcripts/FEAT-02-live-eval-2026-11-22.txt."
+    evidence: "transcripts/60472258-Xia Yue.md (complete original OpenCode session, 27 marked human interventions, historical annotation snapshot and live-evaluation appendices)."
 
   - date: "2026-11-22"
     tool: OpenCode
