@@ -2,12 +2,13 @@
 
 ## Team and relative contributions
 
-This section records the FEAT-01 contribution of Ruihan Zhou and the FEAT-03 contribution of Haobin Yan. The team must add the remaining members and agree the final relative weights so the team average equals 1.0.
+This section records the FEAT-01 contribution of Ruihan Zhou, the FEAT-03 contribution of Haobin Yan and the FEAT-06 contribution of Han Diyi. The team must add the remaining members and agree the final relative weights so the team average equals 1.0.
 
 | Name | Student ID | Rotated roles | Contribution | Evidence | Relative weight |
 | --- | --- | --- | --- | --- | --- |
 | Ruihan Zhou | 60468699 | FEAT-01 implementation and verification; role rotation to be confirmed by the team | Read the FEAT-01 requirements and architecture artifacts; produced the plan; implemented the data adapter, yfinance vendor, Options Analyst node, selection, graph, CLI, delivery and export integration; added offline and live tests; completed the verification and delivery records | `src/tradingagents/dataflows/options.py`, `src/tradingagents/dataflows/vendors/yahoo/options.py`, `src/tradingagents/agents/analysts/options_analyst.py`, `test/offline/test_options_data.py`, `test/offline/test_options_analyst.py`, `test/live/test_options_yfinance_live.py`, `docs/architecture/trace-matrix.md`, `docs/review-memo.md`, `docs/ai-use-log.yaml`, this file | To be agreed by the team; the team average must equal 1.0 |
 | Haobin Yan | 60642891 | FEAT-03 requirements clarification, coding-agent supervision and manual acceptance; role rotation to be confirmed by the team | Directed OpenCode through plan revisions, test approval, implementation and correction rounds with assistance from a separate review chat; ran AAPL acceptance without the Fundamentals Analyst; reviewed and accepted the transcript annotations and individual reflection | `test/offline/test_company_background.py`, `transcripts/60642891-Haobin-Yan.md`, `docs/architecture/trace-matrix.md`, `docs/review-memo.md`, `docs/ai-use-log.yaml`; AAPL 2026-11-22 manual run recorded in the transcript | To be agreed by the team; the team average must equal 1.0 |
+| Han Diyi | 60021318 | FEAT-06 planning, coding-agent supervision, browser acceptance and delivery records; role rotation to be confirmed by the team | Directed an OpenCode session through a read-only plan approval, an offline-test round (tests first, allowed to fail pending implementation), an implementation round, and two evidence-driven fixes found in browser acceptance (ChatGPT subscription model selection; the long analysis-process page); performed the browser acceptance checks | `src/cli/web/`, `src/cli/stream.py`, `src/cli/static/`, `test/offline/test_web_*.py`, `docs/architecture/adr/003-local-web-interface.md`, `docs/architecture/trace-matrix.md` (FEAT-06 D4 record), `docs/bug-diary.md`, `docs/review-memo.md`, `transcripts/60021318-Han-Diyi.md`, this file | To be agreed by the team; the team average must equal 1.0 |
 
 ## Engineering process and improvements
 
@@ -37,6 +38,14 @@ The implementation followed those artifacts in order: data adapter, provider, an
 
 The evidence loops back into the trace matrix and review memo. Offline verification is deterministic and runs without network. The live yfinance test complements it by checking the actual provider path. This separation makes the claim precise: the offline suite proves behavior, and the live suite proves provider integration.
 
+### FEAT-06: requirements, design and tests changing together
+
+FEAT-06 shows a feature whose design changed because of what the browser actually did, not because of a new requirement. The plan reused the CLI's analysis, event interpretation and report writer, and the first offline round passed: 27 web tests green inside a full offline suite of 1647 passed. Those tests pinned the approved interface and behaviour, but they ran against stubbed graphs and did not exercise the real provider and model choices.
+
+Browser acceptance then exposed a gap the offline tests could not: the page did not support the CLI's ChatGPT subscription sign-in. The student uses a ChatGPT Plus/Pro plan rather than an OpenAI API key, and the page listed no plan models. The agent first wrote `test_web_models.py`, whose six cases failed against the current code; they reproduced two concrete defects — the static catalog's `(label, model_id)` tuples were read as objects, and ChatGPT's live `chatgpt_auth.list_models()` was never called. Only then were `cli/web/config.py`, the `/api/models` endpoint and the page's model refresh fixed, so a signed-in plan lists its models, a signed-out plan points to `tradingagents login chatgpt`, and a run reaches the backend as `chatgpt` with the two chosen IDs and no `OPENAI_API_KEY`.
+
+A second acceptance note — the analysis-process page grew very long — led to an offline event-stream test (`test_web_display.py`) and a display change: fixed configuration and tabs, collapsible long output, one in-flight poll by run_id and cursor, and preserved scroll and expansion. The final offline suite is 1657 passed, 1 skipped, 1 deselected, 100 subtests passed. The point is not only that the number rose; it is that the requirement (use the existing subscription workflow), the design (a live `/api/models` endpoint rather than a static list) and the tests (a failing reproduction first) moved together, with the browser as the trigger.
+
 ## Human interventions and their effects
 
 1. The human required a plan only and prohibited edits, tests, implementation and branches. This forced the design, file ownership, interface contracts and test plan to be reviewed before code existed.
@@ -45,6 +54,18 @@ The evidence loops back into the trace matrix and review memo. Offline verificat
 4. The human asked for the verification boundary to be explained. This clarified that the offline suite uses fixed chains and a recording model, while the live test is a separate provider check.
 5. The human asked for a delivery audit, then authorized completion of the missing records and fixed the English name form to `Ruihan Zhou`. This produced the trace-matrix evidence, review memo, AI-use entry, annotated transcript and this report section.
 6. No Git branch or PR could be created because the delivered directory has no `.git` metadata. This remains a repository-level delivery task for the team.
+
+### FEAT-06 human interventions (Han Diyi)
+
+The FEAT-06 development session (OpenCode, `CS5351/DeepSeek-V4-Flash`; recorded in [the annotated transcript](transcripts/60021318-Han-Diyi.md)) had these interventions:
+
+1. Planned only first: the student required a read-only analysis and a Chinese plan before any code, forbidding file changes, dependency installs and Git operations in that round.
+2. Approved the plan but scoped the next round to offline tests only, and required a shared CLI/web event interpretation; tests were allowed to fail pending implementation rather than prompting production code to make them pass.
+3. Reviewed the tests and required one real-HTTP end-to-end case, name/assertion agreement, a byte-level export comparison against the single export, and CLI command checks through `--help`.
+4. Approved implementation after three test fixes, and required the diff and a stop before the post-diff verification gates.
+5. Found in browser acceptance that the ChatGPT subscription path did not work, and required an offline reproduction before the fix.
+6. Found in browser acceptance that the analysis-process page was too long to review, and requested a small display optimisation.
+7. Closed development and requested the FEAT-06 course deliverables as documentation only.
 
 ## Individual reflections
 
@@ -71,3 +92,9 @@ I also ran AAPL locally with the Fundamentals Analyst excluded. The run generate
 My main lesson is that supervision requires checking evidence against each claim. OpenCode reported 34 feature tests passing and 1,528 offline tests passing, but lint remained unavailable and the reviewer could not reproduce the full suite successfully. Keeping these limitations visible, preserving the raw session and acknowledging AI assistance made the delivery record more accurate. In future work, I would establish a reproducible test environment earlier and review compatibility boundaries before implementation begins.
 
 Contribution evidence: [annotated OpenCode transcript](transcripts/60642891-Haobin-Yan.md), [FEAT-03 tests](test/offline/test_company_background.py), [trace matrix](docs/architecture/trace-matrix.md), [review memo](docs/review-memo.md), and [AI-use log](docs/ai-use-log.yaml). The reflection and six retrospective annotations were drafted with review-chat assistance and accepted by Haobin Yan before insertion. No final relative contribution weight or review verdict is assigned here.
+
+### Han Diyi (60021318)
+
+I used my usual TradingAgents sign-in as a simple acceptance test for the web interface. In the terminal, I could choose my ChatGPT subscription, pick a model and start an analysis. In the browser, both model boxes were empty and the error asked me for an OpenAI API key. This was a useful result to set beside the first 27 passing web tests. Earlier, I had asked OpenCode to write the tests before the implementation. I could then read what each test expected while the feature was still missing. One test checked that the Options Analyst appeared in a CLI helper. It could have passed even if the browser had left that analyst off the form. I asked for a test that submitted a configuration over HTTP and retrieved a specific event while the analysis was still running. That gave me a concrete reason to trust the result for streaming. The subscription failure showed where that trust ended. Our plan said the web interface would reuse the CLI workflow, but it never followed a signed-in user from provider selection to a usable model. The tests inherited that omission. Next time I would put the two sign-in paths in the acceptance plan and try my own path before reviewing the rest of the interface. I used a different standard for the long process log and the possible polling problem. I had seen how difficult it was to find an earlier report once several agents had printed their output. That observation justified folding long entries while keeping their full text available. I had no comparable browser evidence that events appeared twice. There I wanted a controlled test with a delayed response and a repeated cursor before describing the risk or accepting a fix. Keeping those records separate also matters to the next person reading our report: they can tell which problem a user experienced, which condition an offline test exercised, and what still needs a live check.
+
+Contribution evidence: [annotated OpenCode transcript](transcripts/60021318-Han-Diyi.md), [FEAT-06 tests](test/offline/test_web_http.py), [local web interface ADR](docs/architecture/adr/003-local-web-interface.md), [trace matrix FEAT-06 record](docs/architecture/trace-matrix.md), [review memo](docs/review-memo.md), [bug diary](docs/bug-diary.md) and [AI-use log](docs/ai-use-log.yaml). The English wording was prepared with Codex assistance from the recorded development session and browser feedback.

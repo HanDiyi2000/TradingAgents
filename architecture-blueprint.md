@@ -62,9 +62,9 @@ Give both researchers the same labelled text. Each argument carries the ID or ID
 
 FEAT-02 evaluates progress separately. A first reply to an unanswered opposing point can advance the debate even when both speakers cite the same paragraph.
 
-## FEAT-06 — Local web interface (specified)
+## FEAT-06 — Local web interface (implemented)
 
-The planned `tradingagents web` entry point serves one local user. Print the local URL and open the default browser after the service is ready. The printed URL also works when automatic opening fails. The existing CLI command continues to open the terminal interface.
+The `tradingagents web` entry point serves one local user. Print the local URL and open the default browser after the service is ready. The printed URL also works when automatic opening fails. The existing CLI command continues to open the terminal interface. See [ADR 003](docs/architecture/adr/003-local-web-interface.md) for the shared event interpretation, the standard-library server, per-run results and display-only citation anchors.
 
 | Handoff | Contract |
 | --- | --- |

@@ -176,3 +176,107 @@ Note: the token-warning failure reported in earlier rounds does not reproduce in
 | FR-WEB-01 | Local launcher, configuration form and analysis runner | WEB-T1 | Ready URL, resolved selections and active run |
 | FR-WEB-02 | Graph event stream, usage handler and browser activity/content views | WEB-T2 and WEB-T3 | Ordered role-labelled output, warning and failure state |
 | FR-WEB-03 | Report writer and run-specific results view | WEB-T4 | Displayed run metadata, HTML preview and Markdown download |
+
+### FEAT-06 D4 verification record (2026-11-23)
+
+Implementation lives under `src/cli/web/` (launcher, `RunManager`, HTTP server,
+form config), the shared stream interpreter in `src/cli/stream.py`, the `web`
+subcommand in `src/cli/main.py`, and the page under `src/cli/static/`. The
+requirement IDs and acceptance cases are FR-WEB-01..03 with WEB-T1..WEB-T4 from
+`docs/code-governance/verification-constraints.md`. Delivery is verified offline;
+no commit, push or PR exists yet, so browser-observed behaviour is recorded from
+the developer's manual run, not from a recorded test.
+
+Test files (37 cases, run in the round ending 2026-11-23): `test_web_launcher.py`
+(11), `test_web_http.py` (1), `test_web_events.py` (4), `test_web_reports.py` (5),
+`test_web_features.py` (6), `test_web_models.py` (6), `test_web_display.py` (4).
+
+| Acceptance condition | Verified offline (test) | Observed in the browser run | Not triggered this round |
+| --- | --- | --- | --- |
+| FR-WEB-01 / WEB-T1 launcher prints URL, opens browser once, busy port suggests a command, `/` returns 200, baseline commands stay invocable | `test_web_launcher.py::test_web_defaults_to_loopback_port_8000`, `::test_the_url_is_printed_before_the_browser_opens`, `::test_no_browser_flag_suppresses_the_launch_but_keeps_the_url`, `::test_a_busy_port_prints_an_actionable_command_not_a_traceback`, `::test_the_root_page_answers_200_once_the_service_is_ready`, `::test_the_original_cli_commands_are_still_invocable` | The URL opened the page and the browser window appeared once | The automatic open and the busy-port path were exercised by tests and the launcher run, not by a deliberately failed browser launch |
+| FR-WEB-01 config form defaults include the options analyst; submitted models and analysts reach the backend; provider switch refreshes both model boxes | `test_web_http.py::test_http_end_to_end_start_stream_report_download`, `test_web_models.py::test_switching_provider_to_chatgpt_refreshes_both_model_boxes`, `::test_a_chatgpt_run_reaches_the_backend_as_chatgpt_with_chosen_models` | The options analyst was checked by default; switching provider changed the model lists; a ChatGPT run used the plan's models | A signed-out ChatGPT plan and a failing `list_models()` were covered only by stubbed tests |
+| FR-WEB-02 / WEB-T2 events appear before the run ends, once, in order; duplicate snapshots add nothing; collapsible long output is readable | `test_web_events.py::test_the_first_event_is_visible_before_the_run_finishes`, `::test_a_repeated_snapshot_does_not_duplicate_prior_events`; `test_web_display.py::test_events_come_in_order_with_full_text_for_expansion`, `::test_a_repeated_cursor_read_adds_no_duplicates`, `::test_the_last_event_is_retrievable_before_finishing` | Live events were appended while the run progressed; long reports and tool output collapsed and expanded; the view stayed put on scroll-up | A deliberately slow response and a deliberately repeated cursor were exercised by tests, not seen in the live run |
+| FR-WEB-02 / WEB-T3 failure keeps prior output, shows the reason, and allows a retry | `test_web_events.py::test_a_failed_run_keeps_its_events_and_allows_retry` | Not run against a real failing graph | A real mid-run failure and retry were not triggered in the browser |
+| FR-WEB-02 / WEB-T2 options data or its unavailable notice, valid and invalid citations visible | `test_web_features.py::test_feat01_form_defaults_include_the_options_analyst`, `::test_feat05_valid_citation_links_to_the_source_paragraph_text`, `::test_feat05_invalid_and_missing_notices_are_visible_in_the_preview` | The options analyst report appeared; a valid citation could jump to its source paragraph | An unavailable-options notice and an invalid/missing citation in a live run were covered by tests, not seen live |
+| FR-WEB-02 / WEB-T2 early-stop reason shown before the manager plan | `test_web_features.py::test_feat02_the_stop_reason_appears_before_the_manager_plan` | Not isolated in the browser run | The debate's early stop was not triggered live this round; the ordering is proven only offline |
+| FR-WEB-02 / WEB-T2 one token warning when usage crosses the threshold | `test_web_features.py::test_feat04_one_token_warning_even_after_a_second_crossing` | Not isolated in the browser run | The 100000-token threshold was not passed in the live run; single-warning behaviour is proven only offline |
+| FR-WEB-03 / WEB-T4 success shows ticker, date, rating, HTML preview and a Markdown download for this run | `test_web_reports.py::test_success_exposes_metadata_and_artifacts_for_this_run`, `::test_the_markdown_download_keeps_company_background_and_numbered_paragraphs`; `test_web_http.py::test_http_end_to_end_start_stream_report_download` | The final report appeared with the run's content and a working Markdown download | — |
+| FR-WEB-03 / WEB-T4 viewing or downloading never re-runs the analysis; two runs on the same ticker/date stay separate | `test_web_reports.py::test_viewing_and_downloading_after_completion_starts_no_new_run`, `::test_two_runs_same_ticker_and_date_keep_separate_artifacts` | Reviewing and downloading after completion did not start another run | Two runs on the same ticker/date were covered by tests, not driven twice in the browser |
+| FR-WEB-03 / WEB-T4 page anchors are display-only; saved files equal the export bytes | `test_web_reports.py::test_preview_adds_citation_anchors_without_altering_saved_files` | Clicking a citation jumped to the source paragraph while the saved file stayed intact | — |
+
+Browser-only items confirmed by the developer: automatic open once; tab
+auto-switch to the final report with a disabled-until-ready state; click-to-source
+scrolling; fixed configuration column and tabs with only the process list
+scrolling; collapse/expand of long output; preserved expansion after switching
+tabs. A real failure/retry, a real unavailable-options notice, a live early-stop
+and a live token-warning crossing were **not** triggered in the browser and are
+supported by offline tests only.
+
+### FEAT-06 implementation round (2026-11-23) — offline tests green at that point
+
+Implementation on branch `CS5351`. The five offline test files pass; the earlier
+FEAT-01 to FEAT-05 suites are unchanged. The browser interactions remain manual
+acceptance items to be filled in after an actual run.
+
+| Test file | Covers | Result |
+| --- | --- | --- |
+| `test_web_launcher.py` | WEB-T1: `web` command and `--port`/`--no-browser`; default `127.0.0.1:8000`; URL printed and browser opened once; busy port gives an actionable command; `/` returns 200; baseline `backtest`/`login`/`logout` still invocable via `--help` | 11 passed |
+| `test_web_http.py` | WEB-T2/T4 over HTTP: config defaults include options; submitted models/analysts reach the backend; an event is read while the run is paused (state still `running`) and a re-poll from the cursor adds nothing; report preview and Markdown download serve this run; stream_run and save_reports each called once | 1 passed |
+| `test_web_events.py` | WEB-T2/T3: first event visible before the run ends (pausable fake stream); repeated cumulative snapshot adds no duplicate; one active run; failure keeps events and retry (factory returns a fresh graph) gets a new id | 4 passed |
+| `test_web_reports.py` | WEB-T4: per-run metadata and artifacts; viewing/downloading starts no new run; two runs on the same ticker/date stay separate; page anchors are display-only and the on-disk MD/HTML equal the bytes the single export wrote; download keeps FEAT-03 background and FEAT-05 numbers | 5 passed |
+| `test_web_features.py` | FEAT-01 default analysts include options; FEAT-02 stop reason precedes the manager plan; FEAT-03 background in MD/HTML; FEAT-04 one warning after a second crossing, run completes; FEAT-05 a valid `[OPT-NN]` link's href targets its source paragraph id (holding the source text) and invalid/missing notices stay visible | 6 passed |
+
+Offline regression on the current tree: `python -m pytest -q test/offline`
+reports `1647 passed, 1 skipped, 1 deselected, 100 subtests passed` (1620 prior
+plus 27 FEAT-06). `ruff check` on the changed source and test files reports no
+findings.
+
+The HTTP tests bind the local service and therefore carry a `loopback` marker;
+the shared `_no_network` fixture permits 127.0.0.1 for that marker only and still
+refuses outbound connections.
+
+Browser acceptance (to be completed by the developer after a real run):
+automatic browser opening and manual URL fallback; the final-report tab
+auto-switching and the disabled-until-ready state; clicking a `[OPT-NN]` citation
+scrolling to the source paragraph; the disabled Start button and readable
+failure/retry flow; and the 1/3 left configuration, 2/3 right display layout with
+the options analyst default shown.
+
+### FEAT-06 model selection fix (2026-11-23)
+
+Browser acceptance found the page did not fully support the CLI's ChatGPT
+subscription flow and mis-parsed the catalog's `(label, model_id)` tuples. Fixed
+and covered by `test_web_models.py` (6 passed). Regression: full offline suite
+`1653 passed, 1 skipped, 1 deselected, 100 subtests passed`.
+
+| Change | Where | Evidence |
+| --- | --- | --- |
+| Catalog tuples unpacked positionally for every provider | `cli/web/config.py` `_catalog_models`/`models_for` | `test_openai_models_are_parsed_from_label_id_tuples` |
+| ChatGPT lists the signed-in plan's models via `chatgpt_auth.list_models()`; no `OPENAI_API_KEY` | `cli/web/config.py` `_chatgpt_models` | `test_chatgpt_models_come_from_the_subscription_not_an_api_key` |
+| Signed-out shows `tradingagents login chatgpt`; listing failure gives a clear message; manual ID entry kept | `cli/web/config.py` `_chatgpt_models` | `test_chatgpt_signed_out_tells_the_user_to_log_in`, `test_chatgpt_failure_keeps_a_clear_message_and_custom_entry` |
+| `GET /api/models?provider=` refreshes both boxes on load and on provider change; Start disabled until both models are chosen | `cli/web/server.py`, `cli/static/app.js` | `test_switching_provider_to_chatgpt_refreshes_both_model_boxes` |
+| A ChatGPT run reaches the backend as `chatgpt` with the two chosen model IDs | `cli/web/runs.py` `_run_config` | `test_a_chatgpt_run_reaches_the_backend_as_chatgpt_with_chosen_models` |
+
+### FEAT-06 analysis-process display fix (2026-11-23)
+
+Browser acceptance found the Analysis process page grew very long: tool output
+and full reports were laid out inline, so review was hard. The page now keeps the
+left configuration and the top tabs fixed and scrolls only the process list;
+long messages, tool output and reports start collapsed to "role/report name + one
+line preview" and expand on click; token warnings, errors and the debate's
+early-stop reason stay fully visible. Polling is one request at a time by
+`run_id` + cursor, drains the last batch before switching to the final report,
+and does not yank a reader who scrolled up. Covered by `test_web_display.py`
+(4 passed); the full offline suite reports `1657 passed, 1 skipped, 1 deselected,
+100 subtests passed`.
+
+| Change | Where | Evidence |
+| --- | --- | --- |
+| Fixed config + tabs, only the process list scrolls | `cli/static/style.css` | `test_served_page_has_collapsible_markup_and_single_poll_guard` |
+| Collapsible long message/tool/report events; warning/error/early-stop always shown | `cli/static/app.js` | `test_events_come_in_order_with_full_text_for_expansion` |
+| One in-flight poll by run_id + cursor; a repeated cursor adds no duplicate | `cli/static/app.js` | `test_a_repeated_cursor_read_adds_no_duplicates` |
+| Final batch read before switching to the report | `cli/static/app.js` `poll` | `test_the_last_event_is_retrievable_before_finishing` |
+
+Browser re-check (manual): expand/collapse a long report and a tool call; scroll
+up while the run continues and confirm the view does not jump; after completion
+switch to Final report and back and confirm expanded items remain expanded.

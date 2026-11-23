@@ -30,6 +30,8 @@ python -m pip install -e ".[dev]"
 python -m cli.main
 ```
 
+The same analysis can be run from a local web page with `python -m cli.main web` (or the installed `tradingagents web`): it serves `127.0.0.1:8000`, prints its URL, opens the browser and keeps the terminal CLI available. The page's provider menu lists models from the same sources as the CLI, including the ChatGPT plan models when signed in with `tradingagents login chatgpt`. Use `--port` for another port and `--no-browser` to skip the automatic open.
+
 | Scope | Command |
 | --- | --- |
 | Offline regression | `python -m pytest -q test/offline` |

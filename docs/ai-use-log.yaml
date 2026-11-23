@@ -1068,3 +1068,179 @@ sessions:
       - No live API calls, commit or push performed.
       - The added course transcript references transcript.raw.json, which was not found under transcripts; raw-export completeness was not certified.
     human_interventions: User authorized configuration removal; no additional intervention.
+
+  - date: "2026-11-23"
+    tool: OpenCode
+    model: "CS5351/DeepSeek-V4-Flash"
+    note: >
+      Distinct from the Codex entries above: this session was run in OpenCode, not Codex. The OpenCode
+      conversation transcript and any human annotation of it are recorded separately from Codex sessions.
+    feature: FEAT-06
+    task: Plan and write the offline acceptance tests for the local web interface; revise them after review.
+    stage_reached: >
+      Planning only (approved) followed by test authoring and a revision round. Five FEAT-06 test files are
+      written and reviewed. No production web code was written, and nothing was committed or pushed.
+    human_instruction: >
+      Round 1 asked for a read-only plan first. After approval, the scope for round 2 was writing and running the
+      offline tests only. After reviewing the tests, the user approved the cli.web and RunManager naming and asked
+      for four revisions: add one real-HTTP end-to-end case; make assertion and name agree for FEAT-02/04/05;
+      compare reports against the bytes the single export actually wrote (no second exporter call); and verify the
+      original CLI commands through their public --help instead of Typer registration objects. The user permitted
+      updating the FEAT-06 trace-matrix row but no production code, commit or push.
+    design_decisions:
+      - "Standard-library ThreadingHTTPServer + native HTML/JS + cursor polling; entry `tradingagents web` on 127.0.0.1:8000 with --port and --no-browser; a busy port prints an actionable command."
+      - "Both CLI and web share one interpretation of graph.stream_run() events; each renders it. Reuse the existing graph, agents and reporting interfaces."
+      - "FEAT-05 page anchors are display-only; saved report files are not altered."
+    files:
+      added_tests:
+        - "test/offline/test_web_launcher.py (WEB-T1): web command, URL/browser-once, busy port, / returns 200, baseline commands via --help."
+        - "test/offline/test_web_http.py (WEB-T2/T4): config defaults include options; submitted models/analysts reach the backend; read one event while paused and re-poll from the cursor adds nothing; report + Markdown download; exactly one analysis."
+        - "test/offline/test_web_events.py (WEB-T2/T3): first event before completion with a pausable fake stream; no duplicate on re-snapshot; one active run; failure keeps events and retry gets a new id."
+        - "test/offline/test_web_reports.py (WEB-T4): per-run artifacts; viewing/downloading starts no new run; two runs same ticker/date stay separate; anchors do not change the bytes the single export wrote."
+        - "test/offline/test_web_features.py (FEAT-01..05): defaults include options; stop reason before plan; background in MD/HTML; one warning after a second crossing; valid citation links to source text; invalid/missing keep notices."
+      updated_docs:
+        - "docs/architecture/trace-matrix.md: FEAT-06 row now distinguishes baseline-passed, tests-written-and-failing-pending-implementation, and browser-pending."
+    verification:
+      - "Environment: project declared no installed pytest, so a throwaway venv at /var/.../opencode/feat06-venv was created and the project installed editable with its own [dev] extras (no system Python change)."
+      - "Baseline before new tests, `python -m pytest -q test/offline`: 1620 passed, 1 skipped, 1 deselected, 100 subtests passed."
+      - "Same baseline after adding the tests, excluding the five FEAT-06 files: 1620 passed, 1 skipped, 1 deselected, 100 subtests passed (no regression)."
+      - "FEAT-06 tests: test_web_launcher.py 3 passed (backtest/login/logout --help) and 7 failed (web missing); the other four files fail at collection with ModuleNotFoundError: No module named 'cli.web'."
+      - "ruff check on the five test files: All checks passed."
+    limitations:
+      - "The five FEAT-06 files fail by design until cli.web exists; no production code was written to make them pass."
+      - "The HTTP endpoint shape pinned by test_web_http.py must be honoured, or the test adjusted, during implementation."
+      - "Browser acceptance (auto-open, tab switching, click-to-source scrolling, layout, retry UI) is not yet run."
+      - "No live API calls, commit or push performed in this session."
+    human_review: pending human review; nothing committed or pushed.
+
+  - date: "2026-11-23"
+    tool: OpenCode
+    model: "CS5351/DeepSeek-V4-Flash"
+    note: >
+      Continuation of the FEAT-06 OpenCode session; distinct from the Codex entries. The OpenCode
+      conversation transcript is kept separately from Codex sessions.
+    feature: FEAT-06
+    task: Fix three reviewed test details, then implement the local web interface and make the offline tests pass.
+    human_instruction: >
+      After approving the tests and HTTP endpoints, the user authorised implementation. The three test fixes
+      were: poll events by cursor (not assume the background thread reached stream_run); use a factory returning
+      successive failure/success graphs instead of set_graph_factory; and assert the valid citation link's href
+      resolves to the source paragraph id and that invalid/missing notices are visible. Implementation must share
+      event handling between CLI and web, keep the CLI usable, auto-open the browser, show live progress, switch to
+      the final report on success with download and review, and keep records with retry on failure. Show the diff
+      and stop before the post-diff verification stage. No commit or push.
+    implementation:
+      - "src/cli/stream.py (new): interpret_messages, interpret_chunk, merge_trace — the single per-step reading of graph.stream_run(), moved from run_analysis unchanged."
+      - "src/cli/run.py: the streaming loop now calls the shared interpreter; display refresh and checkpoint logic unchanged."
+      - "src/cli/web/ (new package): runs.py (RunManager, per-run event log with cursor, display-only citation anchors), server.py (ThreadingHTTPServer, /api/config, POST /api/runs, events/status/report/report.md), config.py (form options from cli.prompts and DEFAULT_CONFIG), __init__.py (run_web launcher)."
+      - "src/cli/main.py: new `web --port --no-browser` subcommand; bare CLI and backtest/login/logout unchanged."
+      - "src/cli/static/{index.html,app.js,style.css}: 1/3 config, 2/3 content, tabs, live event log, report iframe, Markdown download, disabled-until-ready report tab, retry on failure."
+      - "test/conftest.py: a `loopback` marker lets the two HTTP tests reach 127.0.0.1 only; outbound connections still refused. pyproject.toml registers the marker."
+    verification:
+      - "test/offline/test_web_launcher.py: 11 passed. test_web_http.py: 1 passed. test_web_events.py: 4 passed. test_web_reports.py: 5 passed. test_web_features.py: 6 passed. FEAT-06 total 27 passed."
+      - "Full offline suite `python -m pytest -q test/offline`: 1647 passed, 1 skipped, 1 deselected, 100 subtests passed (1620 prior + 27 FEAT-06; no regression)."
+      - "ruff check on changed src/cli files, the cli/web package, the five FEAT-06 test files and conftest.py: All checks passed."
+      - "`python -m cli.main web --help` shows --port and --no-browser."
+    limitations:
+      - "Browser acceptance (auto-open, tab auto-switch, click-to-source scrolling, layout, retry UI) is not yet run; to be recorded by the developer after a real run."
+      - "No live API call, commit or push performed. Formal post-diff structural, regression and behavioural verification is deferred to the next stage per Prompt.md."
+    human_review: pending human review of the diff; nothing committed or pushed.
+
+  - date: "2026-11-23"
+    tool: OpenCode
+    model: "CS5351/DeepSeek-V4-Flash"
+    note: "OpenCode session continued after browser acceptance; distinct from Codex entries."
+    feature: FEAT-06
+    task: Fix web provider/model selection for the ChatGPT subscription flow and catalog tuple parsing.
+    human_instruction: >
+      During browser acceptance the user found the page did not support the CLI's ChatGPT subscription
+      sign-in (no API key) and mis-parsed the catalog tuples. Reproduce with offline tests first, then fix:
+      ChatGPT models come from chatgpt_auth.list_models() and the existing sign-in; signed-out tells the user
+      to run `tradingagents login chatgpt`; listing failure shows a clear message and keeps manual model entry;
+      provider switch refreshes both model boxes; Start is disabled until both models are chosen; a ChatGPT run
+      sends chatgpt plus the two chosen IDs, without OPENAI_API_KEY. Provide browser re-check steps; no commit.
+    reproduction:
+      - "test/offline/test_web_models.py written first; all 6 failed against the current code (tuple unpacking and missing /api/models)."
+    changes:
+      - "cli/web/config.py: _catalog_models unpacks (label, value) tuples; models_for(provider) handles chatgpt via chatgpt_auth.list_models(), mapping sign-out to needs_login + LOGIN_HINT and other failures to an error; custom entry always kept."
+      - "cli/web/server.py: GET /api/models?provider= serves models_for(provider)."
+      - "cli/static/app.js + index.html: refresh models on load and on provider change; show login/failure hint; manual model-ID inputs when 'custom' is chosen; Start disabled until quick and deep models are non-empty."
+    verification:
+      - "test_web_models.py: 6 passed. All FEAT-06 files together: 33 passed."
+      - "Full offline suite `python -m pytest -q test/offline`: 1653 passed, 1 skipped, 1 deselected, 100 subtests passed (1647 + 6)."
+      - "ruff check on changed source and the new test file: All checks passed."
+      - "No OPENAI_API_KEY present in the ChatGPT cases; list_models stubbed so no external call."
+    limitations:
+      - "The ChatGPT model list uses the real chatgpt_auth.list_models() in production; offline tests stub it. A signed-in manual check is still needed."
+      - "No commit or push performed."
+    human_review: pending human review; nothing committed or pushed.
+
+  - date: "2026-11-23"
+    tool: OpenCode
+    model: "CS5351/DeepSeek-V4-Flash"
+    note: "OpenCode session continued after browser acceptance; distinct from Codex entries."
+    feature: FEAT-06
+    task: Collapse long events and fix polling so the analysis-process page stays readable.
+    human_instruction: >
+      During browser acceptance the Analysis process laid tool output and full reports inline and grew
+      very long. Make a small display optimisation: keep the left config and the top tabs fixed and scroll
+      only the process list; keep event order; show short messages inline and collapse long messages, tool
+      output and reports to "role/name + one-line preview" that expand on click; always show token warnings,
+      errors and the early-stop reason; poll one request at a time by run_id + cursor, drain the last batch
+      before switching to the report, and do not move a reader who scrolled up; keep full process and the
+      original report so switching tabs preserves expanded content. Verify offline; give browser re-check
+      steps; no commit.
+    changes:
+      - "cli/static/style.css: layout pinned to viewport (overflow hidden, min-height:0); only .view scrolls; fixed config column and tabs/status; collapsible summary/body styling."
+      - "cli/static/app.js: collapsible rendering (COLLAPSE_CHARS, ALWAYS_OPEN for token_warning/error/delegate); single self-scheduling poll guarded by state.polling and state.seen dedupe; drains the terminal batch before finishSuccess; appendSticky/shouldStickToBottom preserve a scrolled-up reader; DOM kept across tab switches so expanded items persist."
+    verification:
+      - "test/offline/test_web_display.py (new): 4 passed — ordered events with full report text; repeated cursor adds no duplicate; last (completion) event retrievable with empty tail; served page/js carry collapse markup and the single-poll guard."
+      - "All FEAT-06 files together: 37 passed."
+      - "Full offline suite `python -m pytest -q test/offline`: 1657 passed, 1 skipped, 1 deselected, 100 subtests passed."
+      - "ruff check on the new test file: All checks passed."
+    limitations:
+      - "Collapse/expand and scroll-position behaviour are DOM interactions; only the event-stream contract and served markup are covered offline. The click-to-expand and no-jump scrolling remain manual browser checks."
+      - "No commit or push performed."
+    human_review: pending human review; nothing committed or pushed.
+
+  - date: "2026-11-23"
+    tool: OpenCode
+    model: "CS5351/DeepSeek-V4-Flash"
+    note: "Documentation round of the FEAT-06 OpenCode session; documentation only."
+    feature: FEAT-06
+    task: Complete the FEAT-06 course deliverables D4, D5 and D6 as documentation only.
+    human_instruction: >
+      Complete the FEAT-06 delivery documents without changing source, tests, CI or Git. Record the D4 verification
+      and defects, assemble the D5 annotated session at transcripts/60021318-Han-Diyi.md, and add the FEAT-06 team and
+      reflection sections to Report.md, leaving subjective reasons and the reflection to the student.
+    changes:
+      - "docs/architecture/trace-matrix.md: FEAT-06 D4 record separating offline-verified, browser-observed and not-triggered conditions, with file/test names and the round's suite numbers."
+      - "docs/bug-diary.md: three evidenced defects (empty provider model boxes, ChatGPT subscription not wired, overlong process page) plus the polling-duplication risk, marked test-reproduced not observed."
+      - "docs/review-memo.md: FEAT-06 review draft to be linked when a PR exists, verdict pending."
+      - "docs/code-governance/verification-constraints.md: marked the FEAT-06 WEB-T cases verified with the offline/browser split."
+      - "transcripts/60021318-Han-Diyi.md: raw OpenCode session exported from the local OpenCode database in original order; seven human messages and the assistant messages verbatim, tool calls condensed and disclosed; one annotation per human intervention."
+      - "Report.md: FEAT-06 contribution row, process-evolution subsection, human-intervention list and reflection questions for Han Diyi (60021318)."
+      - "architecture-blueprint.md, README.md: FEAT-06 marked implemented with the web command and ChatGPT subscription note; no duplicate ADR, requirement or log entry."
+    verification:
+      - "Full offline suite re-run before writing: 1657 passed, 1 skipped, 1 deselected, 100 subtests passed; FEAT-06 files 37 passed."
+      - "Every cited test function and referenced file checked to exist."
+      - "The raw session was read from ~/.local/share/opencode/opencode.db (session ses_dfa710b4fffesk8Lsw5ZIy5Q2S); no credentials were present."
+    limitations:
+      - "The course PDF CS5351-2026-2027-project.pdf was not found in the workspace; the deliverables follow the repository's existing D4/D5/D6 conventions and the human instruction."
+      - "The reflection text is left to the student; the ChatGPT-preference rationale and the final review verdict are pending the student."
+      - "No commit or push performed."
+    human_review: pending student review; nothing committed or pushed.
+
+  - date: "2026-11-23"
+    tool: Codex
+    task: Finalize the FEAT-06 student contribution for a local commit.
+    human_instruction: Answer the reflection questions using the development history, prepare the English text, and defer deployment.
+    changes:
+      - Prepared the 325-word reflection from Han Diyi's recorded supervision and browser feedback; disclosed the writing assistance.
+      - Regenerated the annotated transcript from the same OpenCode session, preserving the stored text, tool inputs and results, with unrelated session information redacted.
+      - Recorded the student's local browser acceptance separately from the future PR verdict.
+    verification:
+      - Checked the original assignment PDF in the enclosing course directory for D4, D5 and D6.
+      - "37 Web tests passed. Full offline rerun with proxy variables unset for pytest: 1657 passed, 1 skipped, 1 deselected, 100 subtests passed. An earlier run inherited a SOCKS proxy without socksio and had 39 failures."
+      - Repository-wide Ruff and diff whitespace checks passed.
+    human_review: Local browser issues accepted in conversation; final PR review remains with the reviewer.

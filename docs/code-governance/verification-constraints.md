@@ -72,6 +72,8 @@ Use fixed analyst reports and scripted turns. Inspect both researcher inputs and
 
 Proposed offline cases use a local browser, a scripted graph and fixed report fixtures.
 
+Verified 2026-11-23: the offline cases below are covered by `test_web_launcher.py`, `test_web_http.py`, `test_web_events.py`, `test_web_reports.py`, `test_web_features.py`, `test_web_models.py` and `test_web_display.py`. The scripted graph and fixed fixtures are used offline; the HTTP cases carry a `loopback` marker. The case-by-case offline/browser/not-triggered breakdown is in the FEAT-06 D4 verification record of `docs/architecture/trace-matrix.md`. A few conditions (a live mid-run failure and retry, an unavailable-options notice, a live debate early stop and a live token-warning crossing) were exercised offline only and not triggered in the browser run.
+
 | Case | Setup and expected outcome |
 | --- | --- |
 | WEB-T1 · FR-WEB-01 | Observe the launcher opening the printed URL after readiness. Simulate a failed browser launch and open that URL manually. Verify the configuration form, default options analyst and quick/deep model choices. An empty ticker starts zero runs. Submit valid non-default selections twice rapidly and verify exactly one run receives those settings. |
