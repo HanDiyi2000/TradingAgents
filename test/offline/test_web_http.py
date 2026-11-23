@@ -205,7 +205,8 @@ def test_http_end_to_end_start_stream_report_download(server):
 
     # 4. Release the graph, wait for completion, then read the report and download.
     gate.release()
-    _wait_status(base, run_id, "succeeded")
+    completed = _wait_status(base, run_id, "succeeded")
+    assert (completed["ticker"], completed["date"], completed["rating"]) == ("NVDA", submitted["date"], "Buy")
 
     status, report_html = _get(f"{base}/api/runs/{run_id}/report")
     assert status == 200
@@ -248,6 +249,6 @@ def _wait_status(base, run_id, wanted, timeout=5.0):
     while time.time() < deadline:
         status, snap = _json(f"{base}/api/runs/{run_id}/status")
         if snap.get("state") == wanted:
-            return
+            return snap
         time.sleep(0.02)
     raise AssertionError(f"run {run_id} did not reach {wanted}")

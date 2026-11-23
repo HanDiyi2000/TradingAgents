@@ -172,7 +172,8 @@ def test_preview_adds_citation_anchors_without_altering_saved_files(tmp_path):
 
     result = manager.result(run_id)
     # The preview carries an anchor for the cited paragraph.
-    assert 'id="para-OPT-02"' in result["html"] or "#para-OPT-02" in result["html"]
+    assert 'id="para-OPT-02"' in result["html"]
+    assert 'href="#para-OPT-02"' in result["html"]
 
     # Exactly one export happened; the on-disk files match the bytes it wrote.
     assert graph.report_calls == 1

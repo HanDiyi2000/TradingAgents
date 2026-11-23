@@ -75,7 +75,8 @@ class _Handler(BaseHTTPRequestHandler):
         try:
             if action == "status":
                 snap = manager.snapshot(run_id)
-                return self._json(200, {"state": snap["state"], "error": snap["error"]})
+                fields = ("state", "error", "ticker", "date", "rating")
+                return self._json(200, {key: snap[key] for key in fields})
             if action == "events":
                 since = int(parse_qs(parsed.query).get("since", ["0"])[0] or 0)
                 events, nxt = manager.events_since(run_id, since)

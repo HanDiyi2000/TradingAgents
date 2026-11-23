@@ -106,6 +106,7 @@ class _Run:
         self.ticker = ticker
         self.date = date
         self.state = RUNNING
+        self.rating = ""
         self.error = None
         self.log = _EventLog()
         self.thread = None
@@ -123,6 +124,7 @@ class _Run:
             "error": self.error,
             "ticker": self.ticker,
             "date": self.date,
+            "rating": self.rating,
             "events": self.log.all(),
         }
 
@@ -301,7 +303,7 @@ class RunManager:
             "run_id": run.id,
             "ticker": run.ticker,
             "date": run.date,
-            "rating": getattr(run, "rating", ""),
+            "rating": run.rating,
             "html": run.html,
             "markdown": run.markdown,
             "files": dict(run.files),

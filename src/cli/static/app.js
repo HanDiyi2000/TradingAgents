@@ -297,7 +297,7 @@ async function poll() {
       for (const ev of tail.events) addEvent(ev);
       state.cursor = tail.next;
       if (st.state === "succeeded") {
-        await finishSuccess();
+        finishSuccess(st);
       } else {
         finishFailure(st.error || "Analysis failed.");
       }
@@ -314,36 +314,20 @@ async function poll() {
   }
 }
 
-async function finishSuccess() {
-  const res = await fetch(`/api/runs/${state.runId}/report`);
-  const html = await res.text();
-  const frame = $("report-frame");
-  frame.srcdoc = html;
-  $("report-meta").textContent = reportMeta(html);
-  $("download").href = `/api/runs/${state.runId}/report.md`;
+function finishSuccess(status) {
+  // Give fragment links the report's own URL as their navigation base.
+  const reportUrl = `/api/runs/${state.runId}/report`;
+  $("report-frame").src = reportUrl;
+  $("report-meta").textContent = [
+    status.ticker, status.date, status.rating && `Rating: ${status.rating}`,
+  ].filter(Boolean).join("  ·  ");
+  $("download").href = reportUrl + ".md";
   $("download").hidden = false;
   $("tab-report").disabled = false;
   $("status").className = "status";
   $("status").textContent = "Analysis complete.";
   setRunning(false);
   showTab("report");
-}
-
-function reportMeta(html) {
-  // Derive ticker/date/rating from the exported report header when possible.
-  const text = html;
-  const pick = (label) => {
-    const m = text.match(new RegExp(label + ":\\s*([^<\\n]+)"));
-    return m ? m[1].trim() : "";
-  };
-  const ticker = pick("Trading Analysis Report");
-  const date = pick("Analysis date");
-  const rating = pick("Rating");
-  const parts = [];
-  if (state.ticker) parts.push(state.ticker);
-  if (state.date) parts.push(state.date);
-  if (rating) parts.push(`Rating: ${rating}`);
-  return parts.join("  ·  ");
 }
 
 function finishFailure(message) {
@@ -368,8 +352,6 @@ async function startAnalysis(event) {
   }
   $("config-error").textContent = "";
   resetViews();
-  state.ticker = config.ticker;
-  state.date = config.date;
   setRunning(true);
   try {
     const started = await postJSON("/api/runs", config);

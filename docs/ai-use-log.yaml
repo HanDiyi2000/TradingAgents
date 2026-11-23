@@ -1244,3 +1244,13 @@ sessions:
       - "37 Web tests passed. Full offline rerun with proxy variables unset for pytest: 1657 passed, 1 skipped, 1 deselected, 100 subtests passed. An earlier run inherited a SOCKS proxy without socksio and had 39 failures."
       - Repository-wide Ruff and diff whitespace checks passed.
     human_review: Local browser issues accepted in conversation; final PR review remains with the reviewer.
+
+  - date: "2026-11-23"
+    tool: Codex
+    task: Fix FEAT-05 citation navigation in the Final report preview.
+    human_instruction: Fix the nested application page shown after clicking a report citation.
+    changes: Loaded the HTML preview by run URL, exposed report metadata through status, and strengthened report and HTTP assertions.
+    verification:
+      - Five offline report tests passed. A Node check exercised the completion handler with two run IDs and resolved the citation URL for each.
+      - Full offline run had 1640 passes, 10 failures and 7 errors. Sixteen cases hit loopback permission errors. The unrelated retry timing test passed on isolated rerun.
+    human_review: Browser acceptance on the deployed site is pending.
