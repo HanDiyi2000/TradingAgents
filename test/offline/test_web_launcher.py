@@ -21,6 +21,7 @@ from __future__ import annotations
 import socket
 
 import pytest
+from rich.text import Text
 from typer.testing import CliRunner
 
 from cli import main as cli_main
@@ -48,10 +49,11 @@ def _free_port() -> int:
 
 @pytest.mark.unit
 def test_the_web_subcommand_is_registered_and_shows_help():
-    result = CliRunner().invoke(cli_main.app, ["web", "--help"])
+    result = CliRunner().invoke(cli_main.app, ["web", "--help"], color=True)
     assert result.exit_code == 0, result.output
-    assert "--port" in result.output
-    assert "--no-browser" in result.output
+    help_text = Text.from_ansi(result.output).plain
+    assert "--port" in help_text
+    assert "--no-browser" in help_text
 
 
 @pytest.mark.unit

@@ -18,6 +18,7 @@ compare the on-disk files and the Markdown download against those captured bytes
 from __future__ import annotations
 
 import pytest
+
 from cli.web import RunManager
 
 
