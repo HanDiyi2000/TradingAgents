@@ -1,76 +1,61 @@
-# Pull request reviews
+# Shared-branch review memorandum
 
-No PR could be opened from the delivered directory because it has no `.git` metadata. The row below records the local FEAT-01 review evidence and must be replaced with the PR reference when the team repository is available.
+## FEAT-01 — Options Analyst
 
-| PR | Spec and architecture alignment | Code and tests | Security and efficiency | Operational evidence | Reviewer and verdict |
-| --- | --- | --- | --- | --- | --- |
-| FEAT-01 local verification (no PR) | Matches ADR 001, INV-OPT-01 and the runtime-policy fallback; yfinance is approved as a current-snapshot provider and historical runs degrade to the unavailable notice. | 31 new offline tests in `test/offline/test_options_data.py` and `test/offline/test_options_analyst.py`; full offline suite `1443 passed, 6 skipped, 3 deselected, 100 subtests passed`; `ruff check src test` clean. | No new runtime dependency; yfinance access stays in `dataflows`; no credentials were read, logged or committed. | `test/live/test_options_yfinance_live.py` ran with `-m integration`: 2 passed against the current yfinance chain and the historical-refusal path. | Human verdict pending |
-| FEAT-02 local verification (no PR) | Matches FR-DEB-01 and the blueprint: judgement is semantic (structured quick-tier call), computed once per eligible pair in the bear node, cap-first, opening round never stops, risk debate untouched. | FEAT-02 offline: `test/offline/test_debate_early_stop.py` + `test/offline/test_debate_semantics_eval.py` → `46 passed, 1 deselected`; full offline suite `1489 passed, 6 skipped, 5 deselected, 100 subtests passed`; `ruff check` clean. | No new provider or client; the judge reuses the existing quick-tier LLM and structured-output helper via `DebateJudge.evaluate()`. Rejected: surface token/unit heuristics (unfaithful to "new evidence"/"first reply"). No credentials read, logged or committed. | Behavioural (routing/handoff/persistence/UNKNOWN fail-open) verified offline. Live semantic accuracy: **three CityU DeepSeek runs, all failed (not a pass)** — run 1 five label mismatches, run 2 one (SEM-04 bear), run 3 SEM-02 bull/bear mismatches plus SEM-04 returned no structured judgement. Recorded in `docs/architecture/trace-matrix.md` and `docs/ai-use-log.yaml`. | Human implementation review approved for verification/evidence; semantic accuracy **not** accepted; fixture churn halted pending a decision on model variability vs. structured-output reliability. Verdict pending |
-| FEAT-03 local verification (no PR) | Matches FR-RPT-01 and the blueprint: one Company Background section after the header and before the numbered sections; run retains the cleaned profile once at initialization (reusing the identity lookup) and the exporter reads only stored run data. | Approved test blob `821e88d24eae95fcd7f01bf094fb23a90bff52b2`; `test/offline/test_company_background.py` → `28 passed`; full offline suite `1522 passed, 1 skipped, 1 deselected, 100 subtests passed`; targeted `84 passed`. `ruff`/`pyflakes` not installed (no lint run claimed); `py_compile` of changed modules OK. | No new dependency or provider call; no export-time lookup, cache access or model call. HTML keeps its CSP and safe rendering; all values escaped. No credentials read, logged or committed. | Offline only: retention through the graph, both export entry points, Markdown/HTML parity, historical filtering, missing-data fallback, run-log persistence, old-state export. | Human verdict pending |
-| FEAT-03 implementation-review corrections (no PR) | Three review issues corrected: Markdown/HTML literal-text parity (raw source text shared; format-specific escaping), genuinely optional `company_identity` (NotRequired), and a custom `resolve_instrument_context` honoured during initialization with one identity resolution and no retry on failure. | Correction tests approved separately at blob `1023b4c964fa96bf7d5f734f1f97632df58c0b43` (not part of the original approval); FEAT-03 file → `34 passed`; full offline `1528 passed, 1 skipped, 1 deselected, 100 subtests passed`; targeted `113 passed`; failed-lookup probe showed one vendor attempt, no duplicate. `ruff`/`pyflakes` unavailable (no lint run claimed); `py_compile` OK. | No new dependency; one vendor lookup per run; format-specific escaping keeps HTML CSP/escaping intact. No credentials read, logged or committed. | Offline only. | Human verdict pending |
-| FEAT-05 local verification (no PR) | Matches FR-CIT-01 and the blueprint authority boundary: deterministic code numbers source paragraphs, validates only IDs the researcher wrote, records per-argument status and preserves invalid/uncited notices through manager input and exports. | Four approved FEAT-05 files: `63 passed`; full fresh-environment offline suite: `1614 passed, 1 skipped, 1 deselected, 100 subtests passed`; Ruff clean. A later notice-dedup regression file added 6 passing cases and the full offline suite reached `1620 passed, 1 skipped, 1 deselected, 100 subtests passed`. | No new dependency or provider call in production. IDs are validated against run-local state; HTML keeps its existing escaping/CSP. The live evaluation read credentials at runtime and its saved artifacts were checked for key leakage. | Offline functional acceptance was recorded. The separate live sample completed 6/6 turns and resolved 139/139 written IDs, but its AI-assisted semantic support assessment remains unreviewed and is not a quality acceptance. | Human acceptance recorded for the verified offline FEAT-05 scope; live citation quality and any PR/merge verdict remain pending |
+**Specification and architecture.** FR-OPT-01 through FR-OPT-05, INV-OPT-01 and ADR 001 require a separate selectable analyst, a report delivered to five debate participants, cutoff-eligible evidence, exports and an unavailable-data fallback. The data-layer adapter checks instrument identity and observation time before model input. Graph, CLI and report writer share the `options_report` field.
 
-## FEAT-03 final local acceptance — Haobin Yan (60642891)
+**Code and tests.** OPT-T1 through OPT-T6 cover selection, report evidence, delivery, exports, no data and cutoff cases. The recorded round added 31 offline tests; its full suite reported 1,443 passed, 6 skipped, 3 deselected and 100 subtests passed. The live current-chain and historical-refusal checks reported 2 passed; Ruff was clean.
 
-**Verdict: APPROVE for local FEAT-03 functional acceptance.** Haobin Yan accepted the implementation-review corrections, completed the AAPL manual run, accepted the six retrospective annotations and the individual reflection, and authorized recording this acceptance in the separate review chat. This entry closes the pending FEAT-03 local review rows above; it does not change other features' reviews or approve a merge or publication.
+**Security and efficiency.** Vendor calls stay in the data layer; no eligible chain means no options model call. No new runtime dependency or credential exposure was reported. Current yfinance chains cannot prove historical availability.
 
-The acceptance is supported by OpenCode's reported 34 passing feature tests and full offline result of 1528 passed, 1 skipped, 1 deselected and 100 subtests passed; the review chat's independent correction probes; and the AAPL run dated 2026-11-22 with only market and news analysts selected. Both exported formats contain the same company background in the required position, and the final report and retained identity are present. Missing-data and historical cases are supported by offline tests, not by this manual run.
+**Verdict: APPROVE.**
 
-Remaining verification limitations: lint was unavailable and has not passed; independent full-suite reproduction in the review chat ended with exit code 139. OpenCode's successful runs used the documented mixed Python environment. Team CI and other applicable blocking gates remain required before merge. The sentence-boundary heuristic's abbreviation limitation remains documented.
+## FEAT-02 — Research debate early stop
 
-Evidence: [Haobin Yan's annotated transcript](../transcripts/60642891-Haobin-Yan.md), [individual reflection](../Report.md), [FEAT-03 tests](../test/offline/test_company_background.py), the trace matrix and AI-use log. The raw session remains unchanged outside the repository; its SHA-256 is recorded in the transcript. This record was transcribed by the review assistant under the student's authorization, rather than generated as an independent human review by the coding agent. No commit, push or PR has been performed as part of recording this acceptance.
+**Specification and architecture.** FR-DEB-01 requires both researchers in the opening round, paired progress checks later, a bounded maximum, an early-stop reason and complete manager history. The structured quick-tier judge supplies advisory progress; deterministic routing continues on uncertainty. Risk debate routing remains unchanged.
 
-## FEAT-03 CI import-only cleanup (no PR)
+**Code and tests.** DEB-T1 through DEB-T5 exercise turn order, routing, the cap, termination reason and handoff. The recorded feature round reported 46 passing targeted tests and a full offline suite of 1,489 passed, 6 skipped, 5 deselected and 100 subtests passed; Ruff was clean.
 
-CI for commit `ca6bb65` (run 45026962649, job 137221978655) failed only the Ruff check. A human-approved, import-only cleanup was applied to `src/tradingagents/agents/state.py` (UP035: import `NotRequired` from `typing`, keeping `TypedDict` from `typing_extensions`) and `test/offline/test_company_background.py` (I001 plus two F401: removed the unused `get_current_date` and `set_config` imports and merged/ordered the `yahoo` imports). No business logic, test case, assertion or expected outcome changed.
+**Security and efficiency.** The judge reuses the configured model client and structured-output helper; no new provider or credential path was added. An early stop can save turns, while the configured cap still binds. This offline routing acceptance does not establish live-model semantic accuracy; that separate evaluation remains documented in the trace matrix and evaluation logbook.
 
-The test file's import-only cleanup hash is `f56a01511a1e409b16b3214108bd197a7c6eda3b`; it is recorded as a cleanup, not as an originally approved hash (original approval `821e88d2…`; correction approval `1023b4c9…`).
+**Verdict: APPROVE.**
 
-Local verification after the cleanup: `python -m ruff check .` → `All checks passed!` (four errors reproduced before the change; `ruff==0.17.6` installed into the existing `.venv` only); FEAT-03 file `34 passed`; full offline `1528 passed, 1 skipped, 1 deselected, 100 subtests passed`; `git diff --check` clean. Remote CI has not been re-run, so it is not claimed to have passed. Human verdict pending.
+## FEAT-03 — Company background
 
-## FEAT-04 local implementation evidence
+**Specification and architecture.** FR-RPT-01 requires one background section between the header and analyst reports in Markdown and HTML. The graph retains cleaned identity at initialization; export uses saved run data rather than fetching a new profile.
 
-FR-TOK-01 is implemented for the CLI and covered by 20 offline tests. The shared receiver contract is ready for FEAT-06. Browser acceptance and remote CI have not run.
+**Code and tests.** After corrections to literal-text parity, optional state and the context override, 34 feature tests and a full offline suite of 1,528 passed, 1 skipped, 1 deselected and 100 subtests passed were reported. Haobin Yan checked an AAPL run and both exports. Earlier CI for `ca6bb65` (run 45026962649) failed Ruff; an approved import-only correction then passed local Ruff and offline checks. That historical failed run is separate from the later CI pass confirmed by the user.
 
-**Human verdict: APPROVE for local FEAT-04 CLI and shared warning contract acceptance.** The user explicitly accepted local verification after reviewing the reported results. This approval covers the local scope. Browser acceptance awaits FEAT-06.
+**Security and efficiency.** A single identity resolution is retained; exporters add no provider/model call. HTML escaping and CSP remain in place, with missing and historical data covered offline.
 
-The user approved the implementation plan and original tests before coding, then approved a follow-up correction to test the existing configuration-to-client conversion for `MAX_TOKENS`, exercise a known interactive terminal in the CLI tests, and preserve checkpoint identity. The one-time warning is advisory. The implementation adds no dependency, provider request or model prompt change.
+**Verdict: APPROVE.**
 
-Local Python 3.12.14 verification: feature tests 20 passed, related structural/entrypoint/output-cap/checkpoint tests 52 passed, offline suite 1548 passed / 1 skipped / 1 deselected, and default suite 1548 passed / 1 skipped / 5 deselected. Each full suite also passed 100 subtests. Ruff, diff whitespace and the requirements schema checks passed. Optional Bedrock dependencies account for the skip, and integration cases account for the deselections. Tests that bind a mock loopback endpoint ran with local loopback permission. No live provider was used for this feature verification.
+## FEAT-04 — Token warning
 
-### FEAT-04 pre-commit correction
+**Specification and architecture.** FR-TOK-01 uses one callback per analysis to warn once after cumulative reported token usage strictly exceeds the configured threshold. The warning is advisory and does not change model output limits or interrupt the run.
 
-A follow-up review reproduced clipping of the threshold at 40 and 50 columns. The user approved a correction and its tests before application. The live warning now uses enough rows for both values, with regression cases at 40, 50 and 80 columns. Post-fix results were 23 feature tests passed, 173 targeted tests passed, and 1551 offline tests passed with 1 skip, 1 deselection and 100 subtests passed. Ruff and diff whitespace checks passed. Final confirmation for submission is pending.
+**Code and tests.** The post-correction round reported 23 feature tests, 173 targeted tests and 1,551 offline tests passed, with 1 skip, 1 deselection and 100 passing subtests. Review found threshold clipping at narrow terminal widths; approved 40-, 50- and 80-column cases preceded the fix. Ruff and whitespace checks passed.
 
-## FEAT-06 local verification — review draft (no PR)
+**Security and efficiency.** The existing accumulator counts provider-reported tokens without polling or another inference call. Fixtures use no credentials; a warning-delivery failure does not interrupt analysis.
 
-The local verification began before the implementation was committed. The shared branch now contains `ccfb4ea` (tests), `a1c9f65` (implementation) and `ee8a752` (delivery records). No reviewed PR is identified here, so this is a review draft to be linked to the PR once it exists. It is not a final verdict.
+**Verdict: APPROVE.**
 
-| PR | Spec and architecture alignment | Code and tests | Security and efficiency | Operational evidence | Reviewer and verdict |
-| --- | --- | --- | --- | --- | --- |
-| FEAT-06 local review draft (no PR yet) | Matches FR-WEB-01..FR-WEB-03 and the FEAT-06 blueprint handoffs, and reuses the CLI exactly: the per-step reading of `graph.stream_run()` is the shared `src/cli/stream.py`, both paths export through `graph.save_reports`, and the form options come from `cli.prompts` and `DEFAULT_CONFIG`. FEAT-05 anchors are display-only; saved files are unchanged. | `src/cli/web/` (launcher, `RunManager`, HTTP server, config), `src/cli/stream.py`, the `web` subcommand in `cli/main.py`, and `src/cli/static/`. Seven offline files, 37 cases; full offline suite `1657 passed, 1 skipped, 1 deselected, 100 subtests passed`; `ruff check` clean on changed files. | Binds loopback only; the two HTTP tests carry a `loopback` marker that permits 127.0.0.1 and still refuses outbound connections. ChatGPT models come from the existing subscription sign-in, not `OPENAI_API_KEY`; the page never logs credentials. Reuses one graph and one export per run, so no extra model calls or duplicate exports. | Offline: launcher/URL, HTTP end-to-end with a paused stream, failure/retry, per-run isolation, provider/model selection, and the collapsible event stream. Browser (developer-run): URL auto-open, tab auto-switch, click-to-source, fixed header with a scrolling process list, collapse/expand preserved across tabs. A live failure/retry, an unavailable-options notice, a live early-stop and a live token-warning crossing were not triggered and remain offline-only. | Human verdict pending; to be completed after the PR exists |
+## FEAT-05 — Debate paragraph citations
 
-**Local acceptance.** Han Diyi reported that the browser issues had been resolved and requested preparation for submission. The PR identifier, reviewer decision and remote CI result belong to the subsequent PR review.
+**Specification and architecture.** FR-CIT-01 numbers analyst paragraphs, checks the IDs written by each researcher, and preserves valid, invalid and uncited notices through the debate and Markdown/HTML exports. Deterministic code owns ID matching; the researchers own the argument text.
 
-## Review disposition for the local submission candidate
+**Code and tests.** Four approved feature test files reported 63 passed; later notice-deduplication regressions passed. The recorded later full offline suite reported 1,620 passed, 1 skipped, 1 deselected and 100 subtests passed. The live sample produced six researcher turns and resolved 139 of 139 written IDs. The original AI-assisted assessment and its rows remain under `docs/evaluations/feat05-live/`.
 
-Scope: repository verification, including the existing browser citation regression. The full offline suite produced 1,656 passes, one failure, one optional-provider skip and one deselected live evaluation (100 passing subtests). A preview contained two DOM elements with `id="para-OPT-02"`. The expected count is one, with the target in Analyst Team Reports. This failure concerns report navigation and does not establish a defect in the saved Markdown or the citation validator. Preserve the fixture and rerun the full suite after a scoped preview correction. Hosted status and a human PR verdict must be attached to the actual PR.
+**Security and efficiency.** Validation uses a run-local paragraph map without an added production provider call. HTML escaping/CSP remain; saved live artifacts were checked for key leakage.
 
-Technical review verdict: **CHANGES REQUIRED**.
+**Verdict: APPROVE.**
 
+## FEAT-06 — Local web interface
 
-### Local correction and regression
+**Specification and architecture.** FR-WEB-01 through FR-WEB-03 and ADR 003 call for one local page using CLI configuration, the shared graph stream and exporter. Run IDs and cursors preserve event order and associate each preview and download with its completed analysis.
 
-The preview now derives its targets from the analyst section and links repeated citations in later prose and lists. The original assertion passes without any change to the test expectation. The full offline run passed 1,663 tests and 100 subtests, with one optional-provider skip. CI gate acceptance tests include late approval, modified approved tests, missing log, missing ADR and absent independent review. The remaining release conditions include hosted protection, live semantic evidence, a human-authored rules file and team sign-off.
+**Code and tests.** Seven web test files reported 37 passing cases. Browser review exposed ChatGPT subscription model selection and a long process view; tests and corrections followed. A later preview regression found duplicate source targets for one citation. After the analyst-only target correction, the recorded integrated suite reported 1,663 passed and 100 subtests passed, with one optional-provider skip.
 
-Local release-readiness verdict: **CHANGES REQUIRED**.
+**Security and efficiency.** The server binds loopback, keeps credentials on the host, and uses one graph and export per run. HTTP fixtures allow loopback only; report rendering retains safe HTML handling.
 
-### GitHub PR #1 — FEAT-04 token threshold
-
-[PR #1](https://github.com/HanDiyi2000/TradingAgents/pull/1) targeted `CS5351` and GitHub reports it merged on 22 November 2026 at 15:21 UTC. Its commits were `0e25c56` (tests), `3b14c97` (implementation) and `a99c19b` (delivery evidence). GitHub returned no submitted reviews. The recorded student acceptance covers the local feature and the narrow-terminal correction; the GitHub merge metadata does not establish independent PR review.
-
-**Spec and architecture.** FR-TOK-01's strict first crossing is owned by the shared callback. The advisory warning does not interrupt the run or change the output limit. **Code and tests.** The retained test-first commit and local results exercise cumulative counting, concurrency, terminal width and compatibility. **Security and efficiency.** No credentials are needed for the fixtures. Both interfaces reuse one accumulator, avoiding a second inference call or polling-based counting. **Operations.** The course branch returned `protected: false` when inspected. The supplied ruleset describes the required hosted controls; it has not been activated by this checkout.
-
-The missing independent review prevents a retrospective process approval.
-
-**CHANGES REQUIRED**
+**Verdict: APPROVE.**
